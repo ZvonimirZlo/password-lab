@@ -1,10 +1,10 @@
-import './PasswordLab.scss';
 import { useState } from 'react';
+import { FiInfo } from 'react-icons/fi'; // Make sure you ran `npm i react-icons`
+import './PasswordLab.scss';
 
 export default function App() {
   const [password, setPassword] = useState('');
 
-  // Basic character stats calculations
   const stats = {
     length: password.length,
     upper: (password.match(/[A-Z]/g) || []).length,
@@ -13,49 +13,48 @@ export default function App() {
     symbols: (password.match(/[^A-Za-z0-9]/g) || []).length,
   };
 
-  // Mock metric scores for now (will replace these with real Shannon/Markov functions later)
-  const metrics = [
+const metrics = [
     { 
       id: 'shannon', 
       label: 'Shannon Entropy', 
       score: password ? Math.min(password.length * 7, 100) : 0, 
-      unit: 'bits' 
+      unit: 'bits' ,
+      description: 'Measures randomness and unpredictability of characters.'
     },
     { 
       id: 'markov', 
       label: 'Markov Chain Analysis', 
       score: password ? Math.min(password.length * 6, 100) : 0, 
-      unit: '%' 
+      unit: '%', 
+      description: 'Measures randomness and unpredictability of characters.'
     },
     { 
       id: 'composition', 
       label: 'Character Variety', 
       score: password ? Math.min(password.length * 9, 100) : 0, 
-      unit: '%' 
+      unit: '%',
+      description: 'Measures randomness and unpredictability of characters.'
     },
-        { 
-      id: 'composition', 
-      label: 'Character Variety', 
-      score: password ? Math.min(password.length * 9, 100) : 0, 
-      unit: '%' 
+    { 
+      id: 'dictionary', 
+      label: 'Dictionary & Pattern Check', 
+      score: password ? (password.length > 8 ? 80 : 30) : 0, 
+      unit: '%',
+      description: 'Measures randomness and unpredictability of characters.'
     },
-        { 
-      id: 'composition', 
-      label: 'Character Variety', 
-      score: password ? Math.min(password.length * 9, 100) : 0, 
-      unit: '%' 
+    { 
+      id: 'timetocrack', 
+      label: 'Time-to-Crack Estimate', 
+      score: password ? Math.min(password.length * 8, 100) : 0, 
+      unit: 'est',
+      description: 'Measures randomness and unpredictability of characters.' 
     },
-        { 
-      id: 'composition', 
-      label: 'Character Variety', 
-      score: password ? Math.min(password.length * 9, 100) : 0, 
-      unit: '%' 
-    },
-        { 
-      id: 'composition', 
-      label: 'Character Variety', 
-      score: password ? Math.min(password.length * 9, 100) : 0, 
-      unit: '%' 
+    { 
+      id: 'keyspace', 
+      label: 'Keyspace Size', 
+      score: password ? Math.min(password.length * 7.5, 100) : 0, 
+      unit: '%',
+      description: 'Measures randomness and unpredictability of characters.'
     },
   ];
 
@@ -75,7 +74,13 @@ export default function App() {
         {metrics.map((metric) => (
           <div key={metric.id} className="metric-row">
             <div className="metric-info">
-              <span>{metric.label}</span>
+              <span className="label-with-info">
+                {metric.label}
+                <span className="tooltip-container">
+                  <FiInfo className="info-icon" />
+                  <span className="tooltip-text">{metric.description}</span>
+                </span>
+              </span>
               <span>{metric.score} {metric.unit}</span>
             </div>
             <div className="progress-track">
