@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { FiInfo } from 'react-icons/fi'; // Make sure you ran `npm i react-icons`
+import { FiInfo } from 'react-icons/fi';
 import './PasswordLab.scss';
+import PasswordInput from './components/PasswordInput';
 
 export default function App() {
   const [password, setPassword] = useState('');
@@ -61,13 +62,7 @@ const metrics = [
   return (
     <div className="password-lab">
       <h2>Password Lab</h2>
-      
-      <input
-        type="password"
-        placeholder="Type a password to test..."
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+      <PasswordInput password={password} setPassword={setPassword} />
 
       {/* Comparative Progressive Bars */}
       <div className="bars-container">
