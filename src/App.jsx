@@ -1,122 +1,116 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import './PasswordLab.scss';
+import { useState } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [password, setPassword] = useState('');
+
+  // Basic character stats calculations
+  const stats = {
+    length: password.length,
+    upper: (password.match(/[A-Z]/g) || []).length,
+    lower: (password.match(/[a-z]/g) || []).length,
+    numbers: (password.match(/[0-9]/g) || []).length,
+    symbols: (password.match(/[^A-Za-z0-9]/g) || []).length,
+  };
+
+  // Mock metric scores for now (will replace these with real Shannon/Markov functions later)
+  const metrics = [
+    { 
+      id: 'shannon', 
+      label: 'Shannon Entropy', 
+      score: password ? Math.min(password.length * 7, 100) : 0, 
+      unit: 'bits' 
+    },
+    { 
+      id: 'markov', 
+      label: 'Markov Chain Analysis', 
+      score: password ? Math.min(password.length * 6, 100) : 0, 
+      unit: '%' 
+    },
+    { 
+      id: 'composition', 
+      label: 'Character Variety', 
+      score: password ? Math.min(password.length * 9, 100) : 0, 
+      unit: '%' 
+    },
+        { 
+      id: 'composition', 
+      label: 'Character Variety', 
+      score: password ? Math.min(password.length * 9, 100) : 0, 
+      unit: '%' 
+    },
+        { 
+      id: 'composition', 
+      label: 'Character Variety', 
+      score: password ? Math.min(password.length * 9, 100) : 0, 
+      unit: '%' 
+    },
+        { 
+      id: 'composition', 
+      label: 'Character Variety', 
+      score: password ? Math.min(password.length * 9, 100) : 0, 
+      unit: '%' 
+    },
+        { 
+      id: 'composition', 
+      label: 'Character Variety', 
+      score: password ? Math.min(password.length * 9, 100) : 0, 
+      unit: '%' 
+    },
+  ];
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="password-lab">
+      <h2>Password Lab</h2>
+      
+      <input
+        type="password"
+        placeholder="Type a password to test..."
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
 
-      <div className="ticks"></div>
+      {/* Comparative Progressive Bars */}
+      <div className="bars-container">
+        {metrics.map((metric) => (
+          <div key={metric.id} className="metric-row">
+            <div className="metric-info">
+              <span>{metric.label}</span>
+              <span>{metric.score} {metric.unit}</span>
+            </div>
+            <div className="progress-track">
+              <div 
+                className="progress-fill" 
+                style={{ width: `${metric.score}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      {/* Stats Grid Below */}
+      <div className="stats-grid">
+        <div className="stat-card">
+          <span>Length</span>
+          <strong>{stats.length}</strong>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
+        <div className="stat-card">
+          <span>Uppercase</span>
+          <strong>{stats.upper}</strong>
         </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        <div className="stat-card">
+          <span>Lowercase</span>
+          <strong>{stats.lower}</strong>
+        </div>
+        <div className="stat-card">
+          <span>Numbers</span>
+          <strong>{stats.numbers}</strong>
+        </div>
+        <div className="stat-card">
+          <span>Symbols</span>
+          <strong>{stats.symbols}</strong>
+        </div>
+      </div>
+    </div>
+  );
 }
-
-export default App
