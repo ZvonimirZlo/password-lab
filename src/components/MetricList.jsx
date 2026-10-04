@@ -2,7 +2,7 @@ import { FiInfo } from 'react-icons/fi'
 import shannonEntropy from '../algorithms/shannonEntropy'
 import { characterVariety } from '../algorithms/characterVariety'
 import { estimateTimeToCrack } from '../algorithms/estimateTimeToCrack.jsx'
-
+import { checkDictionaryAndPatterns } from '../algorithms/dictAndPatterns';
 const MetricList = ({ password }) => {
   const metrics = [
     {
@@ -38,9 +38,10 @@ const MetricList = ({ password }) => {
     {
       id: 'dictionary',
       label: 'Dictionary & Pattern Check',
-      score: password ? characterVariety(password) : 0,
+      score: password ? checkDictionaryAndPatterns(password).score : 0,
       unit: '%',
-      description: 'Measures randomness and unpredictability of characters.'
+      description: `Dictionary and pattern checks scan passwords against lists of known compromised words, common substitutions, and keyboard walks (like "qwerty" or "123456"). 
+      Even a complex password can be easily compromised if it relies on predictable human patterns.`
     },
     {
       id: 'timetocrack',
