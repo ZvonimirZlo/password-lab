@@ -3,6 +3,7 @@ import './PasswordLab.scss';
 import PasswordInput from './components/PasswordInput';
 import MetricList from './components/MetricList';
 import Stats from './components/Stats';
+import CharacterDistribution from './components/CharacterDistribution';
 
 export default function App() {
   const [password, setPassword] = useState('');
@@ -13,6 +14,7 @@ export default function App() {
       <PasswordInput password={password} setPassword={setPassword} />
       <MetricList password={password}/>
       <Stats password={password} />
+      <CharacterDistribution password={password} />
     </div>
   );
 }
