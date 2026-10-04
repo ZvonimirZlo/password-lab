@@ -1,5 +1,6 @@
 import { FiInfo } from 'react-icons/fi'
 import shannonEntropy from '../algorithms/shannonEntropy'
+import { characterVariety } from '../algorithms/characterVariety';
 
 const MetricList = ({ password }) => {
   const metrics = [
@@ -23,8 +24,9 @@ const MetricList = ({ password }) => {
     {
       id: 'composition',
       label: 'Character Variety',
-      score: password ? Math.min(password.length * 9, 100) : 0,
+      score: password ? characterVariety(password) : 0,
       unit: '%',
+      barWidth: password ? characterVariety(password) : 0,
       description: `Character Variety (often called character pool diversity) measures the range of different types of characters used in a password. 
       Instead of just looking at how long a password is or how random the letters are, this metric evaluates whether you are mixing up different character groups.
       Character variety is crucial because it exponentially increases the keyspace size—the total number of possible combinations an attacker has to guess.
@@ -35,7 +37,7 @@ const MetricList = ({ password }) => {
     {
       id: 'dictionary',
       label: 'Dictionary & Pattern Check',
-      score: password ? (password.length > 8 ? 80 : 30) : 0,
+      score: password ? characterVariety(password) : 0,
       unit: '%',
       description: 'Measures randomness and unpredictability of characters.'
     },
