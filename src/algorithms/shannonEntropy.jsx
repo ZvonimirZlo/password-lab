@@ -3,8 +3,8 @@ const shannonEntropy = (str) => {
   const len = str.length
  
   // Build a frequency map from the string.
-  const frequencies = Array.from(str)
-    .reduce((freq, c) => (freq[c] = (freq[c] || 0) + 1) && freq, {})
+  const frequencies = str.split('')
+    .reduce((freq, curr) => (freq[curr] = (freq[curr] || 0) + 1) && freq, {})
  
   // Sum the frequency of each character.
   return Object.values(frequencies)

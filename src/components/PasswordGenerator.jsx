@@ -82,7 +82,7 @@ const PasswordGenerator = ({ onPasswordGenerated, currentPassword }) => {
         <input 
           type="range" 
           min="8" 
-          max="62" 
+          max="42" 
           value={length} 
           onChange={(e) => setLength(Number(e.target.value))}
           style={{ width: '100%', accentColor: '#3b82f6', marginTop: '4px' }}
