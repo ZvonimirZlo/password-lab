@@ -1,6 +1,7 @@
 import { FiInfo } from 'react-icons/fi'
 import shannonEntropy from '../algorithms/shannonEntropy'
-import { characterVariety } from '../algorithms/characterVariety';
+import { characterVariety } from '../algorithms/characterVariety'
+import { estimateTimeToCrack } from '../algorithms/estimateTimeToCrack.jsx'
 
 const MetricList = ({ password }) => {
   const metrics = [
@@ -44,9 +45,13 @@ const MetricList = ({ password }) => {
     {
       id: 'timetocrack',
       label: 'Time-to-Crack Estimate',
-      score: password ? Math.min(password.length * 8, 100) : 0,
+      score: password ? estimateTimeToCrack(password).text : 'Instantly',
+      isTextScore: true, //UI renders text instead of a % number
+      barWidth: password ? estimateTimeToCrack(password).score : 0,
       unit: 'est',
-      description: 'Measures randomness and unpredictability of characters.'
+      description: `Time-to-crack is calculated using a simple formula: Time to Crack = Total Combinations / Guessing Speed. 
+      It multiplies password's length and character pool size to find the total possible combinations (the keyspace),
+      then divides that by how many guesses per second modern hardware (like GPUs) can test. A weak password takes seconds; a strong one takes millions of years.`
     },
     {
       id: 'keyspace',
@@ -78,7 +83,7 @@ const MetricList = ({ password }) => {
             <div className='progress-track'>
               <div
                 className='progress-fill'
-                style={{ width: `${metric.barWidth || metric.score}%` }}
+                style={{ width: `${typeof (metric.barWidth ?? metric.score) === 'number' ? (metric.barWidth ?? metric.score) : 0}%` }}
               />
             </div>
           </div>
