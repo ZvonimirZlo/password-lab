@@ -1,8 +1,10 @@
-import { FiInfo } from 'react-icons/fi'
-import shannonEntropy from '../algorithms/shannonEntropy'
-import { characterVariety } from '../algorithms/characterVariety'
-import { estimateTimeToCrack } from '../algorithms/estimateTimeToCrack.jsx'
+import { FiInfo } from 'react-icons/fi';
+import shannonEntropy from '../algorithms/shannonEntropy';
+import { characterVariety } from '../algorithms/characterVariety';
+import { estimateTimeToCrack } from '../algorithms/estimateTimeToCrack.jsx';
 import { checkDictionaryAndPatterns } from '../algorithms/dictAndPatterns';
+import styles from './MetricList.module.scss'; // Import SCSS module
+
 const MetricList = ({ password }) => {
   const metrics = [
     {
@@ -28,31 +30,23 @@ const MetricList = ({ password }) => {
       score: password ? characterVariety(password) : 0,
       unit: '%',
       barWidth: password ? characterVariety(password) : 0,
-      description: `Character Variety (often called character pool diversity) measures the range of different types of characters used in a password. 
-      Instead of just looking at how long a password is or how random the letters are, this metric evaluates whether you are mixing up different character groups.
-      Character variety is crucial because it exponentially increases the keyspace size—the total number of possible combinations an attacker has to guess.
-      If a password only uses lowercase letters, a computer only tests 26 possibilities for each position.
-      If a password incorporates all four classes, the pool expands to roughly 94 characters per position.
-      For a 12-character password, a single-class pool gives around 26^12 combinations, while a mixed-class pool jumps to 94^12, making brute-force attacks computationally infeasible.`
+      description: `Character Variety measures the range of different types of characters used. Mixing up lower, upper, numbers, and symbols exponentially increases the keyspace size.`
     },
     {
       id: 'dictionary',
       label: 'Dictionary & Pattern Check',
       score: password ? checkDictionaryAndPatterns(password).score : 0,
       unit: '%',
-      description: `Dictionary and pattern checks scan passwords against lists of known compromised words, common substitutions, and keyboard walks (like "qwerty" or "123456"). 
-      Even a complex password can be easily compromised if it relies on predictable human patterns.`
+      description: `Scans passwords against known compromised words, common substitutions, and keyboard walks like "qwerty".`
     },
     {
       id: 'timetocrack',
       label: 'Time-to-Crack Estimate',
       score: password ? estimateTimeToCrack(password).text : 'Instantly',
-      isTextScore: true, //UI renders text instead of a % number
+      isTextScore: true,
       barWidth: password ? estimateTimeToCrack(password).score : 0,
       unit: 'est',
-      description: `Time-to-crack is calculated using a simple formula: Time to Crack = Total Combinations / Guessing Speed. 
-      It multiplies password's length and character pool size to find the total possible combinations (the keyspace),
-      then divides that by how many guesses per second modern hardware (like GPUs) can test. A weak password takes seconds; a strong one takes millions of years.`
+      description: `Time-to-crack divides total combinations (keyspace) by guessing speed on modern hardware.`
     },
     {
       id: 'keyspace',
@@ -61,37 +55,44 @@ const MetricList = ({ password }) => {
       unit: '%',
       description: 'Measures randomness and unpredictability of characters.'
     }
-  ]
+  ];
 
   return (
     <div>
       {/* Comparative Progressive Bars */}
-      <div className='bars-container'>
-        {metrics.map(metric => (
-          <div key={metric.id} className='metric-row'>
-            <div className='metric-info'>
-              <span className='label-with-info'>
-                {metric.label}
-                <span className='tooltip-container'>
-                  <FiInfo className='info-icon' />
-                  <span className='tooltip-text'>{metric.description}</span>
+      <div className={styles.barsContainer}>
+        {metrics.map(metric => {
+          const calculatedWidth = typeof (metric.barWidth ?? metric.score) === 'number' 
+            ? (metric.barWidth ?? metric.score) 
+            : 0;
+
+          return (
+            <div key={metric.id} className={styles.metricRow}>
+              <div className={styles.metricInfo}>
+                <span className={styles.labelWithInfo}>
+                  {metric.label}
+                  <span className={styles.tooltipContainer}>
+                    <FiInfo className={styles.infoIcon} />
+                    <span className={styles.tooltipText}>{metric.description}</span>
+                  </span>
                 </span>
-              </span>
-              <span>
-                {metric.score} {metric.unit}
-              </span>
+                <span>
+                  {metric.score} {metric.unit}
+                </span>
+              </div>
+              <div className={styles.progressTrack}>
+                {/* Dynamic width stays inline, static styling moved to SCSS */}
+                <div
+                  className={styles.progressFill}
+                  style={{ width: `${calculatedWidth}%` }}
+                />
+              </div>
             </div>
-            <div className='progress-track'>
-              <div
-                className='progress-fill'
-                style={{ width: `${typeof (metric.barWidth ?? metric.score) === 'number' ? (metric.barWidth ?? metric.score) : 0}%` }}
-              />
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default MetricList
+export default MetricList;
