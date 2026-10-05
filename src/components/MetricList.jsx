@@ -1,9 +1,9 @@
-import { FiInfo } from 'react-icons/fi';
-import shannonEntropy from '../algorithms/shannonEntropy';
-import { characterVariety } from '../algorithms/characterVariety';
-import { estimateTimeToCrack } from '../algorithms/estimateTimeToCrack.jsx';
-import { checkDictionaryAndPatterns } from '../algorithms/dictAndPatterns';
-import styles from './MetricList.module.scss'; // Import SCSS module
+import { FiInfo } from 'react-icons/fi'
+import shannonEntropy from '../algorithms/shannonEntropy'
+import { characterVariety } from '../algorithms/characterVariety'
+import { estimateTimeToCrack } from '../algorithms/estimateTimeToCrack.jsx'
+import { checkDictionaryAndPatterns } from '../algorithms/dictAndPatterns'
+import styles from './MetricList.module.scss'
 
 const MetricList = ({ password }) => {
   const metrics = [
@@ -55,16 +55,17 @@ const MetricList = ({ password }) => {
       unit: '%',
       description: 'Measures randomness and unpredictability of characters.'
     }
-  ];
+  ]
 
   return (
     <div>
       {/* Comparative Progressive Bars */}
       <div className={styles.barsContainer}>
         {metrics.map(metric => {
-          const calculatedWidth = typeof (metric.barWidth ?? metric.score) === 'number' 
-            ? (metric.barWidth ?? metric.score) 
-            : 0;
+          const calculatedWidth =
+            typeof (metric.barWidth ?? metric.score) === 'number'
+              ? metric.barWidth ?? metric.score
+              : 0
 
           return (
             <div key={metric.id} className={styles.metricRow}>
@@ -73,7 +74,9 @@ const MetricList = ({ password }) => {
                   {metric.label}
                   <span className={styles.tooltipContainer}>
                     <FiInfo className={styles.infoIcon} />
-                    <span className={styles.tooltipText}>{metric.description}</span>
+                    <span className={styles.tooltipText}>
+                      {metric.description}
+                    </span>
                   </span>
                 </span>
                 <span>
@@ -88,11 +91,11 @@ const MetricList = ({ password }) => {
                 />
               </div>
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default MetricList;
+export default MetricList

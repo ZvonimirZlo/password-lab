@@ -1,14 +1,19 @@
 .barsContainer {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .metricRow {
-  background: #0f172a;
+  background: #090d16;
   padding: 12px 16px;
   border-radius: 8px;
   border: 1px solid #1e293b;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    border-color: #334155;
+  }
 }
 
 .metricInfo {
@@ -18,18 +23,31 @@
   font-size: 0.85rem;
   color: #f8fafc;
   margin-bottom: 8px;
+
+  /* Style for the numeric score/unit on the right */
+  span:last-child {
+    font-weight: 600;
+    color: #38bdf8;
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 .labelWithInfo {
   display: flex;
   align-items: center;
   gap: 6px;
+  color: #94a3b8;
 }
 
 .infoIcon {
-  color: #94a3b8;
+  color: #64748b;
   cursor: help;
   font-size: 0.9rem;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #38bdf8;
+  }
 }
 
 .tooltipContainer {
@@ -40,15 +58,16 @@
   &:hover .tooltipText {
     visibility: visible;
     opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 }
 
 .tooltipText {
   visibility: hidden;
   position: absolute;
-  bottom: 125%;
+  bottom: 140%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(4px);
   width: 260px;
   background-color: #1e293b;
   color: #cbd5e1;
@@ -60,8 +79,21 @@
   font-weight: normal;
   z-index: 10;
   opacity: 0;
-  transition: opacity 0.2s ease;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  line-height: 1.4;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -4px;
+    border-width: 4px;
+    border-style: solid;
+    border-color: #1e293b transparent transparent transparent;
+  }
 }
 
 .progressTrack {
@@ -74,7 +106,8 @@
 
 .progressFill {
   height: 100%;
-  background-color: #3b82f6;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
   border-radius: 3px;
-  transition: width 0.3s ease;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
