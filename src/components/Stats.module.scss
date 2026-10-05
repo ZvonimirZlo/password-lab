@@ -70,31 +70,6 @@
     flex-wrap: wrap;
   }
 
-  .chartLegend {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    font-size: 0.75rem;
-    color: #94a3b8;
-
-    .legendItem {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      .legendDot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        display: inline-block;
-      }
-
-      strong {
-        color: #f8fafc;
-        font-variant-numeric: tabular-nums;
-      }
-    }
-  }
 
   .emptyState {
     font-size: 0.75rem;

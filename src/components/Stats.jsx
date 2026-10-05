@@ -12,7 +12,7 @@ const Stats = ({ password = '' }) => {
 
   // Data formatted for MUI PieChart using your exact dashboard color palette
   const chartData = [
-    { id: 'lower', value: stats.lower, label: 'Lower', color: '#38bdf8' },
+    { id: 'lower', value: stats.lower, label: 'Lower', color: '#0f61cc' },
     { id: 'upper', value: stats.upper, label: 'Upper', color: '#34d399' },
     { id: 'numbers', value: stats.numbers, label: 'Numbers', color: '#fbbf24' },
     { id: 'symbols', value: stats.symbols, label: 'Symbols', color: '#f87171' },
@@ -53,31 +53,37 @@ const Stats = ({ password = '' }) => {
         
         {stats.length > 0 ? (
           <div className={styles.pieWrapper}>
-            <PieChart
-              series={[
-                {
-                  data: chartData,
-                  innerRadius: 35, // Creates the doughnut hole style
-                  outerRadius: 55,
-                  paddingAngle: 4,
-                  cornerRadius: 4,
-                },
-              ]}
-              height={130}
-              margin={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              slotProps={{
-                legend: { hidden: true }, // We can use a custom legend or let tooltips handle it
-              }}
-            />
+
+
+
+    <PieChart
+      series={[
+        {
+          data: chartData,
+          highlightScope: { fade: 'global', highlight: 'item',},
+          faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
+        },
+      ]}
+      slotProps={{
+    legend: {
+      sx: {
+        // Targets the text color of the legend labels
+        '& .MuiChartsLegend-label': {
+          color: '#94a3b8',
+        },
+      },
+    },
+  }}
+      height={200}
+      width={200}
+    />
+
+
+
+
+
+
             {/* Custom compact text legend */}
-            <div className={styles.chartLegend}>
-              {chartData.map((item) => (
-                <div key={item.id} className={styles.legendItem}>
-                  <span style={{ backgroundColor: item.color }} className={styles.legendDot} />
-                  <span>{item.label}: <strong>{item.value}</strong></span>
-                </div>
-              ))}
-            </div>
           </div>
         ) : (
           <div className={styles.emptyState}>Type or generate a password to view distribution</div>
