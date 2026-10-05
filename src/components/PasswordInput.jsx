@@ -1,11 +1,12 @@
-import { FiEye, FiEyeOff } from 'react-icons/fi'
-import { useState } from 'react'
+import { FiEye, FiEyeOff } from 'react-icons/fi';
+import { useState } from 'react';
+import styles from './PasswordInput.module.scss'; // Import SCSS module
 
 const PasswordInput = ({ password, setPassword }) => {
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
-    // Inside your render/return:
-    <div className='password-input-wrapper' style={{ position: 'relative' }}>
+    <div className={styles.passwordInputWrapper}>
       <input
         type={showPassword ? 'text' : 'password'}
         value={password}
@@ -15,24 +16,13 @@ const PasswordInput = ({ password, setPassword }) => {
       <button
         type='button'
         onClick={() => setShowPassword(!showPassword)}
-        style={{
-          position: 'absolute',
-          right: '10px',
-          top: '30%',
-          transform: 'translateY(-50%)',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          color: '#38bdf8',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
+        className={styles.toggleButton}
+        title={showPassword ? 'Hide password' : 'Show password'}
       >
         {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default PasswordInput
+export default PasswordInput;
