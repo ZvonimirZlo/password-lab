@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { generateSecurePassword } from '../algorithms/generateSecurePassword';
 import { FiRefreshCw, FiCopy, FiCheck } from 'react-icons/fi';
+import styles from './PasswordGenerator.module.scss'; // Import SCSS module
 
 const PasswordGenerator = ({ onPasswordGenerated, currentPassword }) => {
   const [length, setLength] = useState(16);
@@ -22,32 +23,21 @@ const PasswordGenerator = ({ onPasswordGenerated, currentPassword }) => {
     
     navigator.clipboard.writeText(currentPassword).then(() => {
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // Reset back to copy icon after 2 seconds
+      setTimeout(() => setCopied(false), 2000);
     });
   };
 
   return (
-    <div className="generator-card" style={{ marginBottom: '20px', padding: '16px', background: '#0f172a', borderRadius: '8px', border: '1px solid #1e293b' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-        <span style={{ fontSize: '0.9rem', fontWeight: '600', color: '#f8fafc' }}>Secure Password Generator</span>
+    <div className={styles.generatorCard}>
+      <div className={styles.header}>
+        <span className={styles.title}>Secure Password Generator</span>
         
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className={styles.buttonGroup}>
           {/* Copy Button */}
           <button 
             onClick={handleCopy}
             disabled={!currentPassword}
-            style={{ 
-              background: '#1e293b', 
-              border: '1px solid #334155', 
-              color: copied ? '#10b981' : '#38bdf8', 
-              padding: '6px 10px', 
-              borderRadius: '6px', 
-              cursor: currentPassword ? 'pointer' : 'not-allowed',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '0.85rem'
-            }}
+            className={`${styles.button} ${styles.copyBtn} ${copied ? styles.copied : ''}`}
             title="Copy password"
           >
             {copied ? <FiCheck /> : <FiCopy />} {copied ? 'Copied' : 'Copy'}
@@ -56,18 +46,7 @@ const PasswordGenerator = ({ onPasswordGenerated, currentPassword }) => {
           {/* Generate Button */}
           <button 
             onClick={handleGenerate}
-            style={{ 
-              background: '#3b82f6', 
-              border: 'none', 
-              color: 'white', 
-              padding: '6px 12px', 
-              borderRadius: '6px', 
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '0.85rem'
-            }}
+            className={`${styles.button} ${styles.generateBtn}`}
           >
             <FiRefreshCw /> Generate
           </button>
@@ -75,8 +54,8 @@ const PasswordGenerator = ({ onPasswordGenerated, currentPassword }) => {
       </div>
 
       {/* Length Slider */}
-      <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div className={styles.sliderContainer}>
+        <div className={styles.sliderLabel}>
           <span>Length: {length}</span>
         </div>
         <input 
@@ -85,7 +64,7 @@ const PasswordGenerator = ({ onPasswordGenerated, currentPassword }) => {
           max="42" 
           value={length} 
           onChange={(e) => setLength(Number(e.target.value))}
-          style={{ width: '100%', accentColor: '#3b82f6', marginTop: '4px' }}
+          className={styles.rangeInput}
         />
       </div>
     </div>
