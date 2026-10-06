@@ -28,7 +28,7 @@ const MetricList = ({ password, dictResult }) => {
       barWidth: password
         ? Math.min(Math.pow(shannonEntropy(password) / 8, 1.2) * 100, 100)
         : 0,
-      description: 'Measures structural character pool variety assuming all elements are typed perfectly independently.'
+      description: 'Calculates the pure mathematical complexity of your character pool. It assumes every letter is completely random and independent, measuring how much theoretical effort a computer brute-force attack needs to break your keyspace.'
     },
     {
       id: 'markov',
@@ -36,7 +36,7 @@ const MetricList = ({ password, dictResult }) => {
       score: password ? calculatedMarkovScore : 0,
       unit: 'bits',
       barWidth: password ? markovBarWidth : 0,
-      description: 'Analyzes conditional character sequence predictability using models trained on 100k compromised datasets.'
+      description: 'Evaluates keystroke predictability based on real human typing patterns. It looks at character pairings to expose lazy keyboard walks, sequence flows, and common modifications that normal entropy math completely misses.'
     },
     {
       id: 'composition',
