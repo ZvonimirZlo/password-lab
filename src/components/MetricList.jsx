@@ -1,11 +1,27 @@
+// src/components/MetricList.jsx
+import { useMemo } from 'react'
 import { FiInfo } from 'react-icons/fi'
 import shannonEntropy from '../algorithms/shannonEntropy'
+import markovEntropy from '../algorithms/markovEntropy'
 import { characterVariety } from '../algorithms/characterVariety'
 import { estimateTimeToCrack } from '../algorithms/estimateTimeToCrack.jsx'
 import { checkDictionaryAndPatterns } from '../algorithms/dictAndPatterns'
+import PROD_MARKOV_MATRIX from '../data/trained_matrix.json'
 import styles from './MetricList.module.scss'
 
 const MetricList = ({ password }) => {
+
+  // 2. Call the external modular algorithm wrapper cleanly
+  const calculatedMarkovScore = useMemo(() => {
+    return markovEntropy(password, PROD_MARKOV_MATRIX)
+  }, [password])
+
+  // 3. Map the Markov bits cleanly to progress fill ceiling
+  const markovBarWidth = useMemo(() => {
+    const MAX_TARGET_ENTROPY = 120 
+    return Math.min(Math.max(Math.round((calculatedMarkovScore / MAX_TARGET_ENTROPY) * 100), 0), 100)
+  }, [calculatedMarkovScore])
+
   const metrics = [
     {
       id: 'shannon',
@@ -15,14 +31,16 @@ const MetricList = ({ password }) => {
       barWidth: password
         ? Math.min(Math.pow(shannonEntropy(password) / 8, 1.2) * 100, 100)
         : 0,
-      description: 'Measures randomness and unpredictability of characters.'
+      description: 'Measures structural character pool variety assuming all elements are typed perfectly independently.'
     },
     {
       id: 'markov',
       label: 'Markov Chain Analysis',
-      score: password ? Math.min(password.length * 6, 100) : 0,
-      unit: '%',
-      description: 'Measures randomness and unpredictability of characters.'
+      // Plug newly evaluated calculations straight into layout
+      score: password ? calculatedMarkovScore : 0,
+      unit: 'bits',
+      barWidth: password ? markovBarWidth : 0,
+      description: 'Analyzes conditional character sequence predictability using models trained on 100k compromised datasets.'
     },
     {
       id: 'composition',
@@ -53,13 +71,12 @@ const MetricList = ({ password }) => {
       label: 'Keyspace Size',
       score: password ? Math.min(password.length * 7.5, 100) : 0,
       unit: '%',
-      description: 'Measures randomness and unpredictability of characters.'
+      description: 'Measures theoretical geometric space total variants calculations.'
     }
   ]
 
   return (
     <div>
-      {/* Comparative Progressive Bars */}
       <div className={styles.barsContainer}>
         {metrics.map(metric => {
           const calculatedWidth =
@@ -84,7 +101,6 @@ const MetricList = ({ password }) => {
                 </span>
               </div>
               <div className={styles.progressTrack}>
-                {/* Dynamic width stays inline, static styling moved to SCSS */}
                 <div
                   className={styles.progressFill}
                   style={{ width: `${calculatedWidth}%` }}
