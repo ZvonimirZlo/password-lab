@@ -15,6 +15,7 @@ export default function markovEntropy(password, matrix) {
   for (let i = 0; i < password.length - 1; i++) {
     const currentChar = password[i];
     const nextChar = password[i + 1];
+    if(currentChar === nextChar) continue; //doesn't add entropy for repeated chars
     let transitionProbability = 0.00001; // Fallback penalty for completely random strings
 
     // Look up transition in our trained dataset
@@ -24,6 +25,8 @@ export default function markovEntropy(password, matrix) {
     
     totalEntropy += -Math.log2(transitionProbability);
   }
+
+  if(password.length < 12) totalEntropy *= 0.75; //reduces entropy if pass is too short
 
   const absoluteCeiling = 128;
   
