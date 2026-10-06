@@ -1,32 +1,46 @@
-// A lean list of extremely common weak passwords
-const COMMON_PASSWORDS = [
-  'password', '123456', '12345678', '123456789', '12345', '1234',
-  'qwerty', 'admin', 'welcome', 'monkey', 'dragon', 'password1',
-  'letmein', 'trustno1', 'iloveyou', 'sunshine', 'princess', 'football'
-];
+import TOP_10K_BLACKLIST from '../data/blacklist_10k.json';
 
+const BLACKLIST_SET = new Set(TOP_10K_BLACKLIST.map(password => password.toLowerCase().trim()));
+
+// Changed from ({ password, dictResult }) to a normal (password) parameter
 export const checkDictionaryAndPatterns = (password) => {
-  if (!password) return { score: 0, status: 'Empty' };
+  if (!password) return { score: 0, status: 'Empty', warning: null };
 
-  const lowerPass = password.toLowerCase();
+  const lowerPass = password.toLowerCase().trim();
 
-  // 1. Check exact match in common weak passwords
-  if (COMMON_PASSWORDS.includes(lowerPass)) {
-    return { score: 0, status: 'Found in common weak password lists' };
+  // 1. Exact Match Warning
+  if (BLACKLIST_SET.has(lowerPass)) {
+    return { 
+      score: 0, 
+      status: 'Critical Alert', 
+      warning: '⚠️ This exact password was found on the global blacklist of most compromised credentials. Do not use this.' 
+    };
   }
 
-  // 2. Check for sequential keyboard patterns (e.g., "12345" or "abcd")
+  // 2. Sequential Keyboard Pattern Warning
   const hasSequence = /(?:123|234|345|456|567|678|789|abc|bcd|cde|def|qwe|asd|zxc)/i.test(lowerPass);
   if (hasSequence && password.length < 10) {
-    return { score: 40, status: 'Contains a predictable keyboard pattern' };
+    return { 
+      score: 40, 
+      status: 'Weak Structure', 
+      warning: '⚠️ Contains a highly predictable layout pattern (keyboard walk or sequence).' 
+    };
   }
 
-  // 3. Check for repeated identical characters (e.g., "aaaaaa")
+  // 3. Repeating Characters Warning
   const hasRepeats = /(.)\1{3,}/.test(password);
   if (hasRepeats) {
-    return { score: 30, status: 'Contains excessive repeating characters' };
+    return { 
+      score: 30, 
+      status: 'Weak Structure', 
+      warning: '⚠️ Contains too many consecutive repeating characters.' 
+    };
   }
 
-  // If it passes these checks, return a clean score
-  return { score: 100, status: 'No common dictionary words or patterns found' };
+  // Safe Pass
+  return { 
+    score: 100, 
+    status: 'Clear', 
+    warning: null 
+  };
 };

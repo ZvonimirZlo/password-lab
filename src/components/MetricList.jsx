@@ -1,22 +1,19 @@
-// src/components/MetricList.jsx
 import { useMemo } from 'react'
 import { FiInfo } from 'react-icons/fi'
 import shannonEntropy from '../algorithms/shannonEntropy'
 import markovEntropy from '../algorithms/markovEntropy'
 import { characterVariety } from '../algorithms/characterVariety'
 import { estimateTimeToCrack } from '../algorithms/estimateTimeToCrack.jsx'
-import { checkDictionaryAndPatterns } from '../algorithms/dictAndPatterns'
 import PROD_MARKOV_MATRIX from '../data/trained_matrix.json'
 import styles from './MetricList.module.scss'
 
-const MetricList = ({ password }) => {
+// Added dictResult to the component props array destructurer
+const MetricList = ({ password, dictResult }) => {
 
-  // 2. Call the external modular algorithm wrapper cleanly
   const calculatedMarkovScore = useMemo(() => {
     return markovEntropy(password, PROD_MARKOV_MATRIX)
   }, [password])
 
-  // 3. Map the Markov bits cleanly to progress fill ceiling
   const markovBarWidth = useMemo(() => {
     const MAX_TARGET_ENTROPY = 120 
     return Math.min(Math.max(Math.round((calculatedMarkovScore / MAX_TARGET_ENTROPY) * 100), 0), 100)
@@ -36,7 +33,6 @@ const MetricList = ({ password }) => {
     {
       id: 'markov',
       label: 'Markov Chain Analysis',
-      // Plug newly evaluated calculations straight into layout
       score: password ? calculatedMarkovScore : 0,
       unit: 'bits',
       barWidth: password ? markovBarWidth : 0,
@@ -53,7 +49,9 @@ const MetricList = ({ password }) => {
     {
       id: 'dictionary',
       label: 'Dictionary & Pattern Check',
-      score: password ? checkDictionaryAndPatterns(password).score : 0,
+      // Dynamic reading from our App prop data directly!
+      score: password && dictResult ? dictResult.score : 0,
+      barWidth: password && dictResult ? dictResult.score : 0,
       unit: '%',
       description: `Scans passwords against known compromised words, common substitutions, and keyboard walks like "qwerty".`
     },

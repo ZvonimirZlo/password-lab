@@ -19,11 +19,17 @@ export default function markovEntropy(password, matrix) {
 
     // Look up transition in our trained dataset
     if (matrix[currentChar] && matrix[currentChar][nextChar] !== undefined) {
-      transitionProbability = matrix[currentChar][nextChar];
+      transitionProbability = matrix[currentChar][nextChar] || 0.00001;
     }
     
     totalEntropy += -Math.log2(transitionProbability);
   }
 
-  return Number(totalEntropy.toFixed(1));
+  const absoluteCeiling = 128;
+  
+  if(totalEntropy > absoluteCeiling) return absoluteCeiling;
+
+  if(!isFinite(totalEntropy)) return absoluteCeiling;
+
+  return +totalEntropy.toFixed(1);
 }
