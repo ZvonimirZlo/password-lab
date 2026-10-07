@@ -1,6 +1,6 @@
 import TOP_10K_BLACKLIST from '../data/blacklist_10k.json';
 
-const BLACKLIST_SET = new Set(TOP_10K_BLACKLIST.map(password => password.toLowerCase().trim()));
+const BLACKLIST_SET = new Set(TOP_10K_BLACKLIST.map(password => password.trim()));
 
 // Changed from ({ password, dictResult }) to a normal (password) parameter
 export const checkDictionaryAndPatterns = (password) => {

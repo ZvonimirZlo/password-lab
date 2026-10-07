@@ -19,7 +19,7 @@ export default function App () {
   return (
     <div className='password-lab'>
       <header className='lab-header'>
-        <h2>Password Lab</h2>
+        <h2>Password LabZ</h2>
       </header>
 
       <div className='dashboard-grid'>
