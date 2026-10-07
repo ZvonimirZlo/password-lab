@@ -4,20 +4,22 @@ import shannonEntropy from '../algorithms/shannonEntropy'
 import markovEntropy from '../algorithms/markovEntropy'
 import { characterVariety } from '../algorithms/characterVariety'
 import { estimateTimeToCrack } from '../algorithms/estimateTimeToCrack.jsx'
-import PROD_MARKOV_MATRIX from '../data/trained_matrix.json'
 import styles from './MetricList.module.scss'
 
 // Added dictResult to the component props array destructurer
 const MetricList = ({ password, dictResult }) => {
 
   const calculatedMarkovScore = useMemo(() => {
-    return markovEntropy(password, PROD_MARKOV_MATRIX)
-  }, [password])
+  const score = markovEntropy(password);
+  return score;
+}, [password]);
 
   const markovBarWidth = useMemo(() => {
     const MAX_TARGET_ENTROPY = 120 
     return Math.min(Math.max(Math.round((calculatedMarkovScore / MAX_TARGET_ENTROPY) * 100), 0), 100)
   }, [calculatedMarkovScore])
+
+  // console.log(markovEntropy('password', PROD_MARKOV_MATRIX))
 
   const metrics = [
     {
@@ -26,6 +28,7 @@ const MetricList = ({ password, dictResult }) => {
       score: password ? Number(shannonEntropy(password).toFixed(1)) : 0,
       unit: 'bits',
       barWidth: password
+        //  for shorter passwords, the progress bar crawls more slowly, but as the entropy climbs into secure territory, the bar accelerates
         ? Math.min(Math.pow(shannonEntropy(password) / 8, 1.2) * 100, 100)
         : 0,
       description: 'Calculates the pure mathematical complexity of your character pool. It assumes every letter is completely random and independent, measuring how much theoretical effort a computer brute-force attack needs to break your keyspace.'

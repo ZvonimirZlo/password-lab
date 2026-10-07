@@ -1,4 +1,7 @@
+import PROD_MARKOV_MATRIX from '../data/trained_matrix.json'
+
 export default function markovEntropy(password, matrix) {
+  matrix = PROD_MARKOV_MATRIX;
   if (!password || password.length === 0) return 0;
   if (!matrix) {
     console.warn("Markov Matrix missing. Returning flat character estimation.");
