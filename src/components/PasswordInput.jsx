@@ -1,27 +1,28 @@
-import { FiEye, FiEyeOff, FiCopy, FiCheck, FiX } from 'react-icons/fi';
-import { useState } from 'react';
-import styles from './PasswordInput.module.scss';
+import { FiEye, FiEyeOff, FiCopy, FiCheck, FiX } from 'react-icons/fi'
+import { useState } from 'react'
+import styles from './PasswordInput.module.scss'
 
 const PasswordInput = ({ password, setPassword }) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const handleCopy = () => {
-    if (!password) return;
-    navigator.clipboard.writeText(password);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+    if (!password) return
+    navigator.clipboard.writeText(password)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
     <div className={styles.passwordInputWrapper}>
       <input
         type={showPassword ? 'text' : 'password'}
         value={password}
+        maxlength={'42'}
         onChange={e => setPassword(e.target.value)}
         placeholder='Enter or generate your password...'
       />
-      
+
       <div className={styles.actions}>
         {password && (
           <>
@@ -39,7 +40,11 @@ const PasswordInput = ({ password, setPassword }) => {
               className={styles.actionBtn}
               title='Copy password'
             >
-              {copied ? <FiCheck size={18} color="#34d399" /> : <FiCopy size={18} />}
+              {copied ? (
+                <FiCheck size={18} color='#34d399' />
+              ) : (
+                <FiCopy size={18} />
+              )}
             </button>
           </>
         )}
@@ -53,7 +58,7 @@ const PasswordInput = ({ password, setPassword }) => {
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PasswordInput;
+export default PasswordInput

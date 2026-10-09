@@ -1,62 +1,84 @@
+import styles from './About.module.scss'
+
 const About = () => {
   return (
     <section
-      className='lab-section architecture-section'
+      className={`lab-section architecture-section ${styles.aboutSection}`}
       style={{ gridArea: 'distribution' }}
     >
-      <div className='card' style={{ lineHeight: '1.6' }}>
-        <h3
-          style={{
-            color: '#38bdf8',
-            borderBottom: '1px solid #1e293b',
-            paddingBottom: '0.5rem',
-            marginBottom: '1rem'
-          }}
-        >
-          System Blueprint: Dual-Engine Verification
-        </h3>
-
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '2rem',
-            fontSize: '0.9rem',
-            color: '#94a3b8'
-          }}
-        >
+      <div className={`card ${styles.aboutCard}`}>
+        <div className={styles.header}>
           <div>
-            <strong
-              style={{
-                color: '#f1f5f9',
-                display: 'block',
-                marginBottom: '0.25rem'
-              }}
-            >
-              🔒 Pattern-Matching Framework (Deterministic)
-            </strong>
-            Our engine instantly compares your text input against a localized
-            memory database of the top 10,000 most frequently compromised human
-            credentials. Suffix, prefix, repetition, and keyboard sequence checks
-            isolate lazily constructed patterns before they hit computing loops.
+            <span className={styles.eyebrow}>
+              SECURITY ARCHITECTURE
+            </span>
+
+            <h3>
+              Dual-Engine Verification
+            </h3>
           </div>
 
-          <div>
-            <strong
-              style={{
-                color: '#f1f5f9',
-                display: 'block',
-                marginBottom: '0.25rem'
-              }}
-            >
-              🧠 Probabilistic Modeling (Markov Chain)
-            </strong>
-            Instead of guessing blindly, our conditional algorithm evaluates the
-            transitional probability vectors of adjacent character pairs. Trained
-            over 100,000 leaked sequences, it computes structural "surprise"
-            math to flag predictable typing habits that flat entropy completely
-            misses.
-          </div>
+          <span className={styles.status}>
+            <span className={styles.statusDot} />
+            ACTIVE
+          </span>
+        </div>
+
+        <div className={styles.engines}>
+
+          <article className={`${styles.engine} ${styles.deterministic}`}>
+            <div className={styles.engineHeader}>
+              <div className={styles.engineIcon}>
+                🔒
+              </div>
+
+              <div>
+                <span className={styles.engineType}>
+                  ENGINE 01 · DETERMINISTIC
+                </span>
+
+                <h4>
+                  Pattern-Matching Framework
+                </h4>
+              </div>
+            </div>
+
+            <p>
+              This engine instantly compares your text input against a
+              localized memory database of the top 10,000 most frequently
+              compromised human credentials. Suffix, prefix, repetition,
+              and keyboard sequence checks isolate lazily constructed
+              patterns before they hit computing loops.
+            </p>
+          </article>
+
+
+          <article className={`${styles.engine} ${styles.probabilistic}`}>
+            <div className={styles.engineHeader}>
+              <div className={styles.engineIcon}>
+                🧠
+              </div>
+
+              <div>
+                <span className={styles.engineType}>
+                  ENGINE 02 · PROBABILISTIC
+                </span>
+
+                <h4>
+                  Markov Chain Analysis
+                </h4>
+              </div>
+            </div>
+
+            <p>
+              Instead of guessing blindly, this conditional algorithm
+              evaluates the transitional probability vectors of adjacent
+              character pairs. Trained over one million leaked sequences,
+              it computes structural "surprise" math to flag predictable
+              typing habits that flat entropy completely misses.
+            </p>
+          </article>
+
         </div>
       </div>
     </section>

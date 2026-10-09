@@ -1,0 +1,586 @@
+// ============================================================
+// App
+// ============================================================
+
+$bg-deep: #050810;
+$bg-main: #080d18;
+$surface: #0d1424;
+$surface-light: #111b2f;
+$surface-hover: #152139;
+$border: rgba(148, 163, 184, 0.12);
+$border-strong: rgba(56, 189, 248, 0.25);
+$text-primary: #f8fafc;
+$text-secondary: #94a3b8;
+$text-muted: #64748b;
+$cyan: #38bdf8;
+$cyan-bright: #67e8f9;
+$indigo: #818cf8;
+$violet: #a78bfa;
+$gradient-primary: linear-gradient(
+  135deg,
+  #38bdf8 0%,
+  #818cf8 55%,
+  #a78bfa 100%);
+
+$gradient-progress: linear-gradient(
+  90deg,
+  #22d3ee 0%,
+  #38bdf8 45%,
+  #818cf8 100%
+);
+$shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.55);
+$shadow-card: 0 10px 30px rgba(0, 0, 0, 0.25);
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ============================================================
+// GLOBAL
+// ============================================================
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(
+      circle at 15% 10%,
+      rgba(56, 189, 248, 0.07),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 85% 85%,
+      rgba(129, 140, 248, 0.07),
+      transparent 35%
+    ),
+    $bg-deep;
+
+  color: $text-primary;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 1rem;
+
+  // Subtle technical/grid texture
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.015) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(56, 189, 248, 0.07),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 85% 85%,
+      rgba(129, 140, 248, 0.07),
+      transparent 35%
+    );
+  background-size: 40px 40px, 40px 40px, auto, auto;
+}
+
+// ============================================================
+// MAIN APPLICATION
+// ============================================================
+
+.password-lab {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  position: relative;
+  background: linear-gradient(
+    145deg,
+    rgba(17, 27, 47, 0.96),
+    rgba(8, 13, 24, 0.97)
+  );
+  border-radius: 22px;
+  border: 1px solid $border;
+  box-shadow: $shadow-lg, inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(18px);
+  // Ambient glow around the application
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(
+      135deg,
+      rgba(56, 189, 248, 0.12),
+      transparent 30%,
+      transparent 70%,
+      rgba(129, 140, 248, 0.1)
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  // ==========================================================
+  // HEADER
+  // ==========================================================
+
+  .lab-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid $border;
+    position: relative;
+
+    h2 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      background: $gradient-primary;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      padding: 0;
+    }
+
+    span {
+      font-size: 9px;
+      font-weight: 700;
+      color: $cyan;
+      letter-spacing: 2px;
+      opacity: 0.8;
+      text-transform: uppercase;
+    }
+
+    // Small glowing indicator
+    &::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: -2px;
+      width: 60px;
+      height: 2px;
+      background: $gradient-primary;
+      border-radius: 999px;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+    }
+  }
+
+  // ==========================================================
+  // DASHBOARD
+  // ==========================================================
+
+  .dashboard-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    .lab-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+
+      // ========================================================
+      // CARDS
+      // ========================================================
+
+      .card {
+        position: relative;
+
+        background: linear-gradient(
+          145deg,
+          rgba(19, 30, 52, 0.92),
+          rgba(13, 20, 36, 0.92)
+        );
+        border: 1px solid $border;
+        border-radius: 14px;
+        padding: 1.25rem;
+        box-shadow: $shadow-card;
+        transition: transform $transition-normal,
+          border-color $transition-normal, box-shadow $transition-normal;
+        animation: card-enter 0.45s ease both;
+        // Very subtle highlight at the top
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 12%;
+          right: 12%;
+          height: 1px;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(56, 189, 248, 0.25),
+            transparent
+          );
+        }
+
+        &:hover {
+          transform: translateY(-2px);
+          border-color: rgba(56, 189, 248, 0.18);
+          box-shadow: 0 14px 35px rgba(0, 0, 0, 0.32),
+            0 0 25px rgba(56, 189, 248, 0.035);
+        }
+
+        h3 {
+          margin-top: 0;
+          margin-bottom: 1rem;
+          font-size: 0.78rem;
+          font-weight: 700;
+          color: $text-secondary;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+      }
+    }
+  }
+
+  // ==========================================================
+  // INPUT
+  // ==========================================================
+
+  input {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border-radius: 9px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: linear-gradient(
+      180deg,
+      rgba(30, 41, 59, 0.9),
+      rgba(15, 23, 42, 0.9)
+    );
+    color: $text-primary;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color $transition-fast, box-shadow $transition-fast,
+      background $transition-fast;
+
+    &::placeholder {
+      color: $text-muted;
+    }
+
+    &:hover {
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    &:focus {
+      border-color: $cyan;
+      background: rgba(15, 23, 42, 0.95);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.08),
+        0 0 20px rgba(56, 189, 248, 0.08);
+    }
+  }
+
+  // ==========================================================
+  // METRIC BARS
+  // ==========================================================
+
+  .bars-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    .metric-row {
+      .metric-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+        color: $text-secondary;
+
+        .label-with-info {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+        }
+
+        .info-icon {
+          color: $text-muted;
+          font-size: 0.85rem;
+          cursor: pointer;
+          transition: color $transition-fast;
+
+          &:hover {
+            color: $cyan;
+          }
+        }
+
+        .tooltip-container {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+
+          &:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+          }
+        }
+
+        .tooltip-text {
+          visibility: hidden;
+          opacity: 0;
+          position: absolute;
+          bottom: 150%;
+          left: 50%;
+          transform: translateX(-50%) translateY(4px);
+          width: 280px;
+          padding: 0.55rem 0.7rem;
+          background: #111827;
+          color: $text-primary;
+          text-align: center;
+          border-radius: 7px;
+          font-size: 0.7rem;
+          line-height: 1.4;
+          border: 1px solid rgba(148, 163, 184, 0.16);
+          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+          z-index: 10;
+          pointer-events: none;
+          transition: opacity $transition-fast, transform $transition-fast;
+
+          &::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -4px;
+            border-width: 4px;
+            border-style: solid;
+            border-color: #111827 transparent transparent transparent;
+          }
+        }
+      }
+
+      // ========================================================
+      // PROGRESS TRACK
+      // ========================================================
+
+      .progress-track {
+        position: relative;
+        height: 8px;
+        background: rgba(30, 41, 59, 0.9);
+        border-radius: 999px;
+        overflow: hidden;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
+
+        .progress-fill {
+          height: 100%;
+          width: 0%;
+          position: relative;
+          background: $gradient-progress;
+          border-radius: inherit;
+          transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+
+          // Moving highlight
+          &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 35px;
+            height: 100%;
+            background: linear-gradient(
+              90deg,
+              transparent,
+              rgba(255, 255, 255, 0.35)
+            );
+            animation: progress-shimmer 2s infinite;
+          }
+        }
+      }
+    }
+  }
+
+  // ==========================================================
+  // STATS
+  // ==========================================================
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.75rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat-card {
+      position: relative;
+      background: linear-gradient(
+        145deg,
+        rgba(30, 41, 59, 0.85),
+        rgba(15, 23, 42, 0.85)
+      );
+      padding: 0.85rem 0.5rem;
+      border-radius: 9px;
+      border: 1px solid rgba(148, 163, 184, 0.08);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      transition: transform $transition-fast, border-color $transition-fast,
+        background $transition-fast;
+
+      &:hover {
+        transform: translateY(-2px);
+        border-color: rgba(56, 189, 248, 0.2);
+        background: linear-gradient(
+          145deg,
+          rgba(30, 41, 59, 0.98),
+          rgba(17, 27, 47, 0.98)
+        );
+      }
+
+      span {
+        font-size: 0.62rem;
+        color: $text-muted;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+      }
+
+      strong {
+        font-size: 1rem;
+        color: $text-primary;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+// ============================================================
+// LARGE SCREEN DASHBOARD
+// ============================================================
+
+@media (min-width: 1024px) {
+  .password-lab {
+    .dashboard-grid {
+      // --------------------------------------------------------
+      // INPUT + GENERATOR
+      // --------------------------------------------------------
+
+      .input-generator-section {
+        display: grid;
+        grid-template-columns:
+          minmax(0, 1fr)
+          minmax(0, 1fr);
+        gap: 1.5rem;
+      }
+
+      // --------------------------------------------------------
+      // ANALYSIS
+      // --------------------------------------------------------
+
+      .analysis-section {
+        display: grid;
+        grid-template-columns:
+          minmax(0, 1fr)
+          minmax(0, 1fr);
+        grid-template-areas:
+          'metrics stats'
+          'distribution distribution';
+        gap: 1.5rem;
+
+        .metrics-card {
+          grid-area: metrics;
+        }
+
+        .stats-card-wrapper {
+          grid-area: stats;
+        }
+
+        .distribution-card {
+          grid-area: distribution;
+        }
+      }
+    }
+  }
+}
+
+// ============================================================
+// MOBILE
+// ============================================================
+
+@media (max-width: 600px) {
+  body {
+    align-items: flex-start;
+    padding: 0.75rem;
+  }
+
+  .password-lab {
+    padding: 1rem;
+    border-radius: 16px;
+
+    .lab-header {
+      h2 {
+        font-size: 1.4rem;
+      }
+
+      span {
+        font-size: 8px;
+      }
+    }
+
+    .dashboard-grid {
+      gap: 1rem;
+
+      .lab-section {
+        gap: 1rem;
+
+        .card {
+          padding: 1rem;
+        }
+      }
+    }
+  }
+}
+
+// ============================================================
+// ANIMATIONS
+// ============================================================
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progress-shimmer {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+}
+
+// ============================================================
+// ACCESSIBILITY
+// ============================================================
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+
+    scroll-behavior: auto !important;
+
+    transition-duration: 0.01ms !important;
+  }
+}

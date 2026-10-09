@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import './PasswordLab.scss'
+import './App.scss'
 import PasswordInput from './components/PasswordInput'
 import MetricList from './components/MetricList'
 import Stats from './components/Stats'
@@ -19,7 +19,8 @@ export default function App () {
   return (
     <div className='password-lab'>
       <header className='lab-header'>
-        <h2>Password LabZ</h2>
+        <h2>Zyfr@Lab</h2>
+           <span>Password <br></br>Analyzer</span>
       </header>
 
       <div className='dashboard-grid'>

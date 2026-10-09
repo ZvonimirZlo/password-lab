@@ -1,3 +1,7 @@
+// ============================================================
+// STATS
+// ============================================================
+
 .statsWrapper {
   display: flex;
   flex-direction: column;
@@ -5,76 +9,237 @@
   width: 100%;
 }
 
+// ============================================================
+// STAT GRID
+// ============================================================
+
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.75rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.65rem;
 
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  // ----------------------------------------------------------
+  // STAT CARD
+  // ----------------------------------------------------------
 
   .statCard {
-    background: #090d16;
-    padding: 0.75rem 0.5rem;
-    border-radius: 8px;
-    border: 1px solid #1e293b;
-    text-align: center;
+    position: relative;
+    min-width: 0;
+    padding: 0.8rem 0.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    transition: border-color 0.2s ease;
+    align-items: center;
+    gap: 0.3rem;
+    text-align: center;
+    background: linear-gradient(
+      145deg,
+      rgba(17, 27, 47, 0.82),
+      rgba(9, 14, 26, 0.92)
+    );
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 9px;
+    overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease,
+      background 0.2s ease, box-shadow 0.2s ease;
+
+    // --------------------------------------------------------
+    // Top accent
+    // --------------------------------------------------------
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 25%;
+      right: 25%;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(56, 189, 248, 0.3),
+        transparent
+      );
+      opacity: 0.5;
+    }
+
+    // --------------------------------------------------------
+    // Hover
+    // --------------------------------------------------------
 
     &:hover {
-      border-color: #334155;
+      transform: translateY(-2px);
+      border-color: rgba(56, 189, 248, 0.18);
+      background: linear-gradient(
+        145deg,
+        rgba(20, 32, 54, 0.95),
+        rgba(10, 17, 30, 0.95)
+      );
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2),
+        0 0 16px rgba(56, 189, 248, 0.025);
     }
+
+    // --------------------------------------------------------
+    // Label
+    // --------------------------------------------------------
 
     span {
-      font-size: 0.65rem;
+      max-width: 100%;
+      overflow: hidden;
+      font-size: 0.6rem;
+      font-weight: 600;
       color: #64748b;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 500;
+      letter-spacing: 0.07em;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
+    // --------------------------------------------------------
+    // Value
+    // --------------------------------------------------------
+
     strong {
+      max-width: 100%;
+      overflow: hidden;
       font-size: 1rem;
-      color: #38bdf8;
+      font-weight: 700;
+      color: #67e8f9;
       font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+      transition: color 0.2s ease, text-shadow 0.2s ease;
+    }
+
+    &:hover strong {
+      color: #a5f3fc;
+      text-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
+    }
+  }
+
+  // ----------------------------------------------------------
+  // TABLET
+  // ----------------------------------------------------------
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  // ----------------------------------------------------------
+  // MOBILE
+  // ----------------------------------------------------------
+
+  @media (max-width: 600px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+
+    .statCard {
+      padding: 0.75rem 0.4rem;
     }
   }
 }
 
+// ============================================================
+// CHART CONTAINER
+// ============================================================
+
 .chartContainer {
-  background: #090d16;
-  border: 1px solid #1e293b;
-  border-radius: 8px;
+  position: relative;
+  background: linear-gradient(
+    145deg,
+    rgba(17, 27, 47, 0.8),
+    rgba(9, 14, 26, 0.94)
+  );
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 10px;
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.65rem;
+  overflow: hidden;
 
-  .chartHeader {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
-    color: #94a3b8;
-    font-weight: 500;
+  // Subtle chart-panel lighting
+  &::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(
+      circle,
+      rgba(129, 140, 248, 0.06),
+      transparent 70%
+    );
+    pointer-events: none;
   }
 
+  // ==========================================================
+  // CHART HEADER
+  // ==========================================================
+
+  .chartHeader {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #94a3b8;
+    letter-spacing: 0.02em;
+
+    // Small active indicator
+    &::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: #818cf8;
+      box-shadow: 0 0 8px rgba(129, 140, 248, 0.5);
+    }
+  }
+
+  // ==========================================================
+  // PIE / CHART AREA
+  // ==========================================================
+
   .pieWrapper {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-around;
     gap: 1rem;
+    min-height: 150px;
     flex-wrap: wrap;
+    padding: 0.5rem 0;
   }
 
+  // ==========================================================
+  // EMPTY STATE
+  // ==========================================================
 
   .emptyState {
-    font-size: 0.75rem;
-    color: #64748b;
+    width: 100%;
+    padding: 1.25rem 0;
+    color: #475569;
     text-align: center;
-    padding: 1rem 0;
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+}
+
+// ============================================================
+// ACCESSIBILITY
+// ============================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .statCard {
+    transition: none;
+  }
+
+  .statCard strong {
+    transition: none;
   }
 }

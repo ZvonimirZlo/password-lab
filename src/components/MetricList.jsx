@@ -6,20 +6,34 @@ import { characterVariety } from '../algorithms/characterVariety'
 import { estimateTimeToCrack } from '../algorithms/estimateTimeToCrack.jsx'
 import styles from './MetricList.module.scss'
 
-// Added dictResult to the component props array destructurer
 const MetricList = ({ password, dictResult }) => {
+  // Calculate both Markov orders from the returned object
+  const calculatedMarkov = useMemo(() => {
+    if (!password) return { bigramEntropy: 0, trigramEntropy: 0 }
+    return markovEntropy(password)
+  }, [password])
 
-  const calculatedMarkovScore = useMemo(() => {
-  const score = markovEntropy(password);
-  return score;
-}, [password]);
+  const maxEntropy = 400
 
-  const markovBarWidth = useMemo(() => {
-    const MAX_TARGET_ENTROPY = 120 
-    return Math.min(Math.max(Math.round((calculatedMarkovScore / MAX_TARGET_ENTROPY) * 100), 0), 100)
-  }, [calculatedMarkovScore])
+  const bigramBarWidth = useMemo(() => {
+    return Math.min(
+      Math.max(
+        Math.round((calculatedMarkov.bigramEntropy / maxEntropy) * 100),
+        0
+      ),
+      100
+    )
+  }, [calculatedMarkov.bigramEntropy])
 
-  // console.log(markovEntropy('password', PROD_MARKOV_MATRIX))
+  const trigramBarWidth = useMemo(() => {
+    return Math.min(
+      Math.max(
+        Math.round((calculatedMarkov.trigramEntropy / maxEntropy) * 100),
+        0
+      ),
+      100
+    )
+  }, [calculatedMarkov.trigramEntropy])
 
   const metrics = [
     {
@@ -28,18 +42,28 @@ const MetricList = ({ password, dictResult }) => {
       score: password ? Number(shannonEntropy(password).toFixed(1)) : 0,
       unit: 'bits',
       barWidth: password
-        //  for shorter passwords, the progress bar crawls more slowly, but as the entropy climbs into secure territory, the bar accelerates
         ? Math.min(Math.pow(shannonEntropy(password) / 8, 1.2) * 100, 100)
         : 0,
-      description: 'Calculates the pure mathematical complexity of your character pool. It assumes every letter is completely random and independent, measuring how much theoretical effort a computer brute-force attack needs to break your keyspace.'
+      description:
+        'Calculates the pure mathematical complexity of your character pool, assuming every character is completely random and independent.'
     },
     {
-      id: 'markov',
-      label: 'Markov Chain Analysis',
-      score: password ? calculatedMarkovScore : 0,
+      id: 'markov1',
+      label: 'Markov 1st Order (Bigram)',
+      score: password ? calculatedMarkov.bigramEntropy : 0,
       unit: 'bits',
-      barWidth: password ? markovBarWidth : 0,
-      description: 'Evaluates keystroke predictability based on real human typing patterns. It looks at character pairings to expose lazy keyboard walks, sequence flows, and common modifications that normal entropy math completely misses.'
+      barWidth: password ? bigramBarWidth : 0,
+      description:
+        'Evaluates character-pair predictability based on real human typing patterns to expose simple keyboard walks and sequence flows.'
+    },
+    {
+      id: 'markov2',
+      label: 'Markov 2nd Order (Trigram)',
+      score: password ? calculatedMarkov.trigramEntropy : 0,
+      unit: 'bits',
+      barWidth: password ? trigramBarWidth : 0,
+      description:
+        'Evaluates 3-character rolling contexts for advanced pattern analysis, capturing complex human habits and common sub-word structures.'
     },
     {
       id: 'composition',
@@ -47,16 +71,17 @@ const MetricList = ({ password, dictResult }) => {
       score: password ? characterVariety(password) : 0,
       unit: '%',
       barWidth: password ? characterVariety(password) : 0,
-      description: `Character Variety measures the range of different types of characters used. Mixing up lower, upper, numbers, and symbols exponentially increases the keyspace size.`
+      description:
+        'Measures the range of different character types used (lowercase, uppercase, numbers, symbols).'
     },
     {
       id: 'dictionary',
       label: 'Dictionary & Pattern Check',
-      // Dynamic reading from our App prop data directly!
       score: password && dictResult ? dictResult.score : 0,
       barWidth: password && dictResult ? dictResult.score : 0,
       unit: '%',
-      description: `Scans passwords against known compromised words, common substitutions, and keyboard walks like "qwerty".`
+      description:
+        'Scans passwords against known compromised words, common substitutions, and keyboard walks.'
     },
     {
       id: 'timetocrack',
@@ -65,14 +90,8 @@ const MetricList = ({ password, dictResult }) => {
       isTextScore: true,
       barWidth: password ? estimateTimeToCrack(password).score : 0,
       unit: 'est',
-      description: `Time-to-crack divides total combinations (keyspace) by guessing speed on modern hardware.`
-    },
-    {
-      id: 'keyspace',
-      label: 'Keyspace Size',
-      score: password ? Math.min(password.length * 7.5, 100) : 0,
-      unit: '%',
-      description: 'Measures theoretical geometric space total variants calculations.'
+      description:
+        'Divides total combinations (keyspace) by modern hardware guessing speeds.'
     }
   ]
 
