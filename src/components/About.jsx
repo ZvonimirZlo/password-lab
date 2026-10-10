@@ -1,4 +1,6 @@
 import styles from './About.module.scss'
+import { isBlacklistLoaded } from '../algorithms/dictAndPatterns.jsx';
+console.log(isBlacklistLoaded);
 
 const About = () => {
   return (
@@ -20,7 +22,7 @@ const About = () => {
 
           <span className={styles.status}>
             <span className={styles.statusDot} />
-            ACTIVE
+            {isBlacklistLoaded === true ? 'ACTIVE' : 'INACTIVE'}
           </span>
         </div>
 
