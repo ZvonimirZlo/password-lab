@@ -1,6 +1,5 @@
 import styles from './About.module.scss'
 import { isBlacklistLoaded } from '../algorithms/dictAndPatterns.jsx'
-console.log(isBlacklistLoaded)
 
 const About = () => {
   return (

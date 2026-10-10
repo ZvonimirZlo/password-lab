@@ -18,7 +18,7 @@ const PasswordInput = ({ password, setPassword }) => {
       <input
         type={showPassword ? 'text' : 'password'}
         value={password}
-        maxlength={'42'}
+        maxLength={'42'}
         onChange={e => setPassword(e.target.value)}
         placeholder='Enter or generate your password...'
       />

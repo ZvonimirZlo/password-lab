@@ -1,9 +1,12 @@
 // Vite imports the entire text contents synchronously as a string
 import TOP_100K_BLACKLIST from '/Pwdb_top-100000.txt?raw';
 
-export const isBlacklistLoaded = Boolean(
+ export const isBlacklistLoaded = Boolean(
   TOP_100K_BLACKLIST.length > 0
 );
+console.log(isBlacklistLoaded);
+
+
 
 // Process the set once when the module loads
 const BLACKLIST_SET = new Set(TOP_100K_BLACKLIST.split(/\r?\n/).map(x => x.trim()));
@@ -14,11 +17,22 @@ const alertSound = typeof window !== 'undefined'
   : null;
 
 export const checkDictionaryAndPatterns =  (password) => {
+
+//Warning in case black list is not loaded
+  if (!isBlacklistLoaded) {
+    return {
+      score: 0,
+      status: 'Error', // Matches the pattern of other returns
+      warning: '⚠️ No list loaded! Blacklist verification is offline.'
+    };
+  }
   if (!password) return { score: 0, status: 'Empty', warning: null };
 
   const data = password.trim()
   // const lowerPass = data.toLowerCase();
 
+
+//Warning in case password was found on the black list
   if (BLACKLIST_SET.has(data)) {
     alertSound.play();
     return { 
