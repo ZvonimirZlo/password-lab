@@ -2,7 +2,7 @@
 import TOP_100K_BLACKLIST from '/Pwdb_top-100000.txt?raw';
 
 export const isBlacklistLoaded = Boolean(
-  TOP_100K_BLACKLIST && TOP_100K_BLACKLIST.trim().length > 0
+  TOP_100K_BLACKLIST.length > 0
 );
 
 // Process the set once when the module loads
