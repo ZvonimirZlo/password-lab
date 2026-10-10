@@ -6,6 +6,7 @@ import { characterVariety } from '../algorithms/characterVariety'
 import { estimateTimeToCrack } from '../algorithms/estimateTimeToCrack.jsx'
 import styles from './MetricList.module.scss'
 
+
 const MetricList = ({ password, dictResult }) => {
   // Calculate both Markov orders from the returned object
   const calculatedMarkov = useMemo(() => {
@@ -34,6 +35,17 @@ const MetricList = ({ password, dictResult }) => {
       100
     )
   }, [calculatedMarkov.trigramEntropy])
+
+  const crackEstimate = useMemo(() => {
+    if (!password) return { text: 'Instantly', score: 0 }
+
+    return estimateTimeToCrack(password, {
+      bigramEntropy: calculatedMarkov.bigramEntropy,
+      trigramEntropy: calculatedMarkov.trigramEntropy,
+      shannonEntropy: shannonEntropy(password),
+      isLeaked: dictResult
+    })
+  }, [password, calculatedMarkov, dictResult])
 
   const metrics = [
     {
@@ -86,14 +98,15 @@ const MetricList = ({ password, dictResult }) => {
     {
       id: 'timetocrack',
       label: 'Time-to-Crack Estimate',
-      score: password ? estimateTimeToCrack(password).text : 'Instantly',
+      score: crackEstimate.text,
       isTextScore: true,
-      barWidth: password ? estimateTimeToCrack(password).score : 0,
+      barWidth: crackEstimate.score,
       unit: 'est',
       description:
         'Divides total combinations (keyspace) by modern hardware guessing speeds.'
     }
   ]
+
 
   return (
     <div>

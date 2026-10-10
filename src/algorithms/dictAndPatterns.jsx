@@ -20,11 +20,11 @@ export const checkDictionaryAndPatterns = (password) => {
   }
 
   // 2. Sequential Keyboard Pattern Warning
-  const hasSequence = /(?:123|234|345|456|567|678|789|abc|bcd|cde|def|qwe|asd|zxc)/i.test(lowerPass);
+  const hasSequence = /(?:123|234|345|456|567|678|789|abc|bcd|cde|def|qwe|asd|zxc|dfg)/i.test(lowerPass);
   if (hasSequence && password.length < 10) {
     alert.play()
     return { 
-      score: 40, 
+      score: 10, 
       status: 'Weak Structure', 
       warning: '⚠️ Contains a highly predictable layout pattern (keyboard walk or sequence).'
       
@@ -36,7 +36,7 @@ export const checkDictionaryAndPatterns = (password) => {
   if (hasRepeats) {
     alert.play()
     return { 
-      score: 30, 
+      score: 5, 
       status: 'Weak Structure', 
       warning: '⚠️ Contains too many consecutive repeating characters.' 
     };
