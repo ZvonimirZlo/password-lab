@@ -40,6 +40,18 @@ console.log(score);
     return { text: 'Less than 10 seconds', score: isLeaked.score}
   }
 
+  if (length <= 6) {
+    seconds = Math.min(seconds, 2);          // Instantly / 2 seconds
+    score = Math.min(score, 10);
+  } else if (length <= 9) {
+    seconds = Math.min(seconds, 3600);       // Max 1 hour
+    score = Math.min(score, 35);
+  } else if (length <= 11) {
+    // Tightened for modern GPU cracking speeds
+    seconds = Math.min(seconds, 86400 * 2);  // Max 2 days instead of 30 days
+    score = Math.min(score, 50);             // Cap at 50% (Mediocre/Warning)
+  }
+
   // if (shannon <= 25 || (trigram && trigram < 50)) {
   //   return { text: `${isLeaked.warning}`, score: Math.min(score, 15) }
   // }

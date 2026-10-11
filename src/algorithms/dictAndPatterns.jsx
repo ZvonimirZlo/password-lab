@@ -1,5 +1,5 @@
-// Vite imports the entire text contents synchronously as a string
-import TOP_100K_BLACKLIST from '/Pwdb_top-100000.txt?raw';
+
+import TOP_100K_BLACKLIST from '../data/passwords.json';
 
  export const isBlacklistLoaded = Boolean(
   TOP_100K_BLACKLIST.length > 0
@@ -9,14 +9,14 @@ console.log(isBlacklistLoaded);
 
 
 // Process the set once when the module loads
-const BLACKLIST_SET = new Set(TOP_100K_BLACKLIST.split(/\r?\n/).map(x => x.trim()));
+const BLACKLIST_SET = new Set(TOP_100K_BLACKLIST);
 
 // Safe audio initialization
 const alertSound = typeof window !== 'undefined' 
   ? new Audio('/universfield-new-notification-051-494246.mp3') 
   : null;
 
-export const checkDictionaryAndPatterns =  (password) => {
+export const checkDictionaryAndPatterns = (password) => {
 
 //Warning in case black list is not loaded
   if (!isBlacklistLoaded) {
@@ -43,7 +43,7 @@ export const checkDictionaryAndPatterns =  (password) => {
   }
 
   // 2. Sequential Keyboard Pattern Warning
-  const hasSequence = /(?:123|234|345|456|567|678|789|abc|bcd|cde|def|qwe|asd|zxc|dfg)/i.test(data);
+  const hasSequence = /(?:123|234|345|456|567|678|789|abc|bcd|cde|def|qwe|asd|zxc|dfg|čćž|ćžš|šžć|đžć)/i.test(data);
   if (hasSequence && password.length < 10) {
     alertSound.play()
     return { 
