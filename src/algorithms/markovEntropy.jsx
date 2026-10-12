@@ -11,11 +11,6 @@ const allTrainedChars = new Set([
 const globalKeyspaceSize = allTrainedChars.size || 95; // Default fallback to standard printable ASCII size
 const dynamicFallback = 1 / globalKeyspaceSize;
 
-// /**
-//  * Calculates both Bigram and Trigram entropy side-by-side using a shared dataset.
-//  * @param {string} password 
-//  * @returns {{ bigramEntropy: number, trigramEntropy: number }}
-//  */
 export default function compareMarkovEntropy(password) {
   if (!password || password.length === 0) {
     return { bigramEntropy: 0, trigramEntropy: 0 };

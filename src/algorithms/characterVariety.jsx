@@ -1,5 +1,7 @@
 export const characterVariety = (str) => {
-  if (!str) return 0;
+  if (!str || typeof str !== 'string') {
+    return 0
+  }
 
   let classesFound = 0;
   

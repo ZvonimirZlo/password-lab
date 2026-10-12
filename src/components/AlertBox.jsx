@@ -1,6 +1,15 @@
 import './AlertBox.scss'
+import { useEffect } from 'react';
 
 const AlertBox = ({ warning }) => {
+
+useEffect(() => {
+  if(warning) {
+    const alertSound = new Audio('/universfield-new-notification-051-494246.mp3')
+  alertSound.play()
+  }
+}, [warning])
+
   if (!warning) return null;
 
   return (
