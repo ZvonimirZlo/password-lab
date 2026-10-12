@@ -10,16 +10,16 @@ const AlertBox = ({ warning }) => {
       aria-live="assertive"
       aria-atomic="true"
     >
-      <div className="security-alert__indicator">
+      <div className="security-alert_indicator">
         !
       </div>
 
-      <div className="security-alert__content">
-        <div className="security-alert__title">
+      <div className="security-alert_content">
+        <div className="security-alert_title">
           CRITICAL SECURITY ADVISORY
         </div>
 
-        <div className="security-alert__message">
+        <div className="security-alert_message">
           {warning}
         </div>
       </div>

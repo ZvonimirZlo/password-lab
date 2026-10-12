@@ -27,7 +27,7 @@
   // Warning indicator
   // ----------------------------------------------------------
 
-  &__indicator {
+  &_indicator {
     flex: 0 0 auto;
     width: 30px;
     height: 30px;
@@ -48,11 +48,11 @@
   // Content
   // ----------------------------------------------------------
 
-  &__content {
+  &_content {
     min-width: 0;
   }
 
-  &__title {
+  &_title {
     margin-bottom: 0.35rem;
     color: #f87171;
     font-size: 0.7rem;
@@ -61,7 +61,7 @@
     text-transform: uppercase;
   }
 
-  &__message {
+  &_message {
     color: #fecaca;
     font-size: 0.85rem;
     line-height: 1.5;
