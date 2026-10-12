@@ -7,28 +7,44 @@ export const generateSecurePassword = (options = {}) => {
     useSymbols = true,
   } = options;
 
-  const lowerChars = 'abcdefghijklmnopqrstuvwxyz';
-  const upperChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const numberChars = '0123456789';
-  const symbolChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+  const sets = [];
+  if (useLower) sets.push('abcdefghijklmnopqrstuvwxyz');
+  if (useUpper) sets.push('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  if (useNumbers) sets.push('0123456789');
+  if (useSymbols) sets.push('!@#$%^&*()_+-=[]{}|;:,.<>?');
 
-
-  let validChars = '';
-  if (useLower) validChars += lowerChars;
-  if (useUpper) validChars += upperChars;
-  if (useNumbers) validChars += numberChars;
-  if (useSymbols) validChars += symbolChars;
-
-  if (!validChars) return ''; // Fallback if all options are unchecked
-
-  let password = '';
-  const array = new Uint32Array(length);
-  // Use crypto.getRandomValues for cryptographically secure randomness
-  window.crypto.getRandomValues(array);
-
-  for (let i = 0; i < length; i++) {
-    password += validChars[array[i] % validChars.length];
+  if (sets.length === 0) return '';
+  if (length < sets.length) {
+    throw new Error(`Password length must be at least ${sets.length} to include all selected character types.`);
   }
 
-  return password;
+  const allChars = sets.join('');
+  const passwordArray = [];
+
+  // 1. Guarantee at least one character from each enabled set
+  for (let i = 0; i < sets.length; i++) {
+    const randomBuffer = new Uint32Array(1);
+    window.crypto.getRandomValues(randomBuffer);
+    passwordArray.push(sets[i][randomBuffer[0] % sets[i].length]);
+  }
+
+  // 2. Fill the remaining length from the combined character pool
+  const remainingLength = length - passwordArray.length;
+  if (remainingLength > 0) {
+    const randomBuffer = new Uint32Array(remainingLength);
+    window.crypto.getRandomValues(randomBuffer);
+    for (let i = 0; i < remainingLength; i++) {
+      passwordArray.push(allChars[randomBuffer[i] % allChars.length]);
+    }
+  }
+
+  // 3.Fisher-Yates algorithm cryptographically shuffle the result so the guaranteed positions aren't predictable
+  const shuffleBuffer = new Uint32Array(passwordArray.length);
+  window.crypto.getRandomValues(shuffleBuffer);
+  for (let i = passwordArray.length - 1; i > 0; i--) {
+    const j = shuffleBuffer[i] % (i + 1);
+    [passwordArray[i], passwordArray[j]] = [passwordArray[j], passwordArray[i]];
+  }
+
+  return passwordArray.join('');
 };

@@ -34,7 +34,7 @@ export const checkDictionaryAndPatterns = password => {
 
   // 2. Sequential Keyboard Pattern Warning
   const hasSequence =
-    /(?:123|234|345|456|567|678|789|012|abc|bcd|cde|def|qwe|asd|zxc|dfg|čćž|ćžš|šžć|đžć|a|1|rtz)/i.test(
+    /(?:123|234|345|456|567|678|789|012|abc|bcd|cde|def|qwe|asd|zxc|dfg|čćž|ćžš|šžć|đžć|rtz|rty)/i.test(
       data
     )
   if (hasSequence && password.length < 10) {

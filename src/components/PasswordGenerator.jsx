@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { generateSecurePassword } from '../algorithms/generateSecurePassword'
-import { FiRefreshCw, FiCopy, FiCheck } from 'react-icons/fi'
+import { FiRefreshCw, FiCheck, FiDownload } from 'react-icons/fi'
 import styles from './PasswordGenerator.module.scss' // Import SCSS module
 
 const PasswordGenerator = ({ onPasswordGenerated, currentPassword }) => {
   const [length, setLength] = useState(16)
-  const [copied, setCopied] = useState(false)
+  const [downloaded, setDownloaded] = useState(false)
   const [options, setOptions] = useState({
     useLower: true,
     useUpper: true,
@@ -18,14 +18,26 @@ const PasswordGenerator = ({ onPasswordGenerated, currentPassword }) => {
     onPasswordGenerated(newPass)
   }
 
-  const handleCopy = () => {
-    if (!currentPassword) return
+//Download password function
+  const handleDownload = () => {
+  if (!currentPassword) return
 
-    navigator.clipboard.writeText(currentPassword).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    })
-  }
+  const blob = new Blob([currentPassword], { type: 'text/plain;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'password.txt'
+  document.body.appendChild(link)
+  link.click()
+  
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+
+  // Feedback state update
+  setDownloaded(true)
+  setTimeout(() => setDownloaded(false), 2000)
+}
 
   return (
     <div className={styles.generatorCard}>
@@ -35,14 +47,14 @@ const PasswordGenerator = ({ onPasswordGenerated, currentPassword }) => {
         <div className={styles.buttonGroup}>
           {/* Copy Button */}
           <button
-            onClick={handleCopy}
+            onClick={handleDownload}
             disabled={!currentPassword}
             className={`${styles.button} ${styles.copyBtn} ${
-              copied ? styles.copied : ''
+              downloaded ? styles.copied : ''
             }`}
-            title='Copy password'
+            title='Download password'
           >
-            {copied ? <FiCheck /> : <FiCopy />} {copied ? 'Copied' : 'Copy'}
+            {downloaded ? <FiCheck /> : <FiDownload />} {downloaded ? 'Downloaded' : 'Download'}
           </button>
 
           {/* Generate Button */}
