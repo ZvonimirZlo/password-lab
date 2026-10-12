@@ -9,6 +9,9 @@ const BLACKLIST_SET = new Set(TOP_100K_BLACKLIST)
 
 
 export const checkDictionaryAndPatterns = password => {
+
+  if(password.length <= 1) return 0;
+
   //Warning in case black list is not loaded
   if (!isBlacklistLoaded) {
     return {

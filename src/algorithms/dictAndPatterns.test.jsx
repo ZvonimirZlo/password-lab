@@ -5,12 +5,11 @@ import {
 } from './dictAndPatterns'
 
 describe('checkDictionaryAndPatterns()', () => {
-  it('should return a score of 5 for a sequence/single character string', () => {
+    it('should return a score of 0 for a sequence/single character string', () => {
     const result = checkDictionaryAndPatterns('a')
-    expect(result.score).toBe(5)
-    expect(result.status).toBe('Weak Structure')
+    expect(result).toBe(0)
   })
-
+  
   it('should return a score of 0 for a password found in the black list', () => {
     const result = checkDictionaryAndPatterns('password')
     expect(result.score).toBe(0)
