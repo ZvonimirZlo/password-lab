@@ -5,37 +5,35 @@ import styles from './PasswordInput.module.scss'
 const PasswordInput = ({ password, setPassword }) => {
   const [showPassword, setShowPassword] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [inputValue, setInputValue] = useState(password || '');
+  const [inputValue, setInputValue] = useState(password || '')
 
-  // useEffect(() => {
-  //   setInputValue(password || '')
-  // },[password])
+  useEffect(() => {
+    setInputValue(password || '')
+  }, [password])
 
-
-  //Debounce function, so if user sits on single key it won't cause stuttering 
-  // or craching the app
+  //Debounce function, so if user sits on single key it won't cause stuttering
+  // or crashing the app
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if(inputValue !== password){
+      if (inputValue !== password) {
         setPassword(inputValue)
       }
-    },100)
+    }, 100)
     return () => clearTimeout(timeoutId)
-  },[inputValue,password,setPassword])
+  }, [inputValue, password, setPassword])
 
-    const handleInputChange = (event) => {
-    setInputValue(event.target.value);
-  };
+  //Handles input change
+  const handleInputChange = event => {
+    setInputValue(event.target.value)
+  }
 
-
+  //Handles password copy
   const handleCopy = () => {
     if (!password) return
     navigator.clipboard.writeText(password)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
-
-
 
   return (
     <div className={styles.passwordInputWrapper}>
@@ -52,8 +50,10 @@ const PasswordInput = ({ password, setPassword }) => {
           <>
             <button
               type='button'
-              onClick={() => {setInputValue('') 
-                setPassword('')}}
+              onClick={() => {
+                setInputValue('')
+                setPassword('')
+              }}
               className={styles.actionBtn}
               title='Clear password'
             >

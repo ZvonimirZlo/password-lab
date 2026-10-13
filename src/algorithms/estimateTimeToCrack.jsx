@@ -11,10 +11,15 @@ export const estimateTimeToCrack = (password, data = {}) => {
 
   let log10Combinations = Math.round(password.length * Math.log10(poolSize))
 
-  const bigram = data.bigramEntropy
-  const trigram = data.trigramEntropy
-  const isLeaked = data.isLeaked
-  const shannon = data.shannonEntropy
+
+//Data needed to calculate crack time
+const {
+    bigramEntropy: bigram = 0,
+    trigramEntropy: trigram = 0,
+    shannonEntropy: shannon = 0,
+    isLeaked = {}
+  } = data
+
   const length = password.length
 
   // console.log(isLeaked);
@@ -33,11 +38,11 @@ console.log(score);
   // MANIPULATE / OVERRIDE FINAL RESULTS BASED ON VULNERABILITIES
   // -----------------------------------------------------------------
   if (isLeaked.status === 'Critical Alert') {
-    return { text: 'Instantly', score: isLeaked.score }
+    return { text: 'Instantly', score: isLeaked.score ?? 0 }
   }
 
     if (isLeaked.status === 'Weak Structure') {
-    return { text: 'Less than 10 seconds', score: isLeaked.score}
+    return { text: 'Less than 10 seconds', score: isLeaked.score ?? 0}
   }
 
   if (length <= 6) {
@@ -52,15 +57,15 @@ console.log(score);
     score = Math.min(score, 50);             // Cap at 50% (Mediocre/Warning)
   }
 
-  // if (shannon <= 25 || (trigram && trigram < 50)) {
-  //   return { text: `${isLeaked.warning}`, score: Math.min(score, 15) }
-  // }
+  if (shannon <= 25 || (trigram && trigram < 50)) {
+    return { text: `${isLeaked.warning}`, score: Math.min(score, 15) }
+  }
 
-  // if (bigram && bigram < 60) {
-  //   // Force a penalty cap on both time and score if bigrams are weak
-  //   seconds = Math.min(seconds, 60) // Cap max time to 1 minute
-  //   score = Math.min(score, 40)
-  // }
+  if (bigram && bigram < 60) {
+    // Force a penalty cap on both time and score if bigrams are weak
+    seconds = Math.min(seconds, 60) // Cap max time to 1 minute
+    score = Math.min(score, 40)
+  }
   // -----------------------------------------------------------------
 
   const formatTimeText = (seconds, score) => {
