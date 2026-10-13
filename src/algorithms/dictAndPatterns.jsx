@@ -6,11 +6,8 @@ console.log(isBlacklistLoaded)
 // Process the set once when the module loads
 const BLACKLIST_SET = new Set(TOP_100K_BLACKLIST)
 
-
-
 export const checkDictionaryAndPatterns = password => {
-
-  if(password.length <= 1) return 0;
+  if (password.length <= 1) return 0
 
   //Warning in case black list is not loaded
   if (!isBlacklistLoaded) {
@@ -41,14 +38,12 @@ export const checkDictionaryAndPatterns = password => {
       data
     )
   if (hasSequence && password.length < 10) {
-    return (
-      {
-        score: 5,
-        status: 'Weak Structure',
-        warning:
-          '⚠️ Contains a highly predictable layout pattern (keyboard walk or sequence).'
-      }
-    )
+    return {
+      score: 5,
+      status: 'Weak Structure',
+      warning:
+        '⚠️ Contains a highly predictable layout pattern (keyboard walk or sequence).'
+    }
   }
 
   // 3. Repeating Characters Warning
@@ -60,14 +55,14 @@ export const checkDictionaryAndPatterns = password => {
       warning: '⚠️ Contains too many consecutive repeating characters.'
     }
   }
-
+  // Repeated patterns warning
   if (/(.{2,4})\1+/.test(password)) {
-  return {
-    score: 5,
-    status: 'Repeated Pattern',
-    warning: '⚠️ Avoid repeating short patterns consecutively (e.g., "abcabc").'
-  };
-}
+    return {
+      score: 5,
+      status: 'Weak Structure',
+      warning: '⚠️ Avoid repeating short patterns consecutively (e.g., "abcabc").'
+    }
+  }
 
   // Safe Pass
   return {

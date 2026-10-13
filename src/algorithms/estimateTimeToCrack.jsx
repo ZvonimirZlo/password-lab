@@ -58,7 +58,7 @@ console.log(score);
   }
 
   if (shannon <= 25 || (trigram && trigram < 50)) {
-    return { text: `${isLeaked.warning}`, score: Math.min(score, 15) }
+     score = Math.min(score, 15)
   }
 
   if (bigram && bigram < 60) {
