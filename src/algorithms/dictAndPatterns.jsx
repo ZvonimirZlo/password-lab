@@ -61,6 +61,14 @@ export const checkDictionaryAndPatterns = password => {
     }
   }
 
+  if (/(.{2,4})\1+/.test(password)) {
+  return {
+    score: 5,
+    status: 'Repeated Pattern',
+    warning: '⚠️ Avoid repeating short patterns consecutively (e.g., "abcabc").'
+  };
+}
+
   // Safe Pass
   return {
     score: 100,
