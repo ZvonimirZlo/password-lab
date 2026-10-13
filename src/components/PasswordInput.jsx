@@ -1,10 +1,32 @@
 import { FiEye, FiEyeOff, FiCopy, FiCheck, FiX } from 'react-icons/fi'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import styles from './PasswordInput.module.scss'
 
 const PasswordInput = ({ password, setPassword }) => {
   const [showPassword, setShowPassword] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [inputValue, setInputValue] = useState(password || '');
+
+  // useEffect(() => {
+  //   setInputValue(password || '')
+  // },[password])
+
+
+  //Debounce function, so if user sits on single key it won't cause stuttering 
+  // or craching the app
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if(inputValue !== password){
+        setPassword(inputValue)
+      }
+    },100)
+    return () => clearTimeout(timeoutId)
+  },[inputValue,password,setPassword])
+
+    const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
 
   const handleCopy = () => {
     if (!password) return
@@ -13,13 +35,15 @@ const PasswordInput = ({ password, setPassword }) => {
     setTimeout(() => setCopied(false), 2000)
   }
 
+
+
   return (
     <div className={styles.passwordInputWrapper}>
       <input
         type={showPassword ? 'text' : 'password'}
-        value={password}
-        maxLength={'42'}
-        onChange={e => setPassword(e.target.value)}
+        value={inputValue}
+        maxLength={'1142'}
+        onChange={handleInputChange}
         placeholder='Enter or generate your password...'
       />
 
@@ -28,7 +52,8 @@ const PasswordInput = ({ password, setPassword }) => {
           <>
             <button
               type='button'
-              onClick={() => setPassword('')}
+              onClick={() => {setInputValue('') 
+                setPassword('')}}
               className={styles.actionBtn}
               title='Clear password'
             >
