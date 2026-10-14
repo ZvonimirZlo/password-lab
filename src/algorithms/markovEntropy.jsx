@@ -69,14 +69,6 @@ export default function compareMarkovEntropy(password) {
     }
   }
 
-  // ----------------------------------------------------
-  // Defense & Safety Adjustments (Applied symmetrically)
-  // ----------------------------------------------------
-  // if (password.length < 12) {
-  //   bigramEntropy *= 0.75;
-  //   trigramEntropy *= 0.75;
-  // }
-
   const absoluteCeiling = 1400;
   
   const finalize = (val) => {
@@ -89,3 +81,5 @@ export default function compareMarkovEntropy(password) {
     trigramEntropy: finalize(trigramEntropy)
   };
 }
+
+console.log(compareMarkovEntropy('a'));

@@ -21,8 +21,6 @@ const {
   } = data
 
   const length = password.length
-
-  // console.log(isLeaked);
   
 
   // Calculate base math time
@@ -32,7 +30,6 @@ const {
 
   let seconds = log10Seconds < 0 ? 0 : Math.pow(10, log10Seconds)
   let score = Math.round(Math.min(Math.max((log10Combinations / 18) * 100, 0), 100))
-console.log(score);
 
   // -----------------------------------------------------------------
   // MANIPULATE / OVERRIDE FINAL RESULTS BASED ON VULNERABILITIES

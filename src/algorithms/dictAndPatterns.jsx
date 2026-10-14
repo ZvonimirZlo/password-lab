@@ -1,7 +1,7 @@
 import TOP_100K_BLACKLIST from '../data/passwords.json'
 
 export const isBlacklistLoaded = Boolean(TOP_100K_BLACKLIST.length > 0)
-console.log(isBlacklistLoaded)
+// console.log(isBlacklistLoaded)
 
 // Process the set once when the module loads
 const BLACKLIST_SET = new Set(TOP_100K_BLACKLIST)
