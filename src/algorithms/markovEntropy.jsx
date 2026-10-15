@@ -1,9 +1,10 @@
-import PROD_MARKOV_DATA from '../data/trained_matrix_mill23opt.json';
+import PROD_MARKOV_DATA from '../data/trained_matrix_millNoPrune.json';
+// import PROD_MARKOV_DATA from '../data/trained_matrix_mill23opt.json';
 
 // Extract both trained models from the single shared JSON asset
 const { bigramModel, trigramModel } = PROD_MARKOV_DATA;
 
-// Compute a dynamic global fallback based on your unique training alphabet
+// Compute a dynamic global fallback based on unique training alphabet
 const allTrainedChars = new Set([
   ...Object.keys(bigramModel),
   ...Object.values(bigramModel).flatMap(obj => Object.keys(obj))
@@ -11,10 +12,28 @@ const allTrainedChars = new Set([
 const globalKeyspaceSize = allTrainedChars.size || 95; // Default fallback to standard printable ASCII size
 const dynamicFallback = 1 / globalKeyspaceSize;
 
+//measures how surprising a password is to trained model
 export default function compareMarkovEntropy(password) {
   if (!password || password.length === 0) {
     return { bigramEntropy: 0, trigramEntropy: 0 };
   }
+// // Helper to detect excessive repetition or simple patterns
+//   const hasExcessiveRepeats = (str) => {
+//     // Check for single character dominance (e.g., "aaaaa")
+//     if (new Set(str).size === 1) return true;
+    
+//     // Check for repeating 2-char or 3-char chunks (e.g., "abcabcabc" or "121212")
+//     // or long runs of identical characters (e.g., 3+ same chars in a row)
+//     const consecutiveRegex = /(.)\1{2,}/;
+//     return consecutiveRegex.test(str);
+//   };
+
+//   // If the password relies heavily on repetitive patterns, cap its entropy score low
+//   if (hasExcessiveRepeats(password)) {
+//     return { bigramEntropy: 4.0, trigramEntropy: 4.0 };
+//   }
+
+
 
   // ----------------------------------------------------
   // METHOD 1: 1st-Order Bigram Entropy Calculation

@@ -7,7 +7,8 @@ const Stats = ({ password = '' }) => {
     upper: (password.match(/[A-Z]/g) || []).length,
     lower: (password.match(/[a-z]/g) || []).length,
     numbers: (password.match(/[0-9]/g) || []).length,
-    symbols: (password.match(/[^A-Za-z0-9]/g) || []).length
+    symbols: (password.match(/[^A-Za-z0-9]/g) || []).length,
+    unique: new Set(password).size
   }
 
   // Data formatted for MUI PieChart using your exact dashboard color palette
@@ -25,6 +26,10 @@ const Stats = ({ password = '' }) => {
         <div className={styles.statCard}>
           <span>Length</span>
           <strong>{stats.length}</strong>
+        </div>
+        <div className={styles.statCard}>
+          <span>Unique</span>
+          <strong>{stats.unique}</strong>
         </div>
         <div className={styles.statCard}>
           <span>Uppercase</span>
