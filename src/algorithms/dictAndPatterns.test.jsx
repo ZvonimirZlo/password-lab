@@ -51,3 +51,18 @@ describe('checkDictionaryAndPatterns()', () => {
     expect(result).toBe(true)
   })
 })
+
+describe('checkDictionaryAndPatterns() performance', () => {
+  it('should execute almost instantly even at the maximum character limit', () => {  
+    const maxInput = '6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie2'
+    const startTime = performance.now()
+
+    const score = checkDictionaryAndPatterns(maxInput)
+
+    const endTime = performance.now()
+    const duration = endTime - startTime
+
+    expect(typeof score.score).toBe('number')
+    expect(duration).toBeLessThan(5) // 5ms threshold 
+  })
+})

@@ -8,7 +8,7 @@ const shannonEntropy = (str) => {
  
   // Sum the frequency of each character.
   return Object.values(frequencies)
-    .reduce((sum, f) => sum - f / len * Math.log2(f / len), 0)
+    .reduce((sum, f) => sum - f / len * Math.log2(f / len), 0)*str.length
 }
     
 export default shannonEntropy;

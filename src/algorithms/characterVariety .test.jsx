@@ -49,10 +49,8 @@ describe('characterVariety()', () => {
 })
 
 describe('characterVariety() performance', () => {
-  it('should execute almost instantly even at the maximum 42-character limit', () => {
-    // Build a complex 42-character string (the maximum allowed length)
-    const maxInput = 'A1!aB2@bC3#cD4$dE5%eF6^fG7&gH8*hI9(iJ0)j'
-
+  it('should execute almost instantly even at the maximum character limit', () => {  
+    const maxInput = '6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie2'
     const startTime = performance.now()
 
     // Run the function
