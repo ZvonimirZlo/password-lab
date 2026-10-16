@@ -1,5 +1,6 @@
-// import PROD_MARKOV_DATA from '../data/trained_matrix_millNoPrune.json';
-import PROD_MARKOV_DATA from '../data/trained_matrix_mill23opt.json';
+import PROD_MARKOV_DATA from '../data/matrix.json';
+
+
 
 // Extract both trained models from the single shared JSON asset
 const { bigramModel, trigramModel } = PROD_MARKOV_DATA;
@@ -101,4 +102,3 @@ export default function compareMarkovEntropy(password) {
   };
 }
 
-console.log(compareMarkovEntropy('a'));

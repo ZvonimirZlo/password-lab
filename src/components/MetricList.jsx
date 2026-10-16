@@ -42,7 +42,7 @@ const MetricList = ({ password, dictResult }) => {
   // 2. Calculate all bar widths cleanly outside the metrics array
   const shannonBarWidth = useMemo(() => {
     if (!password) return 0
-    return Math.min(Math.pow(calculatedShannon / 8, 1.2) * 100, 100)
+    return Math.min(Math.pow(calculatedShannon / 100, 1.2) * 100, 100)
   }, [password, calculatedShannon])
 
   const bigramBarWidth = useMemo(() => {

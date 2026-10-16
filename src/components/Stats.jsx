@@ -95,3 +95,4 @@ const Stats = ({ password = '' }) => {
 }
 
 export default Stats
+
