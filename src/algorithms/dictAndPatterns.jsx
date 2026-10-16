@@ -32,7 +32,7 @@ function normalizePassword(input) {
     .replace(/0/g, 'o')
     .replace(/5|\$/g, 's')
     .replace(/7/g, 't')
-    .replace(/8/g, 'b'); // Added another common substitution
+    .replace(/8/g, 'b');
 }
 
 const data = password.trim();
@@ -63,7 +63,7 @@ if (BLACKLIST_SET.has(data) || BLACKLIST_SET.has(normalized)) {
   }
 
   // 3. Repeating Characters Warning
-  const hasRepeats = /(.)\1{3,}/.test(password)
+  const hasRepeats = /(.)\1{2,}/.test(password)
   if (hasRepeats) {
     return {
       score: 5,
@@ -72,7 +72,7 @@ if (BLACKLIST_SET.has(data) || BLACKLIST_SET.has(normalized)) {
     }
   }
   // Repeated patterns warning
-  if (/(.{2,4})\1+/.test(password)) {
+  if (/(.{2,8})\1+/.test(password)) {
     return {
       score: 5,
       status: 'Weak Structure',

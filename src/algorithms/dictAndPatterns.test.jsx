@@ -10,7 +10,7 @@ describe('checkDictionaryAndPatterns()', () => {
     expect(result).toBe(0)
   })
 
-    it('should handle emojis correctly without NaN or errors', () => {
+  it('should handle emojis correctly without NaN or errors', () => {
     const result = checkDictionaryAndPatterns('😀🚀🔥😀🚀🔥')
 
     expect(result.score).toBeGreaterThan(0)
@@ -33,6 +33,12 @@ describe('checkDictionaryAndPatterns()', () => {
 
   it('should return a score of 0 for a password found in the black list', () => {
     const result = checkDictionaryAndPatterns('password')
+    expect(result.score).toBe(0)
+    expect(result.status).toBe('Critical Alert')
+  })
+
+  it('should return a score of 0 for a normalized leetspeak password found in the black list', () => {
+    const result = checkDictionaryAndPatterns('p@ssw0rd')
     expect(result.score).toBe(0)
     expect(result.status).toBe('Critical Alert')
   })
@@ -74,8 +80,9 @@ describe('checkDictionaryAndPatterns()', () => {
 })
 
 describe('checkDictionaryAndPatterns() performance', () => {
-  it('should execute almost instantly even at the maximum character limit', () => {  
-    const maxInput = '6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie2'
+  it('should execute almost instantly even at the maximum character limit', () => {
+    const maxInput =
+      '6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie2'
     const startTime = performance.now()
 
     const score = checkDictionaryAndPatterns(maxInput)
@@ -84,6 +91,6 @@ describe('checkDictionaryAndPatterns() performance', () => {
     const duration = endTime - startTime
 
     expect(typeof score.score).toBe('number')
-    expect(duration).toBeLessThan(5) // 5ms threshold 
+    expect(duration).toBeLessThan(5) // 5ms threshold
   })
 })
