@@ -10,6 +10,27 @@ describe('checkDictionaryAndPatterns()', () => {
     expect(result).toBe(0)
   })
 
+    it('should handle emojis correctly without NaN or errors', () => {
+    const result = checkDictionaryAndPatterns('😀🚀🔥😀🚀🔥')
+
+    expect(result.score).toBeGreaterThan(0)
+  })
+
+  it('should work for accented or diacritic characters', () => {
+    const asciiResult = checkDictionaryAndPatterns('cafe').score
+    const unicodeResult = checkDictionaryAndPatterns('café').score
+
+    // They should both return valid numbers
+    expect(asciiResult).toBe(0) //because it's found on blacklist
+    expect(unicodeResult).toBeGreaterThan(0)
+  })
+
+  it('should handle non-Latin character sets', () => {
+    const result = checkDictionaryAndPatterns('пивт你好123マラワガ')
+
+    expect(result.score).toBeGreaterThan(0)
+  })
+
   it('should return a score of 0 for a password found in the black list', () => {
     const result = checkDictionaryAndPatterns('password')
     expect(result.score).toBe(0)
