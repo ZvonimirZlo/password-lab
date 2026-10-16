@@ -29,7 +29,7 @@ describe('shannonEntropy()', () => {
   })
 
   it('should handle non-Latin character sets', () => {
-    const result = shannonEntropy('пивт你好123マラワガ')
+    const result = shannonEntropy('пивт你好マラワガ')
 
     expect(result).toBeGreaterThan(0)
   })

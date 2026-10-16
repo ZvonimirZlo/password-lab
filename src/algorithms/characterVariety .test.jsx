@@ -46,11 +46,33 @@ describe('characterVariety()', () => {
   it('should return 25 for non alphabet letters with length >= 4', () => {
     expect(characterVariety('アァカサ')).toBe(25)
   })
+
+  it('should handle emojis correctly without NaN or errors', () => {
+    const result = characterVariety('😀🚀🔥😀🚀🔥')
+
+    expect(result).toBeGreaterThan(0)
+  })
+
+  it('should calculate entropy for accented or diacritic characters', () => {
+    const asciiResult = characterVariety('cafe')
+    const unicodeResult = characterVariety('café')
+
+    // They should both return valid numbers
+    expect(asciiResult).toBeGreaterThan(0)
+    expect(unicodeResult).toBeGreaterThan(0)
+  })
+
+  it('should handle non-Latin character sets', () => {
+    const result = characterVariety('пивт你好マラワガ')
+
+    expect(result).toBeGreaterThan(0)
+  })
 })
 
 describe('characterVariety() performance', () => {
-  it('should execute almost instantly even at the maximum character limit', () => {  
-    const maxInput = '6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie2'
+  it('should execute almost instantly even at the maximum character limit', () => {
+    const maxInput =
+      '6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie2'
     const startTime = performance.now()
 
     // Run the function
