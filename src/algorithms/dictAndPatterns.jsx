@@ -19,18 +19,34 @@ export const checkDictionaryAndPatterns = password => {
   }
   if (!password) return { score: 0, status: 'Empty', warning: null }
 
-  const data = password.trim()
-  // const lowerPass = data.toLowerCase();
+  
+  
+// Helper to normalize strings for leetspeak
+function normalizePassword(input) {
+  return input
+    .trim()
+    .toLowerCase()
+    .replace(/4|@/g, 'a')
+    .replace(/3/g, 'e')
+    .replace(/1|!|\|/g, 'i')
+    .replace(/0/g, 'o')
+    .replace(/5|\$/g, 's')
+    .replace(/7/g, 't')
+    .replace(/8/g, 'b'); // Added another common substitution
+}
 
-  //Warning in case password was found on the black list
-  if (BLACKLIST_SET.has(data)) {
-    return {
-      score: 0,
-      status: 'Critical Alert',
-      warning:
-        '⚠️ This exact password was found on the global blacklist of most compromised credentials. Do not use this.'
-    }
-  }
+const data = password.trim();
+const normalized = normalizePassword(data);
+
+// Check data and normalized blacklists
+if (BLACKLIST_SET.has(data) || BLACKLIST_SET.has(normalized)) {
+  return {
+    score: 0,
+    status: 'Critical Alert',
+    warning: '⚠️ This password or a common variation of it was found on the global blacklist of compromised credentials. Do not use this.'
+  };
+}
+
 
   // 2. Sequential Keyboard Pattern Warning
   const hasSequence =
