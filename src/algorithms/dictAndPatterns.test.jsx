@@ -50,7 +50,7 @@ describe('checkDictionaryAndPatterns()', () => {
   })
 
   it('should return a score of 5 for a password with 4 or more consecutive repeating characters', () => {
-    const result = checkDictionaryAndPatterns('!!!!')
+    const result = checkDictionaryAndPatterns('////')
     expect(result.score).toBe(5)
     expect(result.status).toBe('Weak Structure')
   })
