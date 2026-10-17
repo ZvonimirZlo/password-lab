@@ -7,7 +7,7 @@ export const isBlacklistLoaded = Boolean(TOP_100K_BLACKLIST.length > 0)
 const BLACKLIST_SET = new Set(TOP_100K_BLACKLIST)
 
 export const checkDictionaryAndPatterns = password => {
-  if (password.length <= 1) return 0
+  if (password.length <= 1) return { score: 0, status: 'Min Length' }
 
   //Warning in case black list is not loaded
   if (!isBlacklistLoaded) {

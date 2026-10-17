@@ -5,6 +5,7 @@ describe('characterVariety()', () => {
   it('should handle empty strings or null/undefined inputs safely', () => {
     expect(characterVariety('')).toBe(0)
     expect(characterVariety(null)).toBe(0)
+    expect(characterVariety(undefined)).toBe(0)
   })
 
   it('should handle passwords containing only spaces or whitespace', () => {

@@ -7,7 +7,7 @@ import {
 describe('checkDictionaryAndPatterns()', () => {
   it('should return a score of 0 for a sequence/single character string', () => {
     const result = checkDictionaryAndPatterns('a')
-    expect(result).toBe(0)
+    expect(result.score).toBe(0)
   })
 
   it('should handle emojis correctly without NaN or errors', () => {
