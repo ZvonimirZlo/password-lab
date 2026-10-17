@@ -157,6 +157,16 @@ describe('compareMarkovEntropy()', () => {
   })
 })
 
+it('should handle null or undefined input', () => {
+    expect(compareMarkovEntropy(null)).toEqual({ bigramEntropy: 0, trigramEntropy: 0 })
+    expect(compareMarkovEntropy(undefined)).toEqual({ bigramEntropy: 0, trigramEntropy: 0 })
+  })
+
+  it('should handle non-string types', () => {
+    expect(compareMarkovEntropy(12345)).toEqual({ bigramEntropy: 0, trigramEntropy: 0 })
+    expect(compareMarkovEntropy({})).toEqual({ bigramEntropy: 0, trigramEntropy: 0 })
+  })
+
 
 //Performance tests
 describe('compareMarkovEntropy() bigramEntropy performance', () => {

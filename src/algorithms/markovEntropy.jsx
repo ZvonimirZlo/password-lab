@@ -32,7 +32,7 @@ const dynamicFallback = 1 / globalKeyspaceSize
 
 //measures how surprising a password is to trained model
 export default function compareMarkovEntropy (password) {
-  if (!password || password.length === 0) {
+  if (!password || password.length === 0 || typeof password !== 'string') {
     return { bigramEntropy: 0, trigramEntropy: 0 }
   }
 
