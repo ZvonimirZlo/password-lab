@@ -146,14 +146,14 @@ describe('compareMarkovEntropy()', () => {
     expect(resultTrigram).toBeLessThan(resultBigram)
   })
 
-  it('should return similar output for 2nd order and 1st order chain for complex password', () => {
+  it('should return higher output for 2nd order chain than 1st order chain for complex password', () => {
     const resultBigram = compareMarkovEntropy(
       '}%T>SB[4v+zVZju%H5HJ8M;A_C8pJ*+RYz!OB.I=mV'
     ).bigramEntropy
     const resultTrigram = compareMarkovEntropy(
       '}%T>SB[4v+zVZju%H5HJ8M;A_C8pJ*+RYz!OB.I=mV'
     ).trigramEntropy
-    expect(resultTrigram).toBeCloseTo(resultBigram)
+    expect(resultBigram).toBeLessThan(resultTrigram)
   })
 })
 
