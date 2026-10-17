@@ -1,4 +1,7 @@
 const shannonEntropy = (str) => {
+  if (!str || typeof str !== 'string') {
+    return 0
+  }
 
   const len = str.length
  

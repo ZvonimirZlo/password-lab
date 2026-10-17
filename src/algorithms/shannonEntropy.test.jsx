@@ -2,6 +2,20 @@ import { describe, it, expect } from 'vitest'
 import shannonEntropy from './shannonEntropy'
 
 describe('shannonEntropy()', () => {
+  it('should return 0 for empty input', () => {
+    expect(shannonEntropy('')).toBe(0)
+  })
+
+  it('should handle null or undefined input', () => {
+    expect(shannonEntropy(null)).toBe(0)
+    expect(shannonEntropy(undefined)).toBe(0)
+  })
+
+  it('should handle non-string types', () => {
+    expect(shannonEntropy(12345)).toBe(0)
+    expect(shannonEntropy({})).toBe(0)
+  })
+
   it('should return 0 for a single character string', () => {
     expect(shannonEntropy('a')).toBe(0)
   })
