@@ -18,7 +18,7 @@ const PasswordInput = ({ password, setPassword }) => {
       if (inputValue !== password) {
         setPassword(inputValue)
       }
-    }, 500)
+    }, 200)
     return () => clearTimeout(timeoutId)
   }, [inputValue, password, setPassword])
 

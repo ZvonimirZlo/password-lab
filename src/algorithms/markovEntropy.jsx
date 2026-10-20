@@ -27,6 +27,8 @@ const allTrainedChars = new Set([
   ...Object.keys(bigramModel),
   ...Object.values(bigramModel).flatMap(obj => Object.keys(obj))
 ])
+
+
 const globalKeyspaceSize = allTrainedChars.size || 95 // Default fallback to standard printable ASCII size
 const dynamicFallback = 1 / globalKeyspaceSize
 

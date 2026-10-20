@@ -39,6 +39,8 @@ const MetricList = ({ password, dictResult }) => {
     })
   }, [password, calculatedMarkov, calculatedShannon, dictResult])
 
+  
+
   // 2. Calculate all bar widths cleanly outside the metrics array
   const shannonBarWidth = useMemo(() => {
     if (!password) return 0
