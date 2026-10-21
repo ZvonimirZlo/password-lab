@@ -21,6 +21,35 @@ function analyzePassword (password) {
 }
 
 describe('estimateTimeToCrack', () => {
+  it('should return 0 for empty input', () => {
+    expect(estimateTimeToCrack('')).toStrictEqual({
+      text: 'Instantly',
+      score: 0
+    })
+  })
+
+  it('should handle null or undefined input', () => {
+    expect(estimateTimeToCrack(null)).toStrictEqual({
+      text: 'Instantly',
+      score: 0
+    })
+    expect(estimateTimeToCrack(undefined)).toStrictEqual({
+      text: 'Instantly',
+      score: 0
+    })
+  })
+
+  it('should handle non-string types', () => {
+    expect(estimateTimeToCrack(12345)).toStrictEqual({
+      text: 'Instantly',
+      score: 0
+    })
+    expect(estimateTimeToCrack({})).toStrictEqual({
+      text: 'Instantly',
+      score: 0
+    })
+  })
+
   it('estimates cracking time for a weak/leaked password', () => {
     const { dictResult, result } = analyzePassword('password123')
     expect(result).toEqual({
@@ -29,7 +58,7 @@ describe('estimateTimeToCrack', () => {
     })
   })
 
-    it('detects the leet speak versions of leaked passwords', () => {
+  it('detects the simple leet speak versions of leaked passwords', () => {
     const { dictResult, result } = analyzePassword('5cr@mbl3')
     expect(result).toEqual({
       text: 'Instantly',
@@ -39,25 +68,43 @@ describe('estimateTimeToCrack', () => {
 
   it('estimates cracking time for a weak structure password', () => {
     const { dictResult, result } = analyzePassword('acvbacvb')
-    expect(result).toEqual(
-      { text: '10 Seconds or Less', 
-        score: dictResult.score }
-    )
+    expect(result).toEqual({
+      text: '10 Seconds or Less',
+      score: dictResult.score
+    })
   })
 
   it('ensures a complex password takes longer to crack than a simple one', () => {
-  const weak = analyzePassword('123456')
-  const strong = analyzePassword('Correct-Horse-Battery-Staple-99!')
+    const weak = analyzePassword('123456')
+    const strong = analyzePassword('Correct-Horse-Battery-Staple-99!')
 
-  // Assuming higher score means stronger / longer time to crack
-  expect(strong.result.score).toBeGreaterThan(weak.result.score)
-})
+    expect(strong.result.score).toBeGreaterThan(weak.result.score)
+  })
 
-it('differentiates scrambled words from complex passwords of same length, complex passwords should get higher time', () => {
-    // Note: Pass mock/actual entropy results that reflect these characteristics
+  it('differentiates scrambled words from complex passwords of same length, complex passwords should get higher time', () => {
     const scrambled = analyzePassword('dsoswrpa').result.text
     const complex = analyzePassword('P5ol*V=K').result.text
+
     expect(complex).toBe('3 hours')
     expect(scrambled).toBe('1 hours')
+  })
+
+  it('should return lower result for words that are not on the black list but Markov chain analysis is much lower than scrambled version of the same word', () => {
+    const scrambled = analyzePassword('luesaricPtmchaa').result.text
+    const word = analyzePassword('Pharmaceuticals').result.text
+
+    const scrambled1 = analyzePassword('Almdeecensntogkw').result.text
+    const word1 = analyzePassword('Acknowledgements').result.text
+
+    const scrambled2 = analyzePassword('rvmnziio').result.text
+    const word2 = analyzePassword('zvonimir').result.text
+
+    expect(word).toBe('4 minutes')
+    expect(word1).toBe('4 minutes')
+    expect(scrambled).toBe('Centuries+')
+    expect(scrambled1).toBe('Centuries+')
+
+    expect(word2).toBe('27 seconds')
+    expect(scrambled2).toBe('2 hours')
   })
 })

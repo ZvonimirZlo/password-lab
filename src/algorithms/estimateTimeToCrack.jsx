@@ -1,5 +1,5 @@
 export const estimateTimeToCrack = (password, data = {}) => {
-  if (!password) return { text: 'Instantly', score: 0 }
+  if (!password || typeof password !== 'string') return { text: 'Instantly', score: 0 }
   const length = password.length
 
   const {
