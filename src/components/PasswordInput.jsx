@@ -7,6 +7,7 @@ const PasswordInput = ({ password, setPassword }) => {
   const [copied, setCopied] = useState(false)
   const [inputValue, setInputValue] = useState(password || '')
 
+  
   useEffect(() => {
     setInputValue(password || '')
   }, [password])
@@ -24,7 +25,8 @@ const PasswordInput = ({ password, setPassword }) => {
 
   //Handles input change
   const handleInputChange = event => {
-    setInputValue(event.target.value)
+    const sanitizedValue = event.target.value.replace(/\s/g, '')
+    setInputValue(sanitizedValue)
   }
 
   //Handles password copy
