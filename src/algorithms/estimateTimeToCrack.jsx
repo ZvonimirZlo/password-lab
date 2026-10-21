@@ -23,14 +23,15 @@ export const estimateTimeToCrack = (password, data = {}) => {
   // }
 const penaltyFactor = Math.min((60 - Math.min(bigram, trigram)) / 60, 1)
 //   Softer bigram/trigram penalty (e.g., sliding penalty instead of a harsh flat drop)
-  if (bigram < 60 || trigram < 60) {
-    log10Seconds -= penaltyFactor * 0.5
-  }else if (bigram < 45 || trigram < 45) {
-    log10Seconds -= penaltyFactor * 1.5
-  }else if (bigram < 35 || trigram < 35) {
-    log10Seconds -= penaltyFactor * 2.5
-  }else if (bigram < 30 || trigram < 30) {
+// Check from strictest (lowest entropy) to loosest
+  if (bigram < 30 || trigram < 30) {
     log10Seconds -= penaltyFactor * 3.5
+  } else if (bigram < 35 || trigram < 35) {
+    log10Seconds -= penaltyFactor * 2.5
+  } else if (bigram < 45 || trigram < 45) {
+    log10Seconds -= penaltyFactor * 1.5
+  } else if (bigram < 60 || trigram < 60) {
+    log10Seconds -= penaltyFactor * 0.5
   }
 
   let seconds = log10Seconds < 0 ? 0 : Math.pow(10, log10Seconds)
@@ -125,6 +126,8 @@ const penaltyFactor = Math.min((60 - Math.min(bigram, trigram)) / 60, 1)
 
   return formatTimeText(seconds, score)
 }
+
+
 
 
 

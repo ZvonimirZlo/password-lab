@@ -32,7 +32,7 @@ function normalizePassword(input) {
     .replace(/0/g, 'o')
     .replace(/5|\$/g, 's')
     .replace(/7/g, 't')
-    .replace(/8/g, 'b');
+    .replace(/8/g, 'b')
 }
 
 const data = password.trim();
