@@ -50,6 +50,28 @@ describe('estimateTimeToCrack', () => {
     })
   })
 
+  it('should estimate strong crack times for emoji-heavy passwords', () => {
+    const emojiOnly = analyzePassword('🔑🔒🚀🔥🌟💻🎯🎨')
+
+    // Pure emoji strings should be evaluated as very secure
+    expect(emojiOnly.result.score).toBeGreaterThanOrEqual(80)
+  })
+
+  it('should calculate time for accented or diacritic characters', () => {
+    const asciiResult = analyzePassword('cafe')
+    const unicodeResult = analyzePassword('café')
+
+    // They should both return valid numbers
+    expect(asciiResult.result.score).toBe(0)
+    expect(unicodeResult.result.score).toBeGreaterThan(0)
+  })
+
+  it('should handle non-Latin character sets', () => {
+    const out = analyzePassword('пивт你好マラワガ')
+
+    expect(out.result.score).toBeGreaterThan(0)
+  })
+
   it('estimates cracking time for a weak/leaked password', () => {
     const { dictResult, result } = analyzePassword('password123')
     expect(result).toEqual({
@@ -89,7 +111,7 @@ describe('estimateTimeToCrack', () => {
     expect(scrambled).toBe('1 hours')
   })
 
-  it('should return lower result for words that are not on the black list but Markov chain analysis is much lower than scrambled version of the same word', () => {
+  it('should return lower output for words that are not on the black list but Markov chain analysis output is much lower than scrambled version of the same word', () => {
     const scrambled = analyzePassword('luesaricPtmchaa').result.text
     const word = analyzePassword('Pharmaceuticals').result.text
 
