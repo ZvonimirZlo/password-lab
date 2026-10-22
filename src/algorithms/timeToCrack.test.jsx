@@ -129,6 +129,12 @@ describe('estimateTimeToCrack', () => {
     expect(word2).toBe('27 seconds')
     expect(scrambled2).toBe('2 hours')
   })
+
+  it('should handle long existing words', () => {
+    const out = analyzePassword('Counterdemonstration')
+
+    expect(out.result.score).toBeLessThan(44)
+  })
 })
 
 describe('estimateTimeToCrack() performance', () => {

@@ -92,6 +92,14 @@ const penaltyFactor = Math.min((60 - Math.min(bigram, trigram)) / 60, 1)
     seconds = Math.min(seconds / 10000000000, 240)
   } else if(length === 16 && trigram <= 70){
     seconds = Math.min(seconds / 100000000000, 240)
+  } else if(length === 17 && trigram <= 70){
+    seconds = Math.min(seconds / 1000000000000, 240)
+  }else if(length === 18 && trigram <= 70){
+    seconds = Math.min(seconds / 10000000000000, 240)
+  }else if(length === 19 && trigram <= 70){
+    seconds = Math.min(seconds / 100000000000000, 240)
+  }else if(length === 20 && trigram <= 70){
+    seconds = Math.min(seconds / 1000000000000000, 240)
   }
 
 //Derive score exclusively from Final Time
