@@ -130,3 +130,17 @@ describe('estimateTimeToCrack', () => {
     expect(scrambled2).toBe('2 hours')
   })
 })
+
+describe('estimateTimeToCrack() performance', () => {
+  it('should execute almost instantly even at the maximum character limit', () => {
+    const maxInput =
+      '6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie2'
+    const startTime = performance.now()
+    const { result } = analyzePassword(maxInput)
+    const endTime = performance.now()
+    const duration = endTime - startTime
+
+    expect(typeof result.score).toBe('number')
+    expect(duration).toBeLessThan(10)
+  })
+})
