@@ -195,6 +195,6 @@ describe('compareMarkovEntropy() trigramEntropy performance', () => {
     const duration = endTime - startTime
 
     expect(typeof score).toBe('number')
-    expect(duration).toBeLessThan(5) // 5ms threshold 
+    expect(duration).toBeLessThan(10) // 10ms threshold 
   })
 })

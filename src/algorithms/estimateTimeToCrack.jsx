@@ -33,7 +33,7 @@ export const estimateTimeToCrack = (password, data = {}) => {
   }
 
   let seconds = log10Seconds < 0 ? 0 : Math.pow(10, log10Seconds)
-  console.log(seconds)
+
 
   //Critical Dealbreakers & Short Password Overrides
   if (length <= 2 || isLeaked.status === 'Critical Alert') {
@@ -49,7 +49,7 @@ export const estimateTimeToCrack = (password, data = {}) => {
 
   //Shannon filter tested on randomized strong passwords
   if (shannon >= 1 && shannon < 17) {
-    seconds = seconds / 10
+    seconds = seconds/10
   } else if (shannon >= 17 && shannon <= 19.7) {
     seconds = Math.min(seconds / 100, 10800) //time cap max 3 hrs
   } else if (shannon >= 19.8 && shannon <= 24) {
@@ -66,75 +66,43 @@ export const estimateTimeToCrack = (password, data = {}) => {
     seconds = Math.min(1104493320, seconds / 10000000000)
   }
 
-  //Markov filter to make sure that simple words get less seconds (time cap 2 min) then complex
-  if (length === 6 && bigram < 30) {
-    seconds = Math.min(seconds / 4, 120)
-  } else if (length === 7 && bigram < 30) {
-    seconds = Math.min(seconds / 10, 120)
-  } else if (length === 8 && bigram <= 38) {
-    seconds = Math.min(seconds / 100, 120)
-  } else if (length === 9 && trigram <= 39) {
-    seconds = Math.min(seconds / 1000, 120)
-  } else if (length === 10 && trigram <= 48) {
-    seconds = Math.min(seconds / 10000, 120)
-  } else if (length === 11 && trigram <= 55) {
-    seconds = Math.min(seconds / 100000, 120)
-  } else if (length === 12 && trigram <= 55) {
-    seconds = Math.min(seconds / 1000000, 120)
-  } else if (length === 13 && trigram <= 55) {
-    seconds = Math.min(seconds / 10000000, 240)
-  } else if (length === 14 && trigram <= 55) {
-    seconds = Math.min(seconds / 100000000, 240)
-  } else if (length === 15 && trigram <= 65) {
-    seconds = Math.min(seconds / 10000000000, 240)
-  } else if (length === 16 && trigram <= 70) {
-    seconds = Math.min(seconds / 100000000000, 240)
-  } else if (length === 17 && trigram <= 70) {
-    seconds = Math.min(seconds / 1000000000000, 240)
-  } else if (length === 18 && trigram <= 70) {
-    seconds = Math.min(seconds / 10000000000000, 240)
-  } else if (length === 19 && trigram <= 70) {
-    seconds = Math.min(seconds / 100000000000000, 240)
-  } else if (length === 20 && trigram <= 70) {
-    seconds = Math.min(seconds / 1000000000000000, 240)
-  }
+if (trigram < length * 5) seconds = Math.min(240, trigram * 4)
 
-  //Derive score exclusively from Final Time
-  const getScoreFromSeconds = sec => {
+// Derive score exclusively from Final Time (aligned with floored units)
+const getScoreFromSeconds = sec => {
     if (sec <= 1) return 0
     if (sec <= 10) return 5
     if (sec <= 60) return 10 // 1 minute
-    if (sec <= 3600) return 20 // 1 hour
+    if (sec <= 300) return 15 // 5 minutes
+    if (sec < 7200) return 20 // 1 hour
     if (sec <= 10800) return 28 // 3 hours
     if (sec <= 86400) return 35 // 1 day
     if (sec <= 604800) return 42 // 1 week
     if (sec <= 2592000) return 48 // 30 days (1 month)
     if (sec <= 31536000) return 60 // 1 year
+    if (sec <= 94608000) return 65 // 3 years
+    if (sec <= 157680000) return 67 // 5 years 
     if (sec <= 315360000) return 70 // 10 years
     if (sec <= 3153600000) return 80 // 100 years
     return 100 // 1000+ years
   }
-  console.log(seconds)
 
   const score = getScoreFromSeconds(seconds)
 
-  //Output formatter
+  // Output formatter using Math.floor
   const formatTimeText = (sec, finalScore) => {
     if (sec < 1) return { text: 'Instantly', score: finalScore }
-    if (sec < 60)
-      return { text: `${Math.round(sec)} Seconds`, score: finalScore }
-    if (sec < 3600)
-      return { text: `${Math.round(sec / 60)} Minutes`, score: finalScore }
-    if (sec < 86400)
-      return { text: `${Math.round(sec / 3600)} Hours`, score: finalScore }
-    if (sec < 31536000)
-      return { text: `${Math.round(sec / 86400)} Days`, score: finalScore }
-    if (sec < 31536000 * 1000) {
-      return { text: `${Math.round(sec / 31536000)} Years`, score: finalScore }
-    }
+    if (sec < 60) return { text: `${Math.floor(sec)} Seconds`, score: finalScore }
+    if (sec < 3600) return { text: `${Math.floor(sec / 60)} Minutes`, score: finalScore }
+    if (sec < 86400) return { text: `${Math.floor(sec / 3600)} Hours`, score: finalScore }
+    if (sec < 31536000) return { text: `${Math.floor(sec / 86400)} Days`, score: finalScore }
+    if (sec < 31536000 * 1000) return { text: `${Math.floor(sec / 31536000)} Years`, score: finalScore }
 
     return { text: 'Centuries+', score: finalScore }
   }
+console.log(seconds);
 
   return formatTimeText(seconds, score)
+
+  
 }
