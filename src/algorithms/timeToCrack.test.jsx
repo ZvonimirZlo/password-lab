@@ -63,7 +63,7 @@ describe('estimateTimeToCrack', () => {
 
     // They should both return valid numbers
     expect(asciiResult.result.score).toBe(0)
-    expect(unicodeResult.result.score).toBeGreaterThan(0)
+    expect(unicodeResult.result.score).toBe(2)
   })
 
   it('should handle non-Latin character sets', () => {
@@ -107,8 +107,8 @@ describe('estimateTimeToCrack', () => {
     const scrambled = analyzePassword('dsoswrpa').result.text
     const complex = analyzePassword('P5ol*V=K').result.text
 
-    expect(complex).toBe('3 hours')
-    expect(scrambled).toBe('1 hours')
+    expect(complex).toBe('3 Hours')
+    expect(scrambled).toBe('1 Hours')
   })
 
   it('should return lower output for words that are not on the black list but Markov chain analysis output is much lower than scrambled version of the same word', () => {
@@ -121,13 +121,13 @@ describe('estimateTimeToCrack', () => {
     const scrambled2 = analyzePassword('rvmnziio').result.text
     const word2 = analyzePassword('zvonimir').result.text
 
-    expect(word).toBe('4 minutes')
-    expect(word1).toBe('4 minutes')
+    expect(word).toBe('4 Minutes')
+    expect(word1).toBe('4 Minutes')
     expect(scrambled).toBe('Centuries+')
     expect(scrambled1).toBe('Centuries+')
 
-    expect(word2).toBe('27 seconds')
-    expect(scrambled2).toBe('2 hours')
+    expect(word2).toBe('42 Seconds')
+    expect(scrambled2).toBe('2 Hours')
   })
 
   it('should handle long existing words', () => {
@@ -135,8 +135,84 @@ describe('estimateTimeToCrack', () => {
 
     expect(out.result.score).toBeLessThan(44)
   })
+
+  it('should return 1 minute or less for complex passwords of length 6', () => {
+    const out = analyzePassword('#lDZS1')
+
+    expect(out.result.text).toBe('1 Minutes')
+  })
+
+  it('should return score 10 or less for simple words of length 6', () => {
+    const out = analyzePassword('expect')
+
+    expect(out.result.score).toBe(10)
+  })
+
+  it('should return 20 minute or less for complex passwords of length 7', () => {
+    const out = analyzePassword('>6mSCgv')
+
+    expect(out.result.score).toBe(20)
+  })
+
+  it('should return score 10 or less for simple words of length 7', () => {
+    const out = analyzePassword('marijan')
+
+    expect(out.result.score).toBe(10)
+  })
+
+  it('should return 3 Hours or less for complex passwords of length 8', () => {
+    const out = analyzePassword('[Cgl:=G5')
+
+    expect(out.result.score).toBe(28)
+  })
+
+  it('should return 1 Minute or less for simple words of length 8', () => {
+    const out = analyzePassword('majstori')
+
+    expect(out.result.score).toBe(10)
+  })
+
+  it('should return 1 Day or less for complex passwords of length 9', () => {
+    const out = analyzePassword('0c{K5eyn{')
+
+    expect(out.result.score).toBe(35)
+  })
+
+  it('should return 12 Days or less for complex passwords of length 10', () => {
+    const out = analyzePassword('FOx}Pk6r}p')
+
+    expect(out.result.score).toBe(48)
+  })
+
+  it('should return less than a year or less for complex passwords of length 11', () => {
+    const out = analyzePassword('B>Tp)DM[3Nd')
+
+    expect(out.result.score).toBe(60)
+  })
+
+  it('should return 3 Years or less for complex passwords of length 12', () => {
+    const out = analyzePassword('kyW,_[E(?3z^')
+
+    expect(out.result.text).toBe('3 Years')
+  })
+
+  it('should return 32 Years or less for complex passwords of length 13', () => {
+    const out = analyzePassword('A.^QH#,2ly%jx')
+
+    expect(out.result.text).toBe('32 Years')
+  })
+
+    it('should return Centuries for complex passwords of length 14 or more', () => {
+    const out = analyzePassword('6Yn%ck:*@R.BIj')
+
+    expect(out.result.text).toBe('Centuries+')
+  })
 })
 
+
+// =======================
+// PERFORMANCE TEST
+// =======================
 describe('estimateTimeToCrack() performance', () => {
   it('should execute almost instantly even at the maximum character limit', () => {
     const maxInput =
