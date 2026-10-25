@@ -35,9 +35,10 @@ const MetricList = ({ password, dictResult }) => {
       bigramEntropy: calculatedMarkov.bigramEntropy,
       trigramEntropy: calculatedMarkov.trigramEntropy,
       shannonEntropy: calculatedShannon,
-      isLeaked: dictResult
+      isLeaked: dictResult,
+      variety: calculatedVariety
     })
-  }, [password, calculatedMarkov, calculatedShannon, dictResult])
+  }, [password, calculatedMarkov, calculatedShannon, dictResult, calculatedVariety])
 
   
 

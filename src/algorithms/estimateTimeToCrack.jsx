@@ -7,7 +7,8 @@ export const estimateTimeToCrack = (password, data = {}) => {
     bigramEntropy: bigram = 0,
     trigramEntropy: trigram = 0,
     shannonEntropy: shannon = 0,
-    isLeaked = {}
+    isLeaked = {},
+    variety: variety = 0
   } = data
 
   // Baseline time calculation
@@ -19,24 +20,20 @@ export const estimateTimeToCrack = (password, data = {}) => {
   const log10Speed = Math.log10(guessesPerSecond)
   let log10Seconds = log10Combinations - log10Speed
 
-  console.log(log10Seconds);
-  
+  console.log(variety)
 
-  const penaltyFactor = Math.min((60 - Math.min(bigram, trigram)) / 60, 1)
-  //   Softer bigram/trigram penalty (e.g., sliding penalty instead of a harsh flat drop)
-  // Check from strictest (lowest entropy) to loosest
-  if (bigram < 30 || trigram < 30) {
-    log10Seconds -= penaltyFactor * 1.5
-  } else if (bigram < 35 || trigram < 35) {
-    log10Seconds -= penaltyFactor * 1.1
-  } else if (bigram < 45 || trigram < 45) {
-    log10Seconds -= penaltyFactor * 1
-  } else if (bigram < 60 || trigram < 60) {
-    log10Seconds -= penaltyFactor * 0.5
-  }
+  // const penaltyFactor = Math.min((60 - Math.min(bigram, trigram)) / 60, 1)
+  // if (bigram < 30 || trigram < 30) {
+  //   log10Seconds -= penaltyFactor * 1.5
+  // } else if (bigram < 35 || trigram < 35) {
+  //   log10Seconds -= penaltyFactor * 1.1
+  // } else if (bigram < 45 || trigram < 45) {
+  //   log10Seconds -= penaltyFactor * 1
+  // } else if (bigram < 60 || trigram < 60) {
+  //   log10Seconds -= penaltyFactor * 0.5
+  // }
 
   let seconds = log10Seconds < 0 ? 0 : Math.pow(10, log10Seconds)
-
 
   //Critical Dealbreakers & Short Password Overrides
   if (length <= 2 || isLeaked.status === 'Critical Alert') {
@@ -52,25 +49,26 @@ export const estimateTimeToCrack = (password, data = {}) => {
 
   //Shannon filter tested on randomized strong passwords
   if (shannon >= 1 && shannon < 17) {
-    seconds = seconds / 10
+    seconds = ((seconds / 10) * variety) / 100
   } else if (shannon >= 17 && shannon <= 19.7) {
-    seconds = Math.min(seconds / 100, 10800) //time cap max 3 hrs
+    seconds = (Math.min(seconds / 100, 10800) * variety) / 100 //time cap max 3 hrs
   } else if (shannon >= 19.8 && shannon <= 24) {
-    seconds = Math.min(seconds / 10000, 82800)//23 hrs top
+    seconds = (Math.min(seconds / 10000, 82800) * variety) / 100 //23 hrs top
   } else if (shannon > 24 && shannon <= 29) {
-    seconds = Math.min(seconds / 100000, 86400)//24hrs top
+    seconds = (Math.min(seconds / 100000, 86400) * variety) / 100 //24hrs top
   } else if (shannon > 29 && shannon < 34) {
-    seconds = Math.min(seconds / 1000000, 1468800)//17 days
+    seconds = (Math.min(seconds / 1000000, 1468800) * variety) / 100 //17 days
   } else if (shannon >= 34 && shannon < 39) {
-    seconds = Math.min(seconds / 10000000, 10540800)//122 days
+    seconds = (Math.min(seconds / 10000000, 10540800) * variety) / 100 //122 days
   } else if (shannon >= 39 && shannon <= 44) {
-    seconds = Math.min(seconds / 1000000000, 630720000)//20 years
+    seconds = (Math.min(seconds / 1000000000, 630720000) * variety) / 100 //20 years
   } else if (shannon > 44 && shannon <= 49) {
-    seconds = seconds / 10000000000
+    seconds = ((seconds / 10000000000) * variety) / 100
   }
 
-  //Logic for weaker passwords with Markov analysis as controller and time setter
-  if (trigram < length * 5) seconds = Math.min(seconds, trigram*2 + log10Seconds )
+  //Logic for weaker passwords with Markov analysis as controller
+  if (trigram < length * 5)
+    seconds = Math.min(seconds, trigram * 4 + log10Seconds)
 
   // Derive score exclusively from Final Time (aligned with floored units)
   const getScoreFromSeconds = sec => {
@@ -91,13 +89,7 @@ export const estimateTimeToCrack = (password, data = {}) => {
     return 100 // 1000+ years
   }
 
-const score = getScoreFromSeconds(seconds)
-
-
-console.log(seconds);
-
-
-
+  const score = getScoreFromSeconds(seconds)
 
   // Output formatter using Math.floor
   const formatTimeText = (sec, finalScore) => {
