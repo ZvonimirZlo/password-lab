@@ -7,7 +7,9 @@ export const isBlacklistLoaded = Boolean(TOP_100K_BLACKLIST.length > 0)
 const BLACKLIST_SET = new Set(TOP_100K_BLACKLIST)
 
 export const checkDictionaryAndPatterns = password => {
-  if (password.length <= 1) return { score: 0, status: 'Min Length' }
+  if (!password || typeof password !== 'string') {
+  return { score: 0, status: 'Empty', warning: null }
+}
 
   //Warning in case black list is not loaded
   if (!isBlacklistLoaded) {
@@ -53,9 +55,8 @@ if (BLACKLIST_SET.has(data) || BLACKLIST_SET.has(normalized)) {
     /(?:123|234|345|456|567|678|789|012|abc|bcd|cde|def|qwe|asd|zxc|dfg|čćž|ćžš|šžć|đžć|rtz|rty)/i.test(
       data
     )
-  if (hasSequence && password.length < 10) {
+  if (hasSequence) {
     return {
-      score: 5,
       status: 'Weak Structure',
       warning:
         '⚠️ Contains a highly predictable layout pattern (keyboard walk or sequence).'
@@ -66,7 +67,6 @@ if (BLACKLIST_SET.has(data) || BLACKLIST_SET.has(normalized)) {
   const hasRepeats = /(.)\1{2,}/.test(password)
   if (hasRepeats) {
     return {
-      score: 5,
       status: 'Weak Structure',
       warning: '⚠️ Contains too many consecutive repeating characters.'
     }
@@ -74,7 +74,6 @@ if (BLACKLIST_SET.has(data) || BLACKLIST_SET.has(normalized)) {
   // Repeated patterns warning
   if (/(.{2,8})\1+/.test(password)) {
     return {
-      score: 5,
       status: 'Weak Structure',
       warning: '⚠️ Avoid repeating short patterns consecutively (e.g., "abcabc").'
     }

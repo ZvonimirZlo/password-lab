@@ -1,24 +1,26 @@
+import { getChunkTrigramSurprisal } from '../algorithms/markovEntropy'
+
 export const estimateTimeToCrack = (password, data = {}) => {
   if (!password || typeof password !== 'string')
-    return { text: 'Instantly', score: 0 }
+    return { text: 'Instantly', score: 0, weakestSegment: null, warning: null }
 
   const {
-    bigramEntropy: bigram = 0,
-    trigramEntropy: trigram = 0,
-    shannonEntropy: shannon = 0,
+    // bigramEntropy: bigram = 0,
+    // trigramEntropy: trigram = 0,
+    // shannonEntropy: shannon = 0,
     isLeaked = {}
   } = data
 
   const length = [...password].length
   let pool = 0
 
-//Standard Latin keyboards
+  //Standard Latin keyboards
   if (/[a-z]/.test(password)) pool += 26
   if (/[A-Z]/.test(password)) pool += 26
   if (/[0-9]/.test(password)) pool += 10
   if (/[\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7E]/.test(password)) pool += 33
-  
-//Non-Latin
+
+  //Non-Latin
   if (/\p{Script=Cyrillic}/u.test(password)) pool += 33
   if (/[\p{Script=Hiragana}\p{Script=Katakana}]/u.test(password)) pool += 80
   if (/\p{Script=Han}/u.test(password)) pool += 2500
@@ -26,19 +28,46 @@ export const estimateTimeToCrack = (password, data = {}) => {
   const effectivePoolSize = Math.max(pool, 1)
   const guessesPerSecond = 60e10
 
-  const log10Seconds = length * Math.log10(effectivePoolSize) - Math.log10(guessesPerSecond)
+  const log10Seconds =
+    length * Math.log10(effectivePoolSize) - Math.log10(guessesPerSecond)
 
   let seconds = length === 0 ? 0 : Math.pow(10, Math.max(0, log10Seconds))
 
   // Critical Dealbreakers & Short Password Overrides
   if (length <= 2 || isLeaked.status === 'Critical Alert') {
-    return { text: 'Instantly', score: 0 }
+    return { text: 'Instantly', score: 0}
   }
   if (isLeaked.status === 'Weak Structure') {
     return { text: '10 Seconds or Less', score: 5 }
   }
 
   if (length <= 5) return { text: 'Less Than A Second', score: 0 }
+
+
+
+  let weakestSegment = null;
+  const windowSize = 4
+  let minWindowSurprisal = Infinity
+
+  if (password.length >= windowSize) {
+    for (let i = 0; i <= password.length - windowSize; i++) {
+      const chunk = password.substring(i, i + windowSize)
+      const chunkSurprisal = getChunkTrigramSurprisal(chunk)
+console.log(chunkSurprisal, chunk);
+
+      if (chunkSurprisal < minWindowSurprisal) {
+        minWindowSurprisal = chunkSurprisal
+        // Capture position and chunk content
+        weakestSegment = {
+          index: i,
+          length: windowSize,
+          chunk: chunk,
+          surprisal: chunkSurprisal
+        }
+      }
+    }
+
+  }
 
 
   // Derive score exclusively from Final Time (aligned with floored units)
@@ -57,16 +86,14 @@ export const estimateTimeToCrack = (password, data = {}) => {
     return 100 // 100+ years -> Virtually unbreakable
   }
 
-
   const score = getScoreFromSeconds(seconds)
 
-
   const formatTimeText = (sec, finalScore) => {
-    if (sec < 1) return { text: 'Instantly', score: finalScore }
+    if (sec < 1) return { text: 'Instantly', score: finalScore, weakestSegment: null, warning: null }
 
     // Less than a second
     if (sec < 60) {
-      return { text: `${Math.floor(sec)} Seconds`, score: finalScore }
+      return { text: `${Math.floor(sec)} Seconds`, score: finalScore, weakestSegment: null, warning: null }
     }
 
     //Minutes and seconds
@@ -133,5 +160,20 @@ export const estimateTimeToCrack = (password, data = {}) => {
     }
   }
 
-  return formatTimeText(seconds, score)
+  let warning = null
+
+  if (minWindowSurprisal < 20) {
+    seconds = seconds * 0.00000000000000001
+    warning = `Weak pattern detected: 
+    "${weakestSegment.chunk}",
+     Markov Chain 2nd Order: ${weakestSegment.surprisal}, start:${weakestSegment.index}, end${weakestSegment.index+4}
+     `
+  }
+
+  // return formatTimeText(seconds, score)
+  return {
+    ...formatTimeText(seconds, score),
+    weakestSegment,
+    warning
+  }
 }

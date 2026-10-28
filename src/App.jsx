@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import './App.scss'
 import PasswordInput from './components/PasswordInput'
 import MetricList from './components/MetricList'
@@ -6,21 +6,20 @@ import Stats from './components/Stats'
 import PasswordGenerator from './components/PasswordGenerator'
 import AlertBox from './components/AlertBox'
 import Footer from './components/Footer'
-import { checkDictionaryAndPatterns } from './algorithms/dictAndPatterns'
 import About from './components/About'
+import { usePasswordAnalysis } from './components/usePasswordAnalysis'
 
 export default function App () {
   const [password, setPassword] = useState('')
-
-  const dictResult = useMemo(() => {
-    return checkDictionaryAndPatterns(password)
-  }, [password])
+  
+  // All analysis bundled cleanly in one hook
+  const analysis = usePasswordAnalysis(password)
 
   return (
     <div className='password-lab'>
       <header className='lab-header'>
         <h2>Zyfr@Lab</h2>
-           <span>Password <br></br>Analyzer</span>
+        <span>Password <br />Analyzer</span>
       </header>
 
       <div className='dashboard-grid'>
@@ -41,9 +40,10 @@ export default function App () {
         <section className='lab-section analysis-section'>
           <div className='card metrics-card'>
             <h3>Security Metrics</h3>
-            <MetricList password={password} dictResult={dictResult} />
+            {/* Pass password and the analysis object down */}
+            <MetricList password={password} analysis={analysis} />
           </div>
-        <About />
+          <About />
 
           <div className='card stats-card-wrapper'>
             <h3>Statistics</h3>
@@ -52,7 +52,7 @@ export default function App () {
         </section>
       </div>
 
-      <AlertBox warning={dictResult.warning}/>
+      <AlertBox warning={analysis.warning} />
       <Footer />
     </div>
   )

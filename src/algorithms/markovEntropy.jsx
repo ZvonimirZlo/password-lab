@@ -124,3 +124,11 @@ export default function compareMarkovEntropy (password) {
     trigramEntropy: finalize(trigramEntropy)
   }
 }
+
+export function getChunkTrigramSurprisal(chunk) {
+  if (!chunk || chunk.length < 3) return 0;
+  
+  // Call your existing function and grab the trigram property
+  const result = compareMarkovEntropy(chunk);
+  return result.trigramEntropy;
+}
