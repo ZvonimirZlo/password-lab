@@ -27,7 +27,7 @@ let pool = 0
   if (/[\p{Script=Hiragana}\p{Script=Katakana}]/u.test(password)) pool += 80
   if (/\p{Script=Han}/u.test(password)) pool += 2500
 
-  const combinations = BigInt(pool) ** BigInt(len);
+  const combinations = pool >0 ? BigInt(pool) ** BigInt(len) : 0
 const formatScientific = (value, precision = 2) => {
   if (value === 0n) return '0';
 

@@ -35,7 +35,7 @@ export const estimateTimeToCrack = (password, data = {}) => {
 
   // Critical Dealbreakers & Short Password Overrides
   if (length <= 2 || isLeaked.status === 'Critical Alert') {
-    return { text: 'Instantly', score: 0}
+    return { text: 'Instantly', score: 0 }
   }
   if (isLeaked.status === 'Weak Structure') {
     return { text: '10 Seconds or Less', score: 5 }
@@ -43,9 +43,7 @@ export const estimateTimeToCrack = (password, data = {}) => {
 
   if (length <= 5) return { text: 'Less Than A Second', score: 0 }
 
-
-
-  let weakestSegment = null;
+  let weakestSegment = null
   const windowSize = 4
   let minWindowSurprisal = Infinity
 
@@ -53,7 +51,7 @@ export const estimateTimeToCrack = (password, data = {}) => {
     for (let i = 0; i <= password.length - windowSize; i++) {
       const chunk = password.substring(i, i + windowSize)
       const chunkSurprisal = getChunkTrigramSurprisal(chunk)
-console.log(chunkSurprisal, chunk);
+      console.log(chunkSurprisal, chunk)
 
       if (chunkSurprisal < minWindowSurprisal) {
         minWindowSurprisal = chunkSurprisal
@@ -66,9 +64,7 @@ console.log(chunkSurprisal, chunk);
         }
       }
     }
-
   }
-
 
   // Derive score exclusively from Final Time (aligned with floored units)
   const getScoreFromSeconds = sec => {
@@ -89,11 +85,22 @@ console.log(chunkSurprisal, chunk);
   const score = getScoreFromSeconds(seconds)
 
   const formatTimeText = (sec, finalScore) => {
-    if (sec < 1) return { text: 'Instantly', score: finalScore, weakestSegment: null, warning: null }
+    if (sec < 1)
+      return {
+        text: 'Instantly',
+        score: finalScore,
+        weakestSegment: null,
+        warning: null
+      }
 
     // Less than a second
     if (sec < 60) {
-      return { text: `${Math.floor(sec)} Seconds`, score: finalScore, weakestSegment: null, warning: null }
+      return {
+        text: `${Math.floor(sec)} Seconds`,
+        score: finalScore,
+        weakestSegment: null,
+        warning: null
+      }
     }
 
     //Minutes and seconds
@@ -166,7 +173,9 @@ console.log(chunkSurprisal, chunk);
     seconds = seconds * 0.00000000000000001
     warning = `Weak pattern detected: 
     "${weakestSegment.chunk}",
-     Markov Chain 2nd Order: ${weakestSegment.surprisal}, start:${weakestSegment.index}, end${weakestSegment.index+4}
+     Markov Chain 2nd Order: ${weakestSegment.surprisal}, start:${
+      weakestSegment.index
+    }, end${weakestSegment.index + 4}
      `
   }
 
