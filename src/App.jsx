@@ -47,7 +47,7 @@ export default function App () {
 
           <div className='card stats-card-wrapper'>
             <h3>Statistics</h3>
-            <Stats password={password} />
+            <Stats password={password} analysis={analysis.crackEstimate} />
           </div>
         </section>
       </div>

@@ -1,11 +1,9 @@
 import { PieChart } from '@mui/x-charts/PieChart'
 import styles from './Stats.module.scss'
 
-
-
-const Stats = ({ password = '' }) => {
-  const len = password.length;
-  const upper = (password.match(/[A-Z]/g) || []).length 
+const Stats = ({ password = '', analysis }) => {
+  const len = password.length
+  const upper = (password.match(/[A-Z]/g) || []).length
   const lower = (password.match(/[a-z]/g) || []).length
   const nums = (password.match(/[0-9]/g) || []).length
   const sym = (password.match(/[^A-Za-z0-9]/g) || []).length
@@ -14,48 +12,59 @@ const Stats = ({ password = '' }) => {
   // const jap = (password.match(/[\p{Script=Hiragana}\p{Script=Katakana}]/u) || []).length
   // const chn = (password.match(/\p{Script=Han}/u) || []).length
 
-let pool = 0
+  const weakest = analysis.weakestSegment === undefined ? [] : analysis.weakestSegment
+  const data = analysis.segments === undefined ? []: analysis.segments
+const strong = data ? [...data] : [];
+ console.log(data);
+  
+console.log(strong.sort((a,b)=>b.surprisal-a.surprisal)[0]||0)
+  let pool = 0
 
-//Standard Latin keyboards
+  //Standard Latin keyboards
   if (/[a-z]/.test(password)) pool += 26
   if (/[A-Z]/.test(password)) pool += 26
   if (/[0-9]/.test(password)) pool += 10
   if (/[\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7E]/.test(password)) pool += 33
-  
-//Non-Latin
+
+  //Non-Latin
   if (/\p{Script=Cyrillic}/u.test(password)) pool += 33
   if (/[\p{Script=Hiragana}\p{Script=Katakana}]/u.test(password)) pool += 80
   if (/\p{Script=Han}/u.test(password)) pool += 2500
 
-  const combinations = pool >0 ? BigInt(pool) ** BigInt(len) : 0
-const formatScientific = (value, precision = 2) => {
-  if (value === 0n) return '0';
+  const combinations = pool > 0 ? BigInt(pool) ** BigInt(len) : 0
+  const formatScientific = (value, precision = 2) => {
+    if (value === 0n) return '0'
 
-  const str = value.toString();
-  const exponent = str.length - 1;
+    const str = value.toString()
+    const exponent = str.length - 1
 
-  if (exponent === 0) return str;
+    if (exponent === 0) return str
 
-  const decimals = str
-    .slice(1, precision + 1)
-    .padEnd(precision, '0');
+    const decimals = str.slice(1, precision + 1).padEnd(precision, '0')
 
-  return `${str[0]}.${decimals} × 10${toSuperscript(exponent)}`;
-};
+    return `${str[0]}.${decimals} × 10${toSuperscript(exponent)}`
+  }
 
-const toSuperscript = (num) => {
-  const superscriptDigits = {
-    '0': '⁰', '1': '¹', '2': '²', '3': '³',
-    '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷',
-    '8': '⁸', '9': '⁹', '-': '⁻'
-  };
+  const toSuperscript = num => {
+    const superscriptDigits = {
+      0: '⁰',
+      1: '¹',
+      2: '²',
+      3: '³',
+      4: '⁴',
+      5: '⁵',
+      6: '⁶',
+      7: '⁷',
+      8: '⁸',
+      9: '⁹',
+      '-': '⁻'
+    }
 
-  return String(num)
-    .split('')
-    .map(char => superscriptDigits[char] || char)
-    .join('');
-};
-
+    return String(num)
+      .split('')
+      .map(char => superscriptDigits[char] || char)
+      .join('')
+  }
 
   const stats = {
     length: len,
@@ -107,6 +116,14 @@ const toSuperscript = (num) => {
           <span>Combinations</span>
           <strong>{formatScientific(stats.combo)}</strong>
         </div>
+        <div className={styles.statCard}>
+          <span>Weakest Segment</span>
+          <strong className={styles.elementOne}>{weakest.chunk||0}</strong>
+        </div>
+        <div className={styles.statCard}>
+          <span>Strongest Segment</span>
+          <strong className={styles.elementTwo}>{strong.sort((a,b)=>b.surprisal-a.surprisal)[0]?.chunk||0}</strong>
+        </div>
       </div>
 
       {/* Integrated Doughnut Chart for Character Distribution */}
@@ -155,4 +172,3 @@ const toSuperscript = (num) => {
 }
 
 export default Stats
-

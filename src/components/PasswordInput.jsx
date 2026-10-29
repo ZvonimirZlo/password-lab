@@ -7,11 +7,8 @@ const PasswordInput = ({ password, setPassword, analysis }) => {
   const [copied, setCopied] = useState(false)
   const [inputValue, setInputValue] = useState(password || '')
 
-  const data = analysis.weakestSegment === undefined ? [] : analysis.weakestSegment
+  // const data = analysis.weakestSegment === undefined ? [] : analysis.weakestSegment
 
-  
- console.log(data.chunk);
- 
  
  
   useEffect(() => {

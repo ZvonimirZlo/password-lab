@@ -43,45 +43,73 @@ export const estimateTimeToCrack = (password, data = {}) => {
 
   if (length <= 5) return { text: 'Less Than A Second', score: 0 }
 
-  let weakestSegment = null
-  const windowSize = 4
-  let minWindowSurprisal = Infinity
-  const segments = []
+  
+let weakestSegment = null;
+const windowSize = 4;
+let minWindowSurprisal = Infinity;
+const segments = [];
 
 
-  if (password.length >= windowSize) {
-    for (let i = 0; i <= password.length - windowSize; i++) {
-      const chunk = password.substring(i, i + windowSize)
-      const chunkSurprisal = getChunkTrigramSurprisal(chunk)
-      // console.log(chunkSurprisal, chunk)
+//Sliding window algorithm, checks for structural weaknesses - chunks below trigram 20, and pushes all chunks 
+//and stats to segments array
+if (password.length >= windowSize) {
+  for (let i = 0; i <= password.length - windowSize; i++) {
+    const chunk = password.substring(i, i + windowSize);
+    const chunkSurprisal = getChunkTrigramSurprisal(chunk);
+    
+    if (chunkSurprisal < minWindowSurprisal) {
+      minWindowSurprisal = chunkSurprisal;
       
-      if (chunkSurprisal < minWindowSurprisal) {
-        minWindowSurprisal = chunkSurprisal
-        // Capture position and chunk content
-        weakestSegment = {
-          index: i,
-          length: windowSize,
-          chunk: chunk,
-          surprisal: chunkSurprisal
+      // Dynamically expand the weakest segment if the pattern continues
+      let currentLength = windowSize;
+      let currentChunk = chunk;
+      let currentSurprisal = chunkSurprisal;
+      
+      // Expand forward as long as characters repeat (e.g., 'xxxxxxxx') 
+      // or as long as the trigram surprisal remains low for larger slices
+      while (i + currentLength < password.length) {
+        const nextChunk = password.substring(i, i + currentLength + 1);
+        const nextSurprisal = getChunkTrigramSurprisal(nextChunk);
+        
+        // If expanding maintains or captures the weak pattern, grow the segment
+        if (nextSurprisal <= 20) { 
+          currentLength++;
+          currentChunk = nextChunk;
+          currentSurprisal = nextSurprisal;
+        } else {
+          break;
         }
       }
-       segments.push({
-        id: i,
-        chunk,
-        surprisal: chunkSurprisal,
-      });
+
+      // Capture position and expanded chunk content
+      weakestSegment = {
+        index: i,
+        length: currentLength,
+        chunk: currentChunk,
+        surprisal: currentSurprisal
+      };
     }
+    
+    segments.push({
+      id: i,
+      chunk,
+      surprisal: chunkSurprisal,
+    });
   }
+}
 
-let warning = null
+console.log(segments);
 
-  if (minWindowSurprisal < 20) {
-    seconds = seconds * 0.001
-    warning = `Weak pattern detected: 
-    "${weakestSegment.chunk}",`
-  }
-  // console.log(segments.filter(x => x.surprisal <= 20));
-  
+let warning = null;
+
+if (minWindowSurprisal < 20 && weakestSegment) {
+  seconds = seconds * 0.001;
+  warning = `Weak pattern detected: "${weakestSegment.chunk}"`;
+}
+
+
+
+
 
   // Derive score exclusively from Final Time (aligned with floored units)
   const getScoreFromSeconds = sec => {
