@@ -1,7 +1,9 @@
 import { PieChart } from '@mui/x-charts/PieChart'
 import styles from './Stats.module.scss'
+import { useState } from 'react'
 
 const Stats = ({ password = '', analysis }) => {
+  const [showAllChunks, setShowAllChunks] = useState(false)
   const len = password.length
   const upper = (password.match(/[A-Z]/g) || []).length
   const lower = (password.match(/[a-z]/g) || []).length
@@ -12,12 +14,13 @@ const Stats = ({ password = '', analysis }) => {
   // const jap = (password.match(/[\p{Script=Hiragana}\p{Script=Katakana}]/u) || []).length
   // const chn = (password.match(/\p{Script=Han}/u) || []).length
 
-  const weakest = analysis.weakestSegment === undefined ? [] : analysis.weakestSegment
-  const data = analysis.segments === undefined ? []: analysis.segments
-const strong = data ? [...data] : [];
- console.log(data);
-  
-console.log(strong.sort((a,b)=>b.surprisal-a.surprisal)[0]||0)
+  const weakest =
+    analysis.weakestSegment === undefined ? [] : analysis.weakestSegment
+  const data = analysis.segments === undefined ? [] : analysis.segments
+  const strong = data ? [...data] : []
+  console.log(data)
+
+  console.log(strong.sort((a, b) => b.surprisal - a.surprisal)[0] || 0)
   let pool = 0
 
   //Standard Latin keyboards
@@ -118,16 +121,45 @@ console.log(strong.sort((a,b)=>b.surprisal-a.surprisal)[0]||0)
         </div>
         <div className={styles.statCard}>
           <span>Weakest Segment</span>
-          <strong className={styles.elementOne}>{weakest.chunk||0}</strong>
+          <strong className={styles.elementOne}>{weakest.chunk || 0}</strong>
         </div>
-        <div className={styles.statCard}>
-          <span>Strongest Segment</span>
-          <strong className={styles.elementTwo}>{strong.sort((a,b)=>b.surprisal-a.surprisal)[0]?.chunk||0}</strong>
+        {/* New Dropdown Toggle Card */}
+        <div
+          className={`${styles.statCard} ${styles.clickableCard}`}
+          onClick={() => setShowAllChunks(!showAllChunks)}
+        >
+          <span>All Chunks ({data.length})</span>
+          <strong className={styles.toggleText}>
+            {showAllChunks ? 'Hide Details ▲' : 'View Details ▼'}
+          </strong>
         </div>
       </div>
 
       {/* Integrated Doughnut Chart for Character Distribution */}
       <div className={styles.chartContainer}>
+                {/* Collapsible Dropdown Drawer / List */}
+        {showAllChunks && (
+          <div className={styles.chunkDropdownContainer}>
+            <h4>Stats Breakdown</h4>
+            <div className={styles.chunkList}>
+              {data.map(item => (
+                <div key={item.id} className={styles.chunkRow}>
+                  <span className={styles.chunkId}>#{item.id + 1}</span>
+                  <code className={styles.chunkCode}>"{item.chunk}"</code>
+                  <span
+                    className={
+                      item.surprisal < 20
+                        ? styles.lowSurprisal
+                        : styles.normalSurprisal
+                    }
+                  >
+                    {item.surprisal.toFixed(1)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         <div className={styles.chartHeader}>
           <span>Character Distribution</span>
           <span>{stats.length} chars</span>
