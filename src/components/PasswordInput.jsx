@@ -2,12 +2,18 @@ import { FiEye, FiEyeOff, FiCopy, FiCheck, FiX } from 'react-icons/fi'
 import { useState, useEffect } from 'react'
 import styles from './PasswordInput.module.scss'
 
-const PasswordInput = ({ password, setPassword }) => {
+const PasswordInput = ({ password, setPassword, analysis }) => {
   const [showPassword, setShowPassword] = useState(false)
   const [copied, setCopied] = useState(false)
   const [inputValue, setInputValue] = useState(password || '')
 
+  const data = analysis.weakestSegment === undefined ? [] : analysis.weakestSegment
+
   
+ console.log(data.chunk);
+ 
+ 
+ 
   useEffect(() => {
     setInputValue(password || '')
   }, [password])
@@ -89,3 +95,5 @@ const PasswordInput = ({ password, setPassword }) => {
 }
 
 export default PasswordInput
+
+

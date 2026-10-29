@@ -26,7 +26,7 @@ export default function App () {
         <section className='lab-section input-generator-section'>
           <div className='card'>
             <h3>Password Input</h3>
-            <PasswordInput password={password} setPassword={setPassword} />
+            <PasswordInput password={password} setPassword={setPassword} analysis={analysis.crackEstimate}/>
           </div>
 
           <div className='card'>

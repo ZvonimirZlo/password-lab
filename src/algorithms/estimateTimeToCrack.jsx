@@ -38,7 +38,7 @@ export const estimateTimeToCrack = (password, data = {}) => {
     return { text: 'Instantly', score: 0 }
   }
   if (isLeaked.status === 'Weak Structure') {
-    return { text: '10 Seconds or Less', score: 5 }
+    seconds = seconds * 0.00001
   }
 
   if (length <= 5) return { text: 'Less Than A Second', score: 0 }
@@ -46,13 +46,15 @@ export const estimateTimeToCrack = (password, data = {}) => {
   let weakestSegment = null
   const windowSize = 4
   let minWindowSurprisal = Infinity
+  const segments = []
+
 
   if (password.length >= windowSize) {
     for (let i = 0; i <= password.length - windowSize; i++) {
       const chunk = password.substring(i, i + windowSize)
       const chunkSurprisal = getChunkTrigramSurprisal(chunk)
-      console.log(chunkSurprisal, chunk)
-
+      // console.log(chunkSurprisal, chunk)
+      
       if (chunkSurprisal < minWindowSurprisal) {
         minWindowSurprisal = chunkSurprisal
         // Capture position and chunk content
@@ -63,8 +65,23 @@ export const estimateTimeToCrack = (password, data = {}) => {
           surprisal: chunkSurprisal
         }
       }
+       segments.push({
+        id: i,
+        chunk,
+        surprisal: chunkSurprisal,
+      });
     }
   }
+
+let warning = null
+
+  if (minWindowSurprisal < 20) {
+    seconds = seconds * 0.001
+    warning = `Weak pattern detected: 
+    "${weakestSegment.chunk}",`
+  }
+  // console.log(segments.filter(x => x.surprisal <= 20));
+  
 
   // Derive score exclusively from Final Time (aligned with floored units)
   const getScoreFromSeconds = sec => {
@@ -167,22 +184,12 @@ export const estimateTimeToCrack = (password, data = {}) => {
     }
   }
 
-  let warning = null
-
-  if (minWindowSurprisal < 20) {
-    seconds = seconds * 0.00000000000000001
-    warning = `Weak pattern detected: 
-    "${weakestSegment.chunk}",
-     Markov Chain 2nd Order: ${weakestSegment.surprisal}, start:${
-      weakestSegment.index
-    }, end${weakestSegment.index + 4}
-     `
-  }
 
   // return formatTimeText(seconds, score)
   return {
     ...formatTimeText(seconds, score),
     weakestSegment,
-    warning
+    warning,
+    segments
   }
 }
