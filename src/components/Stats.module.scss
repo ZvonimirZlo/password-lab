@@ -98,9 +98,9 @@
       color: rgb(175, 28, 28);
     }
 
-        .elementTwo {
+    .elementTwo {
       color: rgb(46, 167, 46);
-        }
+    }
     // --------------------------------------------------------
     // Value
     // --------------------------------------------------------
@@ -238,27 +238,29 @@
 }
 
 // ============================================================
-// ACCESSIBILITY
+// DROPDOWN ANALYSIS DETAILS
 // ============================================================
 
-@media (prefers-reduced-motion: reduce) {
-  .statCard {
-    transition: none;
-  }
-
-  .statCard strong {
-    transition: none;
-  }
-}
-
+// Focus accessibility outline for the clickable card
 .clickableCard {
   cursor: pointer;
   border-color: rgba(56, 189, 248, 0.3);
-  
+
   &:hover {
     border-color: rgba(56, 189, 248, 0.6);
   }
+
+  &:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px;
+  }
+
+  .toggleText {
+    color:#67e8f9;;
+  }
 }
+
+
 
 .chunkDropdownContainer {
   background: rgba(9, 14, 26, 0.95);
@@ -278,13 +280,34 @@
     margin: 0;
   }
 
+  // Custom Scrollbar for the chunk list dropdown
   .chunkList {
     max-height: 200px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
-    padding-right: 0.25rem;
+    padding-right: 0.35rem;
+
+    // Webkit scrollbar styling (Chrome, Edge, Safari)
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(9, 14, 26, 0.5);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.2);
+      border-radius: 3px;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: rgba(56, 189, 248, 0.4);
+      }
+    }
 
     .chunkRow {
       display: flex;
@@ -318,7 +341,28 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
+// ============================================================
+// ACCESSIBILITY
+// ============================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .statCard {
+    transition: none;
+  }
+
+  .statCard strong {
+    transition: none;
+  }
+}
+
 

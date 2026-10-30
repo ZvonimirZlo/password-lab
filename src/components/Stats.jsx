@@ -121,23 +121,31 @@ const Stats = ({ password = '', analysis }) => {
         </div>
         <div className={styles.statCard}>
           <span>Weakest Segment</span>
-          <strong className={styles.elementOne}>{weakest.chunk || 0}</strong>
+          <strong className={styles.elementOne}>{weakest.chunk || ''}</strong>
         </div>
-        {/* New Dropdown Toggle Card */}
+        {/*Dropdown Toggle Card */}
         <div
           className={`${styles.statCard} ${styles.clickableCard}`}
           onClick={() => setShowAllChunks(!showAllChunks)}
+          role='button'
+          tabIndex={0}
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setShowAllChunks(!showAllChunks)
+            }
+          }}
         >
-          <span>All Chunks ({data.length})</span>
-          <strong className={styles.toggleText}>
+          <span>All Segments ({data.length})</span>
+          <div className={styles.toggleText}>
             {showAllChunks ? 'Hide Details ▲' : 'View Details ▼'}
-          </strong>
+          </div>
         </div>
       </div>
 
       {/* Integrated Doughnut Chart for Character Distribution */}
       <div className={styles.chartContainer}>
-                {/* Collapsible Dropdown Drawer / List */}
+        {/* Collapsible Dropdown Drawer / List */}
         {showAllChunks && (
           <div className={styles.chunkDropdownContainer}>
             <h4>Stats Breakdown</h4>
@@ -148,12 +156,12 @@ const Stats = ({ password = '', analysis }) => {
                   <code className={styles.chunkCode}>"{item.chunk}"</code>
                   <span
                     className={
-                      item.surprisal < 20
+                      item.surprisal < 25
                         ? styles.lowSurprisal
                         : styles.normalSurprisal
                     }
                   >
-                    {item.surprisal.toFixed(1)}
+                    {item.surprisal.toFixed(1)}<span> bits</span>
                   </span>
                 </div>
               ))}
