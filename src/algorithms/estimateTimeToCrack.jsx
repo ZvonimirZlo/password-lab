@@ -11,6 +11,8 @@ export const estimateTimeToCrack = (password, data = {}) => {
     isLeaked = {}
   } = data
 
+  console.log(data.isLeaked)
+
   const length = [...password].length
   let pool = 0
 
@@ -38,78 +40,71 @@ export const estimateTimeToCrack = (password, data = {}) => {
     return { text: 'Instantly', score: 0 }
   }
   if (isLeaked.status === 'Weak Structure') {
-    seconds = seconds * 0.00001
+    seconds = seconds * 0.0000001
   }
 
   if (length <= 5) return { text: 'Less Than A Second', score: 0 }
 
-  
-let weakestSegment = null;
-const windowSize = 4;
-let minWindowSurprisal = Infinity;
-const segments = [];
+  let weakestSegment = null
+  const windowSize = 4
+  let minWindowSurprisal = Infinity
+  const segments = []
 
+  //Sliding window algorithm, checks for structural weaknesses - chunks below trigram 20, and pushes all chunks
+  //and stats to segments array
+  if (password.length >= windowSize) {
+    for (let i = 0; i <= password.length - windowSize; i++) {
+      const chunk = password.substring(i, i + windowSize)
+      const chunkSurprisal = getChunkTrigramSurprisal(chunk)
 
-//Sliding window algorithm, checks for structural weaknesses - chunks below trigram 20, and pushes all chunks 
-//and stats to segments array
-if (password.length >= windowSize) {
-  for (let i = 0; i <= password.length - windowSize; i++) {
-    const chunk = password.substring(i, i + windowSize);
-    const chunkSurprisal = getChunkTrigramSurprisal(chunk);
-    
-    if (chunkSurprisal < minWindowSurprisal) {
-      minWindowSurprisal = chunkSurprisal;
-      
-      // Dynamically expand the weakest segment if the pattern continues
-      let currentLength = windowSize;
-      let currentChunk = chunk;
-      let currentSurprisal = chunkSurprisal;
-      
-      // Expand forward as long as characters repeat (e.g., 'xxxxxxxx') 
-      // or as long as the trigram surprisal remains low for larger slices
-      while (i + currentLength < password.length) {
-        const nextChunk = password.substring(i, i + currentLength + 1);
-        const nextSurprisal = getChunkTrigramSurprisal(nextChunk);
-        
-        // If expanding maintains or captures the weak pattern, grow the segment
-        if (nextSurprisal <= 20) { 
-          currentLength++;
-          currentChunk = nextChunk;
-          currentSurprisal = nextSurprisal;
-        } else {
-          break;
+      if (chunkSurprisal < minWindowSurprisal) {
+        minWindowSurprisal = chunkSurprisal
+
+        // Dynamically expand the weakest segment if the pattern continues
+        let currentLength = windowSize
+        let currentChunk = chunk
+        let currentSurprisal = chunkSurprisal
+
+        // Expand forward as long as characters repeat (e.g., 'xxxxxxxx')
+        // or as long as the trigram surprisal remains low for larger slices
+        while (i + currentLength < password.length) {
+          const nextChunk = password.substring(i, i + currentLength + 1)
+          const nextSurprisal = getChunkTrigramSurprisal(nextChunk)
+
+          // If expanding maintains or captures the weak pattern, grow the segment
+          if (nextSurprisal <= 20) {
+            currentLength++
+            currentChunk = nextChunk
+            currentSurprisal = nextSurprisal
+          } else {
+            break
+          }
+        }
+
+        // Capture position and expanded chunk content
+        weakestSegment = {
+          index: i,
+          length: currentLength,
+          chunk: currentChunk,
+          surprisal: currentSurprisal
         }
       }
 
-      // Capture position and expanded chunk content
-      weakestSegment = {
-        index: i,
-        length: currentLength,
-        chunk: currentChunk,
-        surprisal: currentSurprisal
-      };
+      segments.push({
+        id: i,
+        chunk,
+        surprisal: chunkSurprisal
+      })
     }
-    
-    segments.push({
-      id: i,
-      chunk,
-      surprisal: chunkSurprisal,
-    });
   }
-}
-
-console.log(segments);
-
-let warning = null;
-
-if (minWindowSurprisal < 20 && weakestSegment) {
-  seconds = seconds * 0.001;
-  warning = `Weak pattern detected: "${weakestSegment.chunk}"`;
-}
 
 
+  let warning = null
 
-
+  if (minWindowSurprisal < 20 && weakestSegment) {
+    seconds = seconds * 0.001
+    warning = `Weak pattern detected: "${weakestSegment.chunk}"`
+  }
 
   // Derive score exclusively from Final Time (aligned with floored units)
   const getScoreFromSeconds = sec => {
@@ -205,13 +200,46 @@ if (minWindowSurprisal < 20 && weakestSegment) {
       }
     }
 
+    //Scientific formatter
+    const formatScientific = (value, precision = 2) => {
+      if (value === 0n) return '0'
+
+      const str = value.toString()
+      const exponent = str.length - 1
+
+      if (exponent === 0) return str
+
+      const decimals = str.slice(1, precision + 1).padEnd(precision, '0')
+
+      return `${str[0]}${decimals} × 10${toSuperscript(exponent)}`
+    }
+
+    const toSuperscript = num => {
+      const superscriptDigits = {
+        0: '⁰',
+        1: '¹',
+        2: '²',
+        3: '³',
+        4: '⁴',
+        5: '⁵',
+        6: '⁶',
+        7: '⁷',
+        8: '⁸',
+        9: '⁹',
+        '-': '⁻'
+      }
+
+      return String(num)
+        .split('')
+        .map(char => superscriptDigits[char] || char)
+        .join('')
+    }
     //Above trillion
     return {
-      text: `${years.toExponential(1).replace('e+', 'x10^')} Years`,
+      text: `${formatScientific(years)} Years`,
       score: finalScore
     }
   }
-
 
   // return formatTimeText(seconds, score)
   return {

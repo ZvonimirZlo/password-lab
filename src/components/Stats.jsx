@@ -18,9 +18,9 @@ const Stats = ({ password = '', analysis }) => {
     analysis.weakestSegment === undefined ? [] : analysis.weakestSegment
   const data = analysis.segments === undefined ? [] : analysis.segments
   const strong = data ? [...data] : []
-  console.log(data)
+  // console.log(data)
 
-  console.log(strong.sort((a, b) => b.surprisal - a.surprisal)[0] || 0)
+  // console.log(strong.sort((a, b) => b.surprisal - a.surprisal)[0] || 0)
   let pool = 0
 
   //Standard Latin keyboards
@@ -34,7 +34,10 @@ const Stats = ({ password = '', analysis }) => {
   if (/[\p{Script=Hiragana}\p{Script=Katakana}]/u.test(password)) pool += 80
   if (/\p{Script=Han}/u.test(password)) pool += 2500
 
+  //Possible combinations
   const combinations = pool > 0 ? BigInt(pool) ** BigInt(len) : 0
+  
+  //Scientific formatter
   const formatScientific = (value, precision = 2) => {
     if (value === 0n) return '0'
 
