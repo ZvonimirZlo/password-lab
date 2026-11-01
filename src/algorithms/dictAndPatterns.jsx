@@ -27,14 +27,14 @@ function findBlacklistMatch(data, normalized) {
   for (let length = len; length >= 3; length--) {
     for (let i = 0; i <= len - length; i++) {
       const subData = data.substr(i, length)
-      const subNorm = normalized.substr(i, length)
+      // const subNorm = normalized.substr(i, length)
 
       if (BLACKLIST_SET.has(subData)) {
         return { start: i, end: i + length, matchedText: subData, matchType: 'blacklist-substring' }
       }
-      if (BLACKLIST_SET.has(subNorm)) {
-        return { start: i, end: i + length, matchedText: subNorm, matchType: 'blacklist-normalized' }
-      }
+      // if (BLACKLIST_SET.has(subNorm)) {
+      //   return { start: i, end: i + length, matchedText: subNorm, matchType: 'blacklist-normalized' }
+      // }
     }
   }
   return null
@@ -59,7 +59,6 @@ export const checkDictionaryAndPatterns = password => {
   const normalized = normalizePassword(data)
 
   // 1. Check Dictionary Blacklists
-  // Since the whole password matches the dictionary, the index is usually 0 to data.length
   if (BLACKLIST_SET.has(data)) {
     return {
       score: 0,
@@ -68,19 +67,7 @@ export const checkDictionaryAndPatterns = password => {
       position: { start: 0, end: data.length, matchType: 'exact' }
     }
   }
-
-  // 1. Check Dictionary & Substring Blacklists efficiently
-  const dictionaryMatch = findBlacklistMatch(data,normalized)
-  if (dictionaryMatch) {
-    const { start, end, matchedText } = dictionaryMatch
-    return {
-      score: 0,
-      status: 'Critical Alert',
-      position: dictionaryMatch,
-      warning: `"${matchedText}" ⚠️ This password or a portion of it was found on the global blacklist of compromised credentials.`,
-    }
-  }
-  
+  //Check leetspeak version of blacklisted password
   if (BLACKLIST_SET.has(normalized)) {
     return {
       score: 0,
@@ -90,7 +77,7 @@ export const checkDictionaryAndPatterns = password => {
     }
   }
 
-  // 2. Sequential Keyboard Pattern Warning (using .exec() to get index)
+  // Sequential Keyboard Pattern Warning (using .exec() to get index)
   const sequenceRegex = /(?:123|234|345|456|567|678|789|012|abc|bcd|cde|def|qwe|asd|zxc|dfg|čćž|ćžš|šžć|đžć|rtz|rty)/i
   const sequenceMatch = sequenceRegex.exec(data)
   
@@ -107,7 +94,7 @@ export const checkDictionaryAndPatterns = password => {
     }
   }
 
-  // 3. Repeating Characters Warning
+  // Repeating Characters Warning
   const repeatRegex = /(.)\1{2,}/
   const repeatMatch = repeatRegex.exec(password)
   
@@ -124,7 +111,7 @@ export const checkDictionaryAndPatterns = password => {
     }
   }
 
-  // 4. Repeated Patterns Warning (e.g., "abcabc")
+  // Repeated Patterns Warning (e.g., "abcabc")
   const patternRegex =/(.{2,8})\1+/
   const patternMatch = patternRegex.exec(password)
   
@@ -138,6 +125,17 @@ export const checkDictionaryAndPatterns = password => {
         matchedText: patternMatch[0],
         matchType: 'repeated-pattern'
       }
+    }
+  }
+
+    // Check Dictionary & Substring Blacklists 
+  const dictionaryMatch = findBlacklistMatch(data,normalized)
+  if (dictionaryMatch) {
+    const { matchedText } = dictionaryMatch
+    return {
+      status: 'Weak Structure',
+      position: dictionaryMatch,
+      warning: `"${matchedText}" ⚠️ This password or a portion of it was found on the global blacklist of compromised credentials.`,
     }
   }
 

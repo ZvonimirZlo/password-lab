@@ -17,7 +17,7 @@ const Stats = ({ password = '', analysis }) => {
   const weakest =
     analysis.weakestSegment === undefined ? [] : analysis.weakestSegment
   const data = analysis.segments === undefined ? [] : analysis.segments
-  const strong = data ? [...data] : []
+
   // console.log(data)
 
   // console.log(strong.sort((a, b) => b.surprisal - a.surprisal)[0] || 0)
@@ -36,7 +36,7 @@ const Stats = ({ password = '', analysis }) => {
 
   //Possible combinations
   const combinations = pool > 0 ? BigInt(pool) ** BigInt(len) : 0
-  
+
   //Scientific formatter
   const formatScientific = (value, precision = 2) => {
     if (value === 0n) return '0'
@@ -153,6 +153,8 @@ const Stats = ({ password = '', analysis }) => {
           <div className={styles.chunkDropdownContainer}>
             <h4>Stats Breakdown</h4>
             <div className={styles.chunkList}>
+                          <div className={styles.desc}><span>num</span><span>chunk</span> 
+            <span>trigram</span> <span>entropy</span></div>
               {data.map(item => (
                 <div key={item.id} className={styles.chunkRow}>
                   <span className={styles.chunkId}>#{item.id + 1}</span>
@@ -164,7 +166,18 @@ const Stats = ({ password = '', analysis }) => {
                         : styles.normalSurprisal
                     }
                   >
-                    {item.surprisal.toFixed(1)}<span> bits</span>
+                    {item.surprisal.toFixed(1)}
+                    <span> bits</span>
+                  </span>
+                  <span
+                    className={
+                      item.entropy < 1.5
+                        ? styles.lowSurprisal
+                        : styles.normalSurprisal
+                    }
+                  >
+                    {item.entropy.toFixed(1)}
+                    <span> bits</span>
                   </span>
                 </div>
               ))}

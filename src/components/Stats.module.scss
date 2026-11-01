@@ -289,6 +289,16 @@
     gap: 0.4rem;
     padding-right: 0.35rem;
 
+    .desc {
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      padding: 0rem 0.6rem;
+  }
+
     // Webkit scrollbar styling (Chrome, Edge, Safari)
     &::-webkit-scrollbar {
       width: 6px;

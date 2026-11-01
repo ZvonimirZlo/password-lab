@@ -1,17 +1,10 @@
 import { getChunkTrigramSurprisal } from '../algorithms/markovEntropy'
 
-export const estimateTimeToCrack = (password, data = {}) => {
+export const estimateTimeToCrack = (password, analysis) => {
   if (!password || typeof password !== 'string')
     return { text: 'Instantly', score: 0, weakestSegment: null, warning: null }
 
-  const {
-    // bigramEntropy: bigram = 0,
-    // trigramEntropy: trigram = 0,
-    // shannonEntropy: shannon = 0,
-    isLeaked = {}
-  } = data
-
-  console.log(data.isLeaked)
+  const { isLeaked = {} } = analysis
 
   const length = [...password].length
   let pool = 0
@@ -30,17 +23,36 @@ export const estimateTimeToCrack = (password, data = {}) => {
   const effectivePoolSize = Math.max(pool, 1)
   const guessesPerSecond = 60e10
 
-  const log10Seconds =
-    length * Math.log10(effectivePoolSize) - Math.log10(guessesPerSecond)
-
-  let seconds = length === 0 ? 0 : Math.pow(10, Math.max(0, log10Seconds))
+  // Helper to calculate seconds given a specific length
+  const getSecondsForLength = len => {
+    if (len === 0) return 0
+    const log10Secs =
+      len * Math.log10(effectivePoolSize) - Math.log10(guessesPerSecond)
+    return Math.pow(10, Math.max(0, log10Secs))
+  }
 
   // Critical Dealbreakers & Short Password Overrides
   if (length <= 2 || isLeaked.status === 'Critical Alert') {
     return { text: 'Instantly', score: 0 }
   }
-  if (isLeaked.status === 'Weak Structure') {
-    seconds = seconds * 0.0000001
+
+  //Shannon entropy helper function, calculates entropy per char
+  const shannon = str => {
+    if (!str || typeof str !== 'string') {
+      return 0
+    }
+    const len = str.length
+
+    // Build a frequency map from the string.
+    const frequencies = str
+      .split('')
+      .reduce((freq, curr) => (freq[curr] = (freq[curr] || 0) + 1) && freq, {})
+
+    // Sum the frequency of each character.
+    return Object.values(frequencies).reduce(
+      (sum, f) => sum - (f / len) * Math.log2(f / len),
+      0
+    )
   }
 
   if (length <= 5) return { text: 'Less Than A Second', score: 0 }
@@ -56,6 +68,7 @@ export const estimateTimeToCrack = (password, data = {}) => {
     for (let i = 0; i <= password.length - windowSize; i++) {
       const chunk = password.substring(i, i + windowSize)
       const chunkSurprisal = getChunkTrigramSurprisal(chunk)
+      const entropy = shannon(chunk)
 
       if (chunkSurprisal < minWindowSurprisal) {
         minWindowSurprisal = chunkSurprisal
@@ -65,14 +78,15 @@ export const estimateTimeToCrack = (password, data = {}) => {
         let currentChunk = chunk
         let currentSurprisal = chunkSurprisal
 
-        // Expand forward as long as characters repeat (e.g., 'xxxxxxxx')
-        // or as long as the trigram surprisal remains low for larger slices
+       //Expands the window if weak parts are longer than 4, (example: aaaaaaa)
         while (i + currentLength < password.length) {
+          const nextChar = password[i + currentLength]
+          const prevChar = password[i + currentLength - 1]
           const nextChunk = password.substring(i, i + currentLength + 1)
           const nextSurprisal = getChunkTrigramSurprisal(nextChunk)
 
-          // If expanding maintains or captures the weak pattern, grow the segment
-          if (nextSurprisal <= 20) {
+          // If it's a repeating character streak OR low surprisal, grow the segment
+          if (nextChar === prevChar || nextSurprisal <= 20) {
             currentLength++
             currentChunk = nextChunk
             currentSurprisal = nextSurprisal
@@ -93,16 +107,46 @@ export const estimateTimeToCrack = (password, data = {}) => {
       segments.push({
         id: i,
         chunk,
-        surprisal: chunkSurprisal
+        surprisal: chunkSurprisal,
+        entropy: entropy
       })
     }
   }
 
+  // Determine the effective password string by removing weak/leaked parts
+  let effectivePassword = password
 
+  //Weak structure penalizer, slices out the weak part and calculates time
+  //on rest of the password
+  if (isLeaked.status === 'Weak Structure') {
+    const { start, end } = isLeaked.position
+    // Safely slice out the weak part
+    const first = password.slice(0, start)
+    const second = password.slice(end)
+    effectivePassword = first + second
+    console.log(effectivePassword, password.slice(start, end))
+  }
+
+  //Weakest segment penalizer
+  if (weakestSegment.surprisal <= 20) {
+    // Safely slice out the weak part
+    const first = password.slice(0, weakestSegment.index)
+    const second = password.slice(weakestSegment.index + weakestSegment.length)
+    effectivePassword = first + second
+    // const weak = password.slice(weakestSegment.index, weakestSegment.index+weakestSegment.length)
+  }
+
+  // Calculate seconds using the length of the *remaining* strong parts
+  let seconds = getSecondsForLength(effectivePassword.length)
+
+  // //Reduces the time if there is more than one structural weakness
+  // const structuralWeakness = Math.max(1, segments.filter(x => x.surprisal < 25).length)
+
+  // if(structuralWeakness > 1 && isLeaked.status === 'Clear') seconds = seconds / structuralWeakness
   let warning = null
 
   if (minWindowSurprisal < 20 && weakestSegment) {
-    seconds = seconds * 0.001
+    // seconds = seconds * 0.5
     warning = `Weak pattern detected: "${weakestSegment.chunk}"`
   }
 
