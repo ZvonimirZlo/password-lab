@@ -185,35 +185,12 @@ describe('estimateTimeToCrack', () => {
     expect(out.result.score).toBe(65)
   })
 
-  it('should remove compromised part of the password from effective part of the password', () => {
+  it('should ignore compromised part of the password from effective part of the password when calculating', () => {
     const resultWithWeak = analyzePassword('G$d?9spasswordWN').score
     const resultWithoutWeak = analyzePassword('G$d?9sWN').score
     expect(resultWithWeak).toEqual(resultWithoutWeak)
   })
 
-  //   it('should return less than a year or less for complex passwords of length 11', () => {
-  //     const out = analyzePassword('B>Tp)DM[3Nd')
-
-  //     expect(out.result.score).toBe(60)
-  //   })
-
-  //   it('should return 3 Years for complex passwords of length 12', () => {
-  //     const out = analyzePassword('kyW,_[E(?3z^')
-
-  //     expect(out.result.score).toBe(67)
-  //   })
-
-  //   it('should return 30 Years or more for complex passwords of length 13', () => {
-  //     const out = analyzePassword('A.^QH#,2ly%jx')
-
-  //     expect(out.result.score).toBe(80)
-  //   })
-
-  //     it('should return Centuries for complex passwords of length 14 or more', () => {
-  //     const out = analyzePassword('6Yn%ck:*@R.BIj')
-
-  //     expect(out.result.text).toBe('Centuries+')
-  //   })
 })
 
 // =======================

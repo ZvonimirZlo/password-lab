@@ -1,4 +1,5 @@
 import { getChunkTrigramSurprisal } from '../algorithms/markovEntropy'
+import { sequenceRegex } from '../data/keyboardWalks.js';
 
 export const estimateTimeToCrack = (password, analysis) => {
   if (!password || typeof password !== 'string')
@@ -127,18 +128,20 @@ export const estimateTimeToCrack = (password, analysis) => {
   }
 
   //Weakest segment penalizer
-  if (weakestSegment.surprisal <= 21 && isLeaked.status === 'Clear') {
+  if (weakestSegment?.surprisal <= 21 && isLeaked.status === 'Clear') {
     // Safely slice out the weak part
     const first = password.slice(0, weakestSegment.index)
     const second = password.slice(weakestSegment.index + weakestSegment.length)
     effectivePassword = first + second
   }
 
+
+
 //Final cleanup of the effective password
  effectivePassword = effectivePassword
  .replace(/(.)\1{2,}/gi,'')
  .replace(/(.{2,8})\1+/gi,'')
- .replace(/(?:123|234|345|456|567|678|789|012|abc|bcd|cde|def|qwe|asd|zxc|dfg|čćž|ćžš|šžć|đžć|rtz|rty)/gi,'')
+ .replace(sequenceRegex, ''); 
 
   console.log(effectivePassword);
  
@@ -153,7 +156,7 @@ export const estimateTimeToCrack = (password, analysis) => {
   // if(structuralWeakness > 1 && isLeaked.status === 'Clear') seconds = seconds / structuralWeakness
   let warning = null
 
-  if (minWindowSurprisal < 21 && weakestSegment) {5
+  if (minWindowSurprisal < 21 && weakestSegment) {
     warning = `Weak pattern detected: "${weakestSegment.chunk}"`
   }
 

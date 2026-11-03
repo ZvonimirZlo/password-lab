@@ -1,12 +1,12 @@
 import TOP_100K_BLACKLIST from '../data/passwords.json'
-
+import { sequenceRegex } from '../data/keyboardWalks.js';
 export const isBlacklistLoaded = Boolean(TOP_100K_BLACKLIST.length > 0)
 
 // Process the set once when the module loads for O(1) lookups
 const BLACKLIST_SET = new Set(TOP_100K_BLACKLIST)
 
 // Helper to normalize strings for leetspeak
-function normalizePassword(input) {
+function normalizePassword (input) {
   return input
     .trim()
     .toLowerCase()
@@ -19,7 +19,7 @@ function normalizePassword(input) {
     .replace(/8/g, 'b')
 }
 
-function findBlacklistMatch(data, normalized) {
+function findBlacklistMatch (data, normalized) {
   const len = data.length
 
   // Check substrings from longest to shortest, or check all sliding windows.
@@ -30,7 +30,12 @@ function findBlacklistMatch(data, normalized) {
       // const subNorm = normalized.substr(i, length)
 
       if (BLACKLIST_SET.has(subData)) {
-        return { start: i, end: i + length, matchedText: subData, matchType: 'blacklist-substring' }
+        return {
+          start: i,
+          end: i + length,
+          matchedText: subData,
+          matchType: 'blacklist-substring'
+        }
       }
       // if (BLACKLIST_SET.has(subNorm)) {
       //   return { start: i, end: i + length, matchedText: subNorm, matchType: 'blacklist-normalized' }
@@ -41,7 +46,7 @@ function findBlacklistMatch(data, normalized) {
 }
 
 export const checkDictionaryAndPatterns = password => {
-  if (!password || typeof password !== 'string' || password.length === 1) {
+  if (!password || typeof password !== 'string') {
     return { score: 0, status: 'Empty', warning: null, position: null }
   }
 
@@ -63,7 +68,8 @@ export const checkDictionaryAndPatterns = password => {
     return {
       score: 0,
       status: 'Critical Alert',
-      warning: '⚠️ This password was found on the global blacklist of compromised credentials.',
+      warning:
+        '⚠️ This password was found on the global blacklist of compromised credentials.',
       position: { start: 0, end: data.length, matchType: 'exact' }
     }
   }
@@ -72,13 +78,14 @@ export const checkDictionaryAndPatterns = password => {
     return {
       score: 0,
       status: 'Critical Alert',
-      warning: '⚠️ A leetspeak variation of this password was found on the global blacklist.',
+      warning:
+        '⚠️ A leetspeak variation of this password was found on the global blacklist.',
       position: { start: 0, end: data.length, matchType: 'normalized' }
     }
   }
 
-      // Check Dictionary & Substring Blacklists 
-  const dictionaryMatch = findBlacklistMatch(data,normalized)
+  // Check Dictionary & Substring Blacklists
+  const dictionaryMatch = findBlacklistMatch(data, normalized)
   if (dictionaryMatch) {
     const { matchedText } = dictionaryMatch
     return {
@@ -89,9 +96,29 @@ export const checkDictionaryAndPatterns = password => {
   }
 
   // Sequential Keyboard Pattern Warning (using .exec() to get index)
-  const sequenceRegex = /(?:123|234|345|456|567|678|789|012|abc|bcd|cde|def|qwe|asd|zxc|dfg|čćž|ćžš|šžć|đžć|rtz|rty)/i
+  // const sequenceRegex =
+  //   /(?:123|234|345|456|567|678|789|012|abc|bcd|cde|def|qwe|asd|zxc|dfg|čćž|ćžš|šžć|đžć|rtz|rty)/i
+  // const sequenceMatch = sequenceRegex.exec(data)
+
+  // if (sequenceMatch) {
+  //   return {
+  //     status: 'Weak Structure',
+  //     warning: `⚠️ "${sequenceMatch[0]}" Contains a highly predictable layout pattern (keyboard walk or sequence).`,
+  //     position: {
+  //       start: sequenceMatch.index,
+  //       end: sequenceMatch.index + sequenceMatch[0].length,
+  //       matchedText: sequenceMatch[0],
+  //       matchType: 'sequence'
+  //     }
+  //   }
+  // }
+
+
+
+  // Dynamically build the RegExp from the array
+
   const sequenceMatch = sequenceRegex.exec(data)
-  
+
   if (sequenceMatch) {
     return {
       status: 'Weak Structure',
@@ -108,7 +135,7 @@ export const checkDictionaryAndPatterns = password => {
   // Repeating Characters Warning
   const repeatRegex = /(.)\1{2,}/
   const repeatMatch = repeatRegex.exec(password)
-  
+
   if (repeatMatch) {
     return {
       status: 'Weak Structure',
@@ -118,17 +145,14 @@ export const checkDictionaryAndPatterns = password => {
         end: repeatMatch.index + repeatMatch[0].length,
         matchedText: repeatMatch[0],
         matchType: 'repeating-chars'
-      },
-      
-      
+      }
     }
   }
 
-
   // Repeated Patterns Warning (e.g., "abcabc")
-  const patternRegex =/(.{2,8})\1+/
+  const patternRegex = /(.{2,8})\1+/
   const patternMatch = patternRegex.exec(password)
-  
+
   if (patternMatch) {
     return {
       status: 'Weak Structure',

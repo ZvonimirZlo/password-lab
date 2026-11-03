@@ -5,10 +5,6 @@ import {
 } from './dictAndPatterns'
 
 describe('checkDictionaryAndPatterns()', () => {
-  it('should return a score of 0 for a sequence/single character string', () => {
-    const result = checkDictionaryAndPatterns('a')
-    expect(result.score).toBe(0)
-  })
 
   it('should handle emojis correctly without NaN or errors', () => {
     const result = checkDictionaryAndPatterns('😀🚀🔥😀🚀🔥')
@@ -43,6 +39,23 @@ describe('checkDictionaryAndPatterns()', () => {
     expect(result.status).toBe('Critical Alert')
   })
 
+    it('should detect if portion of password is found on the global blacklist of compromised credentials', () => {
+    const result = checkDictionaryAndPatterns('G$d?9spasswordWN')
+    expect(result.status).toBe('Weak Structure')
+    expect(result.warning).toBe(
+      '⚠️ Detected: "password" This password or a portion of it was found on the global blacklist of compromised credentials.'
+    )
+  })
+
+  it('should detect if leetspeak variation of the password was found on the global blacklist', () => {
+    const result = checkDictionaryAndPatterns('h0us3')
+    expect(result.status).toBe('Critical Alert')
+    expect(result.score).toBe(0)
+    expect(result.warning).toBe(
+      '⚠️ A leetspeak variation of this password was found on the global blacklist.'
+    )
+  })
+
   it('should return a status Weak Structure for a password with highly predictable layout pattern', () => {
     const result = checkDictionaryAndPatterns('rty')
     expect(result.status).toBe('Weak Structure')
@@ -67,15 +80,6 @@ describe('checkDictionaryAndPatterns()', () => {
     const result = checkDictionaryAndPatterns('!1!12341234^1!')
     expect(result.status).toBe('Weak Structure')
   })
-
-  it('should detect if portion of password is found on the global blacklist of compromised credentials', () => {
-    const result = checkDictionaryAndPatterns('G$d?9spasswordWN')
-    expect(result.status).toBe('Weak Structure')
-    expect(result.warning).toBe(
-      '⚠️ Detected: "password" This password or a portion of it was found on the global blacklist of compromised credentials.'
-    )
-  })
-
 
   it('should return no error if blacklist is loaded', () => {
     const result = isBlacklistLoaded
