@@ -41,7 +41,7 @@ function findBlacklistMatch(data, normalized) {
 }
 
 export const checkDictionaryAndPatterns = password => {
-  if (!password || typeof password !== 'string') {
+  if (!password || typeof password !== 'string' || password.length === 1) {
     return { score: 0, status: 'Empty', warning: null, position: null }
   }
 
@@ -77,6 +77,17 @@ export const checkDictionaryAndPatterns = password => {
     }
   }
 
+      // Check Dictionary & Substring Blacklists 
+  const dictionaryMatch = findBlacklistMatch(data,normalized)
+  if (dictionaryMatch) {
+    const { matchedText } = dictionaryMatch
+    return {
+      status: 'Weak Structure',
+      position: dictionaryMatch,
+      warning: `⚠️ Detected: "${matchedText}" This password or a portion of it was found on the global blacklist of compromised credentials.`
+    }
+  }
+
   // Sequential Keyboard Pattern Warning (using .exec() to get index)
   const sequenceRegex = /(?:123|234|345|456|567|678|789|012|abc|bcd|cde|def|qwe|asd|zxc|dfg|čćž|ćžš|šžć|đžć|rtz|rty)/i
   const sequenceMatch = sequenceRegex.exec(data)
@@ -84,7 +95,7 @@ export const checkDictionaryAndPatterns = password => {
   if (sequenceMatch) {
     return {
       status: 'Weak Structure',
-      warning: '⚠️ Contains a highly predictable layout pattern (keyboard walk or sequence).',
+      warning: `⚠️ "${sequenceMatch[0]}" Contains a highly predictable layout pattern (keyboard walk or sequence).`,
       position: {
         start: sequenceMatch.index,
         end: sequenceMatch.index + sequenceMatch[0].length,
@@ -101,15 +112,18 @@ export const checkDictionaryAndPatterns = password => {
   if (repeatMatch) {
     return {
       status: 'Weak Structure',
-      warning: '⚠️ Contains too many consecutive repeating characters.',
+      warning: `⚠️ "${repeatMatch}" Contains too many consecutive repeating characters.`,
       position: {
         start: repeatMatch.index,
         end: repeatMatch.index + repeatMatch[0].length,
         matchedText: repeatMatch[0],
         matchType: 'repeating-chars'
-      }
+      },
+      
+      
     }
   }
+
 
   // Repeated Patterns Warning (e.g., "abcabc")
   const patternRegex =/(.{2,8})\1+/
@@ -118,24 +132,13 @@ export const checkDictionaryAndPatterns = password => {
   if (patternMatch) {
     return {
       status: 'Weak Structure',
-      warning: '⚠️ Avoid repeating short patterns consecutively (e.g., "abcabc").',
+      warning: `⚠️ Avoid repeating short patterns consecutively (e.g., "abcabc"). Detected: "${patternMatch}"`,
       position: {
         start: patternMatch.index,
         end: patternMatch.index + patternMatch[0].length,
         matchedText: patternMatch[0],
         matchType: 'repeated-pattern'
       }
-    }
-  }
-
-    // Check Dictionary & Substring Blacklists 
-  const dictionaryMatch = findBlacklistMatch(data,normalized)
-  if (dictionaryMatch) {
-    const { matchedText } = dictionaryMatch
-    return {
-      status: 'Weak Structure',
-      position: dictionaryMatch,
-      warning: `"${matchedText}" ⚠️ This password or a portion of it was found on the global blacklist of compromised credentials.`,
     }
   }
 

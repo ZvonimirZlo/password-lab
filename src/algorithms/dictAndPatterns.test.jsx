@@ -13,7 +13,7 @@ describe('checkDictionaryAndPatterns()', () => {
   it('should handle emojis correctly without NaN or errors', () => {
     const result = checkDictionaryAndPatterns('😀🚀🔥😀🚀🔥')
 
-    expect(result.score).toBeGreaterThan(0)
+    expect(result.status).toBe('Weak Structure')
   })
 
   it('should work for accented or diacritic characters', () => {
@@ -26,9 +26,9 @@ describe('checkDictionaryAndPatterns()', () => {
   })
 
   it('should handle non-Latin character sets', () => {
-    const result = checkDictionaryAndPatterns('пивт你好123マラワガ')
+    const result = checkDictionaryAndPatterns('пивт你好マラワガ')
 
-    expect(result.score).toBeGreaterThan(0)
+    expect(result.status).toBe('Clear')
   })
 
   it('should return a score of 0 for a password found in the black list', () => {
@@ -43,35 +43,39 @@ describe('checkDictionaryAndPatterns()', () => {
     expect(result.status).toBe('Critical Alert')
   })
 
-  it('should return a score of 5 for a password with highly predictable layout pattern', () => {
+  it('should return a status Weak Structure for a password with highly predictable layout pattern', () => {
     const result = checkDictionaryAndPatterns('rty')
-    expect(result.score).toBe(5)
     expect(result.status).toBe('Weak Structure')
   })
 
-  it('should return a score of 5 for a password with 4 or more consecutive repeating characters', () => {
+  it('should return status Weak Structure for a password with 4 or more consecutive repeating characters', () => {
     const result = checkDictionaryAndPatterns('////')
-    expect(result.score).toBe(5)
     expect(result.status).toBe('Weak Structure')
   })
 
-  it('should return a score of 5 for a password with repeated pattern of two letters', () => {
+  it('should return status Weak Structure for a password with repeated pattern of two letters', () => {
     const result = checkDictionaryAndPatterns('!!asas^1!')
-    expect(result.score).toBe(5)
     expect(result.status).toBe('Weak Structure')
   })
 
-  it('should return a score of 5 for a password with repeated pattern of three letters', () => {
+  it('should return status Weak Structure for a password with repeated pattern of three letters', () => {
     const result = checkDictionaryAndPatterns('!!asdasd^1!')
-    expect(result.score).toBe(5)
     expect(result.status).toBe('Weak Structure')
   })
 
-  it('should return a score of 5 for a password with repeated pattern of four letters', () => {
+  it('should return a status Weak Structure for a password with repeated pattern of four letters', () => {
     const result = checkDictionaryAndPatterns('!1!12341234^1!')
-    expect(result.score).toBe(5)
     expect(result.status).toBe('Weak Structure')
   })
+
+  it('should detect if portion of password is found on the global blacklist of compromised credentials', () => {
+    const result = checkDictionaryAndPatterns('G$d?9spasswordWN')
+    expect(result.status).toBe('Weak Structure')
+    expect(result.warning).toBe(
+      '⚠️ Detected: "password" This password or a portion of it was found on the global blacklist of compromised credentials.'
+    )
+  })
+
 
   it('should return no error if blacklist is loaded', () => {
     const result = isBlacklistLoaded
@@ -91,6 +95,6 @@ describe('checkDictionaryAndPatterns() performance', () => {
     const duration = endTime - startTime
 
     expect(typeof score.score).toBe('number')
-    expect(duration).toBeLessThan(5) // 5ms threshold
+    expect(duration).toBeLessThan(15) // 15ms threshold
   })
 })

@@ -41,7 +41,7 @@ const About = () => {
 
             <p>
               This engine instantly compares your text input against a localized
-              memory database of the top 10,000 most frequently compromised
+              memory database of more than 100,000 most frequently compromised
               human credentials. Suffix, prefix, repetition, and keyboard
               sequence checks isolate lazily constructed patterns before they
               hit computing loops.
@@ -64,7 +64,7 @@ const About = () => {
             <p>
               Instead of guessing blindly, this conditional algorithm evaluates
               the transitional probability vectors of adjacent character pairs.
-              Trained over one million leaked sequences, it computes structural
+              Trained over million leaked sequences, it computes structural
               "surprise" math to flag predictable typing habits that flat
               entropy completely misses.
             </p>

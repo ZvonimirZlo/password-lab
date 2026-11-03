@@ -86,7 +86,7 @@ export const estimateTimeToCrack = (password, analysis) => {
           const nextSurprisal = getChunkTrigramSurprisal(nextChunk)
 
           // If it's a repeating character streak OR low surprisal, grow the segment
-          if (nextChar === prevChar || nextSurprisal <= 20) {
+          if (nextChar === prevChar || nextSurprisal <= 21) {
             currentLength++
             currentChunk = nextChunk
             currentSurprisal = nextSurprisal
@@ -127,12 +127,11 @@ export const estimateTimeToCrack = (password, analysis) => {
   }
 
   //Weakest segment penalizer
-  if (weakestSegment.surprisal <= 20 && isLeaked.status === 'Clear') {
+  if (weakestSegment.surprisal <= 21 && isLeaked.status === 'Clear') {
     // Safely slice out the weak part
     const first = password.slice(0, weakestSegment.index)
     const second = password.slice(weakestSegment.index + weakestSegment.length)
     effectivePassword = first + second
-    // const weak = password.slice(weakestSegment.index, weakestSegment.index+weakestSegment.length)
   }
 
 //Final cleanup of the effective password
@@ -146,15 +145,21 @@ export const estimateTimeToCrack = (password, analysis) => {
   // Calculate seconds using the length of the *remaining* strong parts
   let seconds = getSecondsForLength(effectivePassword.length)
 
-  // //Reduces the time if there is more than one structural weakness
-  // const structuralWeakness = Math.max(1, segments.filter(x => x.surprisal < 25).length)
+  // More structural weakness
+  const structuralWeakness = segments.filter(x => x.surprisal < 25)
+  console.log(structuralWeakness);
+  
 
   // if(structuralWeakness > 1 && isLeaked.status === 'Clear') seconds = seconds / structuralWeakness
   let warning = null
 
-  if (minWindowSurprisal < 20 && weakestSegment) {
-    // seconds = seconds * 0.5
+  if (minWindowSurprisal < 21 && weakestSegment) {5
     warning = `Weak pattern detected: "${weakestSegment.chunk}"`
+  }
+
+  if(structuralWeakness.length > 3 && isLeaked.status === 'Clear') {
+    warning = `Multiple Structural Weaknesses detected: "${structuralWeakness.map(x => x.chunk)}"`
+    seconds = seconds * 0.5
   }
 
   // Derive score exclusively from Final Time (aligned with floored units)
