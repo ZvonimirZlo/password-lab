@@ -124,11 +124,10 @@ export const estimateTimeToCrack = (password, analysis) => {
     const first = password.slice(0, start)
     const second = password.slice(end)
     effectivePassword = first + second
-    console.log(effectivePassword, password.slice(start, end))
   }
 
   //Weakest segment penalizer
-  if (weakestSegment.surprisal <= 20) {
+  if (weakestSegment.surprisal <= 20 && isLeaked.status === 'Clear') {
     // Safely slice out the weak part
     const first = password.slice(0, weakestSegment.index)
     const second = password.slice(weakestSegment.index + weakestSegment.length)
@@ -136,6 +135,14 @@ export const estimateTimeToCrack = (password, analysis) => {
     // const weak = password.slice(weakestSegment.index, weakestSegment.index+weakestSegment.length)
   }
 
+//Final cleanup of the effective password
+ effectivePassword = effectivePassword
+ .replace(/(.)\1{2,}/gi,'')
+ .replace(/(.{2,8})\1+/gi,'')
+ .replace(/(?:123|234|345|456|567|678|789|012|abc|bcd|cde|def|qwe|asd|zxc|dfg|čćž|ćžš|šžć|đžć|rtz|rty)/gi,'')
+
+  console.log(effectivePassword);
+ 
   // Calculate seconds using the length of the *remaining* strong parts
   let seconds = getSecondsForLength(effectivePassword.length)
 
