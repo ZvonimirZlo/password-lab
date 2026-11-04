@@ -1229,4 +1229,4 @@ const sequencePatterns = [
 ];
 
 
-export const sequenceRegex = new RegExp(sequencePatterns.join('|'), 'gi');
+export const sequenceRegex = new RegExp(sequencePatterns.join('|'), 'i');

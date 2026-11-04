@@ -19,7 +19,7 @@ function normalizePassword (input) {
     .replace(/8/g, 'b')
 }
 
-function findBlacklistMatch (data, normalized) {
+function findBlacklistMatch (data) {
   const len = data.length
 
   // Check substrings from longest to shortest, or check all sliding windows.
@@ -115,8 +115,8 @@ export const checkDictionaryAndPatterns = password => {
 
 
 
-  // Dynamically build the RegExp from the array
 
+// Chechs for highly predictable layout pattern (keyboard walk or sequence)
   const sequenceMatch = sequenceRegex.exec(data)
 
   if (sequenceMatch) {
@@ -160,7 +160,7 @@ export const checkDictionaryAndPatterns = password => {
       position: {
         start: patternMatch.index,
         end: patternMatch.index + patternMatch[0].length,
-        matchedText: patternMatch[0],
+        matchedText: patternMatch,
         matchType: 'repeated-pattern'
       }
     }

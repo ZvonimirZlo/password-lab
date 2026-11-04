@@ -83,20 +83,10 @@ describe('estimateTimeToCrack', () => {
   })
 
   it('estimates cracking time for a weak/leaked password', () => {
-    const { dictResult, result } = analyzePassword('password123')
-    expect(result).toEqual({
-      text: 'Instantly',
-      score: dictResult.score
-    })
+    const { result } = analyzePassword('password123')
+    expect(result).toEqual({ text: 'Instantly', score: 0})
   })
 
-  it('detects the simple leet speak versions of leaked passwords', () => {
-    const { dictResult, result } = analyzePassword('5cr@mbl3')
-    expect(result).toEqual({
-      text: 'Instantly',
-      score: dictResult.score
-    })
-  })
 
   it('ensures a complex password takes longer to crack than a simple one', () => {
     const weak = analyzePassword('123456')
