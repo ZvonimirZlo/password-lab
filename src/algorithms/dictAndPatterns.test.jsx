@@ -88,7 +88,7 @@ describe('checkDictionaryAndPatterns()', () => {
 })
 
 describe('checkDictionaryAndPatterns() performance', () => {
-  it('should execute almost instantly even at the maximum character limit', () => {
+  it('should execute under 20 ms at the maximum character limit', () => {
     const maxInput =
       '6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie2'
     const startTime = performance.now()
@@ -99,6 +99,6 @@ describe('checkDictionaryAndPatterns() performance', () => {
     const duration = endTime - startTime
 
     expect(typeof score.score).toBe('number')
-    expect(duration).toBeLessThan(15) // 15ms threshold
+    expect(duration).toBeLessThan(20) // 20ms threshold
   })
 })

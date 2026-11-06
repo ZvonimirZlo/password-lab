@@ -23,7 +23,7 @@ function findBlacklistMatch (data) {
   const len = data.length
 
   // Check substrings from longest to shortest, or check all sliding windows.
-  // For performance, we check contiguous substrings of length 3 or more.
+  // For performance, check contiguous substrings of length 3 or more.
   for (let length = len; length >= 3; length--) {
     for (let i = 0; i <= len - length; i++) {
       const subData = data.substr(i, length)
@@ -37,9 +37,6 @@ function findBlacklistMatch (data) {
           matchType: 'blacklist-substring'
         }
       }
-      // if (BLACKLIST_SET.has(subNorm)) {
-      //   return { start: i, end: i + length, matchedText: subNorm, matchType: 'blacklist-normalized' }
-      // }
     }
   }
   return null
@@ -94,26 +91,6 @@ export const checkDictionaryAndPatterns = password => {
       warning: `⚠️ Detected: "${matchedText}" This password or a portion of it was found on the global blacklist of compromised credentials.`
     }
   }
-
-  // Sequential Keyboard Pattern Warning (using .exec() to get index)
-  // const sequenceRegex =
-  //   /(?:123|234|345|456|567|678|789|012|abc|bcd|cde|def|qwe|asd|zxc|dfg|čćž|ćžš|šžć|đžć|rtz|rty)/i
-  // const sequenceMatch = sequenceRegex.exec(data)
-
-  // if (sequenceMatch) {
-  //   return {
-  //     status: 'Weak Structure',
-  //     warning: `⚠️ "${sequenceMatch[0]}" Contains a highly predictable layout pattern (keyboard walk or sequence).`,
-  //     position: {
-  //       start: sequenceMatch.index,
-  //       end: sequenceMatch.index + sequenceMatch[0].length,
-  //       matchedText: sequenceMatch[0],
-  //       matchType: 'sequence'
-  //     }
-  //   }
-  // }
-
-
 
 
 // Chechs for highly predictable layout pattern (keyboard walk or sequence)

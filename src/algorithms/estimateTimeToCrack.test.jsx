@@ -60,11 +60,10 @@ describe('estimateTimeToCrack', () => {
     })
   })
 
-  it('should estimate strong crack times for emoji-heavy passwords', () => {
+  it('should estimate crack times for emoji-heavy passwords', () => {
     const emojiOnly = analyzePassword('🔑🔒🚀🔥🌟💻🎯🎨')
 
-    // Pure emoji strings should be evaluated as very secure
-    expect(emojiOnly.result.score).toBeGreaterThanOrEqual(0)
+    expect(emojiOnly.result.score).toBeGreaterThan(0)
   })
 
   it('should calculate time for accented or diacritic characters', () => {
@@ -73,7 +72,7 @@ describe('estimateTimeToCrack', () => {
 
     // They should both return valid numbers
     expect(asciiResult.result.score).toBe(0)
-    expect(unicodeResult.result.text).toBe('Less Than A Second')
+    expect(unicodeResult.result.score).toBe(1)
   })
 
   it('should handle non-Latin character sets', () => {
@@ -84,9 +83,8 @@ describe('estimateTimeToCrack', () => {
 
   it('estimates cracking time for a weak/leaked password', () => {
     const { result } = analyzePassword('password123')
-    expect(result).toEqual({ text: 'Instantly', score: 0})
+    expect(result).toEqual({ text: 'Instantly', score: 0 })
   })
-
 
   it('ensures a complex password takes longer to crack than a simple one', () => {
     const weak = analyzePassword('123456')
@@ -102,30 +100,26 @@ describe('estimateTimeToCrack', () => {
     expect(scrambled).toBeLessThan(complex)
   })
 
-  //   it('should return lower output for words that are not on the black list but Markov chain analysis output is much lower than scrambled version of the same word', () => {
-  //     const scrambled = analyzePassword('luesaricPtmchaa').result.text
-  //     const word = analyzePassword('Pharmaceuticals').result.score
+  it('should return lower output for words that are not on the black list than scrambled version of the same word', () => {
+    const scrambled = analyzePassword('luesaricPtmchaa').result.score
+    const word = analyzePassword('Pharmaceuticals').result.score
 
-  //     const scrambled1 = analyzePassword('Almdeecensntogkw').result.text
-  //     const word1 = analyzePassword('Acknowledgements').result.score
+    const scrambled1 = analyzePassword('Almdeecensntogkw').result.score
+    const word1 = analyzePassword('Acknowledgements').result.score
 
-  //     const scrambled2 = analyzePassword('rvmnziio').result.score
-  //     const word2 = analyzePassword('zvonimir').result.score
+    const scrambled2 = analyzePassword('rvmnziio1').result.score
+    const word2 = analyzePassword('zvonimir1').result.score
 
-  //     expect(word).toBe(15)
-  //     expect(word1).toBe(15)
-  //     expect(word2).toBe(15)
+    expect(word).toBeLessThan(scrambled)
+    expect(word1).toBeLessThan(scrambled1)
+    expect(word2).toBeLessThan(scrambled2)
+  })
 
-  //     expect(scrambled).toBe('Centuries+')
-  //     expect(scrambled1).toBe('Centuries+')
-  //     expect(scrambled2).toBe(28)
-  //   })
+  it('should handle long existing words', () => {
+    const out = analyzePassword('Counterdemonstration')
 
-  //   it('should handle long existing words', () => {
-  //     const out = analyzePassword('Counterdemonstration')
-
-  //     expect(out.result.score).toBeLessThan(44)
-  //   })
+    expect(out.result.score).toBeLessThan(44)
+  })
 
   it('should return score 5 or less for complex passwords of length 6', () => {
     const out = analyzePassword('#lDZS1')
@@ -133,10 +127,10 @@ describe('estimateTimeToCrack', () => {
     expect(out.result.score).toBe(5)
   })
 
-  it('should return score 0 for simple words of length 6', () => {
+  it('should return score 1 for simple words of length 6', () => {
     const out = analyzePassword('expect')
 
-    expect(out.result.score).toBe(0)
+    expect(out.result.score).toBe(1)
   })
 
   it('should return score 10 for complex passwords of length 7', () => {
@@ -145,10 +139,10 @@ describe('estimateTimeToCrack', () => {
     expect(out.result.score).toBe(10)
   })
 
-  it('should return score 0 or for simple words of length 7', () => {
+  it('should return score 1 or for simple words of length 7', () => {
     const out = analyzePassword('marijan')
 
-    expect(out.result.score).toBe(0)
+    expect(out.result.score).toBe(1)
   })
 
   it('should return score 20 for complex passwords of length 8', () => {
@@ -157,28 +151,58 @@ describe('estimateTimeToCrack', () => {
     expect(out.result.score).toBe(20)
   })
 
-  it('should return score 0 for simple words of length 8', () => {
+  it('should return score 1 for simple words of length 8', () => {
     const out = analyzePassword('majstori')
 
-    expect(out.result.score).toBe(0)
+    expect(out.result.score).toBe(1)
   })
 
-  it('should return 12 Days or less for complex passwords of length 9', () => {
+  it('should return score 40 or less for complex passwords of length 9', () => {
     const out = analyzePassword('0c{K5eyn{')
 
     expect(out.result.score).toBe(40)
   })
 
-  it('should return 3 Years or less for complex passwords of length 10', () => {
+  it('should return score 65 or less for complex passwords of length 10', () => {
     const out = analyzePassword('FOx}Pk6r}p')
 
     expect(out.result.score).toBe(65)
   })
 
-  it('should ignore compromised part of the password from effective part of the password when calculating', () => {
+  it('should ignore compromised part of the password when calculating', () => {
     const resultWithWeak = analyzePassword('G$d?9spasswordWN').score
     const resultWithoutWeak = analyzePassword('G$d?9sWN').score
     expect(resultWithWeak).toEqual(resultWithoutWeak)
+  })
+
+  it('should ignore keyboard walks when calculating', () => {
+    const resultWithWalk = analyzePassword('bPl9+eijnlt').score
+    const resultWithoutWalk = analyzePassword('bPl9+elt').score
+    expect(resultWithWalk).toEqual(resultWithoutWalk)
+  })
+
+  it('should ignore repeated characters when calculating', () => {
+    const resultWithRepeated = analyzePassword('lW{!7%/////////////////////E-').score
+    const resultWithoutrepeated = analyzePassword('lW{!7%E-').score
+    expect(resultWithRepeated).toEqual(resultWithoutrepeated)
+  })
+
+  it('should ignore predictable parts with low Markov chain analysis when calculating', () => {
+    const resultWithRepeated = analyzePassword(';64BmyorkpjS').score
+    const resultWithoutrepeated = analyzePassword(';64BmpjS').score
+    expect(resultWithRepeated).toEqual(resultWithoutrepeated)
+  })
+
+  it('should ignore parts with low Shannon entropy analysis when calculating', () => {
+    const resultWithLowEntropy = analyzePassword('q(.2WiiW1*dD').score
+    const resultWithHighEntropy = analyzePassword('q(.21*dD').score
+    expect(resultWithLowEntropy).toEqual(resultWithHighEntropy)
+  })
+
+    it('should ignore all weak parts when calculating', () => {
+    const resultPoluted = analyzePassword('2bhuZpassC>)gWiiWX////////////wakewakem').score
+    const resultClean = analyzePassword('2ZC>)gXm').score
+    expect(resultPoluted).toEqual(resultClean)
   })
 
 })
@@ -187,7 +211,7 @@ describe('estimateTimeToCrack', () => {
 // PERFORMANCE TEST
 // =======================
 describe('estimateTimeToCrack() performance', () => {
-  it('should execute under 70 ms even at the maximum character limit', () => {
+  it('should execute under 20 ms even at the maximum character limit', () => {
     const maxInput =
       '6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie21<=C(05&MJ-{ch=SH+z6%,ie2'
     const startTime = performance.now()
@@ -196,6 +220,6 @@ describe('estimateTimeToCrack() performance', () => {
     const duration = endTime - startTime
 
     expect(typeof result.score).toBe('number')
-    expect(duration).toBeLessThan(70)
+    expect(duration).toBeLessThan(20)
   })
 })

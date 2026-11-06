@@ -44,6 +44,3 @@ it('should accept custom lengths below 8 if requested', () => {
   })
 })
 
-// const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-// const nums = '0123456789'
-// const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?'

@@ -112,7 +112,7 @@ export default function compareMarkovEntropy (password) {
     }
   }
 
-  const absoluteCeiling = 1400
+  const absoluteCeiling = 14000
 
   const finalize = val => {
     if (val > absoluteCeiling || !isFinite(val)) return absoluteCeiling
@@ -125,10 +125,11 @@ export default function compareMarkovEntropy (password) {
   }
 }
 
+//Helper function used in estimateTimeToCrack module
 export function getChunkTrigramSurprisal(chunk) {
   if (!chunk || chunk.length < 3) return 0;
   
-  // Call your existing function and grab the trigram property
+  // Call existing function and grab the trigram property
   const result = compareMarkovEntropy(chunk);
   return result.trigramEntropy;
 }

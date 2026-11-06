@@ -9,9 +9,9 @@ const shannonEntropy = (str) => {
   const frequencies = str.split('')
     .reduce((freq, curr) => (freq[curr] = (freq[curr] || 0) + 1) && freq, {})
  
-  // Sum the frequency of each character.
+  // Sum the frequency of each character * password length
   return Object.values(frequencies)
-    .reduce((sum, f) => sum - f / len * Math.log2(f / len), 0)*str.length
+    .reduce((sum, f) => sum - f / len * Math.log2(f / len), 0) * str.length
 }
     
 export default shannonEntropy;

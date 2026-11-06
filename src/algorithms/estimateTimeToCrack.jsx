@@ -5,16 +5,20 @@ export const estimateTimeToCrack = (password, analysis) => {
   if (!password || typeof password !== 'string')
     return { text: 'Instantly', score: 0, weakestSegment: null, warning: null }
 
-  const { isLeaked = {} } = analysis
-  const length = [...password].length
+  const { isLeaked = {} } = analysis;
 
-// Critical Dealbreakers & Short Password Overrides
+// console.log(trigram);
+
+  const length = [...password].length;
+  let warning = null;
+
+  // Critical Dealbreakers & Short Password Overrides
   if (length <= 2 || isLeaked.status === 'Critical Alert') {
     return { text: 'Instantly', score: 0 }
   }
 
   if (length <= 5) {
-    return { text: 'Less Than A Second', score: 0 }
+    return { text: 'Less Than A Second', score: 1 }
   }
 
   // Calculate pool size
@@ -28,26 +32,29 @@ export const estimateTimeToCrack = (password, analysis) => {
   if (/\p{Script=Han}/u.test(password)) pool += 2500
 
   const effectivePoolSize = Math.max(pool, 1)
-  const guessesPerSecond = 60e10
+  const guessesPerSecond = 60e10 //600 billion guesses per second, representing high-speed hardware estimation
 
+  //Baseline time calculation
   const getSecondsForLength = len => {
     if (len === 0) return 0
-    const log10Secs = len * Math.log10(effectivePoolSize) - Math.log10(guessesPerSecond)
+    const log10Secs =
+      len * Math.log10(effectivePoolSize) - Math.log10(guessesPerSecond)
     return Math.pow(10, Math.max(0, log10Secs))
   }
 
   // call the imported function analyzePasswordStructure
-  const { segments, weakestSegment, minWindowSurprisal, structuralWeaknesses } = analyzePasswordStructure(password);
+  const { segments, weakestSegment} = analyzePasswordStructure(password);
 
+  //Effective password used for final time calculation
   let effectivePassword = password
 
   //Leaked passwords and other weak structures penalizer
   if (isLeaked.status === 'Weak Structure') {
     const { start, end } = isLeaked.position
     effectivePassword = password.slice(0, start) + password.slice(end)
-  } 
-   
-  //Markov chain weak point penalizer
+  }
+
+  //Markov chain weakest segment penalizer
   if (weakestSegment?.surprisal <= 21 && isLeaked.status === 'Clear') {
     effectivePassword =
       password.slice(0, weakestSegment.index) +
@@ -60,53 +67,56 @@ export const estimateTimeToCrack = (password, analysis) => {
     .replace(/(.{2,8})\1+/gi, '')
     .replace(sequenceRegex, '')
 
-    
-   //Structural weaknesses of effective password 
-  const finalWeak = analyzePasswordStructure(effectivePassword).structuralWeaknesses
+  //Calculates effective length of weak spots
+  const calculateWeakSpanLength = weakSegments => {
+    if (!weakSegments || weakSegments.length === 0) return 0
 
-  
-    
- //Calculates effective lengths of weak spots   
-const calculateWeakSpanLength = (weakSegments) => {
-  if (!weakSegments || weakSegments.length === 0) return 0;
+    // Map using 'id' for the start index, and 'chunk.length' for the size
+    const intervals = weakSegments.map(seg => [
+      seg.id,
+      seg.id + seg.chunk.length
+    ])
 
-  // Map using 'id' for the start index, and 'chunk.length' for the size
-  const intervals = weakSegments.map(seg => [seg.id, seg.id + seg.chunk.length]);
-  
-  // Sort intervals by their starting index
-  intervals.sort((a, b) => a[0] - b[0]);
+    // Sort intervals by their starting index
+    intervals.sort((a, b) => a[0] - b[0])
 
-  const merged = [intervals[0]];
+    const merged = [intervals[0]]
 
-  for (let i = 1; i < intervals.length; i++) {
-    const prev = merged[merged.length - 1];
-    const curr = intervals[i];
+    for (let i = 1; i < intervals.length; i++) {
+      const prev = merged[merged.length - 1]
+      const curr = intervals[i]
 
-    if (curr[0] <= prev[1]) {
-      prev[1] = Math.max(prev[1], curr[1]);
-    } else {
-      merged.push(curr);
+      if (curr[0] <= prev[1]) {
+        prev[1] = Math.max(prev[1], curr[1])
+      } else {
+        merged.push(curr)
+      }
     }
+
+    return merged.reduce((total, [start, end]) => total + (end - start), 0)
   }
 
-  return merged.reduce((total, [start, end]) => total + (end - start), 0);
-};
+  //Structural weaknesses of effective password
+  const finalWeak = analyzePasswordStructure(effectivePassword).structuralWeaknesses;
+
+  //Effective length of weak segments
+  const weakSpanLength = calculateWeakSpanLength(finalWeak)
+
+  //More than one weak segments warning
+  if (calculateWeakSpanLength > 4) {
+    warning = `Weak segments detected!`
+  }
+// console.log(effectivePassword);
 
 
-const finalLength = calculateWeakSpanLength(finalWeak);
-
-console.log(effectivePassword,finalLength, finalWeak);
-
-  
-//Final seconds calculated from length reduced by weak spots length
-let seconds = getSecondsForLength(effectivePassword.length - finalLength)
-  let warning = null
-
+  //Final seconds calculated from length reduced by weak segments length
+  let seconds = getSecondsForLength(effectivePassword.length - weakSpanLength)
 
 
   // Derive score exclusively from Final Time (aligned with floored units)
   const getScoreFromSeconds = sec => {
-    if (sec <= 1) return 0
+    if (sec === 0) return 0
+    if (sec <= 1) return 1
     if (sec <= 60) return 5 // Up to 1 minute -> Barely anything
     if (sec <= 3600) return 10 // Up to 1 hour
     if (sec <= 86400) return 20 // Up to 1 day -> Still highly vulnerable
@@ -134,7 +144,7 @@ let seconds = getSecondsForLength(effectivePassword.length - finalLength)
     // Less than a second
     if (sec < 60) {
       return {
-        text: `${Math.floor(sec)} Seconds`,
+        text: `${Math.ceil(sec)} Seconds`,
         score: finalScore,
         weakestSegment: null,
         warning: null

@@ -18,9 +18,6 @@ const Stats = ({ password = '', analysis }) => {
     analysis.weakestSegment === undefined ? [] : analysis.weakestSegment
   const data = analysis.segments === undefined ? [] : analysis.segments
 
-  // console.log(data)
-
-  // console.log(strong.sort((a, b) => b.surprisal - a.surprisal)[0] || 0)
   let pool = 0
 
   //Standard Latin keyboards
@@ -124,7 +121,7 @@ const Stats = ({ password = '', analysis }) => {
         </div>
         <div className={styles.statCard}>
           <span>Weakest Segment</span>
-          <strong className={styles.elementOne}>{weakest.chunk || ''}</strong>
+          <strong className={styles.elementOne}>{weakest?.chunk || ''}</strong>
         </div>
         {/*Dropdown Toggle Card */}
         <div
@@ -161,7 +158,7 @@ const Stats = ({ password = '', analysis }) => {
                   <code className={styles.chunkCode}>"{item.chunk}"</code>
                   <span
                     className={
-                      item.surprisal < 25
+                      item.surprisal < 23
                         ? styles.lowSurprisal
                         : styles.normalSurprisal
                     }
@@ -171,7 +168,7 @@ const Stats = ({ password = '', analysis }) => {
                   </span>
                   <span
                     className={
-                      item.entropy < 1.5
+                      item.entropy <= 1.5
                         ? styles.lowSurprisal
                         : styles.normalSurprisal
                     }

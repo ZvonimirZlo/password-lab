@@ -17,11 +17,12 @@ const Footer = () => {
       </div>
 
       <div className={styles.description}>
-        Securing cryptographic initialization inputs
+        Securing cryptographic initialization inputs<br />
+        LOCAL ANALYSIS · NO EXTERNAL SERVICES
       </div>
 
       <div className={styles.copyright}>
-        © {new Date().getFullYear()} LOCAL ANALYSIS · NO EXTERNAL SERVICES
+        © {new Date().getFullYear()} Zyfr@ Lab by ZvonimirZlo. All Rights Reserved.
       </div>
     </footer>
   )
