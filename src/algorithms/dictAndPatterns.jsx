@@ -116,7 +116,7 @@ export const checkDictionaryAndPatterns = password => {
   if (repeatMatch) {
     return {
       status: 'Weak Structure',
-      warning: `⚠️ "${repeatMatch}" Contains too many consecutive repeating characters.`,
+      warning: `⚠️ "${repeatMatch[0]}" Contains too many consecutive repeating characters.`,
       position: {
         start: repeatMatch.index,
         end: repeatMatch.index + repeatMatch[0].length,
@@ -133,7 +133,7 @@ export const checkDictionaryAndPatterns = password => {
   if (patternMatch) {
     return {
       status: 'Weak Structure',
-      warning: `⚠️ Avoid repeating short patterns consecutively (e.g., "abcabc"). Detected: "${patternMatch}"`,
+      warning: `⚠️ Avoid repeating short patterns consecutively (e.g., "abcabc"). Detected: "${patternMatch[0]}"`,
       position: {
         start: patternMatch.index,
         end: patternMatch.index + patternMatch[0].length,

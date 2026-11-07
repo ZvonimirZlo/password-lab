@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 const Stats = ({ password = '', analysis }) => {
   const [showAllChunks, setShowAllChunks] = useState(false)
-  const len = password.length
+  const len = [...password].length //Prevent emojis to take double length
   const upper = (password.match(/[A-Z]/g) || []).length
   const lower = (password.match(/[a-z]/g) || []).length
   const nums = (password.match(/[0-9]/g) || []).length
@@ -93,7 +93,7 @@ const Stats = ({ password = '', analysis }) => {
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
           <span>Length</span>
-          <strong>{[...password].length}</strong>
+          <strong>{stats.length}</strong>
         </div>
         <div className={styles.statCard}>
           <span>Unique</span>
