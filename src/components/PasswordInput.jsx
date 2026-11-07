@@ -84,7 +84,7 @@ const PasswordInput = ({ password, setPassword, analysis }) => {
           className={styles.actionBtn}
           title={showPassword ? 'Hide password' : 'Show password'}
         >
-          {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+          {showPassword ? <FiEye size={18} /> : <FiEyeOff size={18} />}
         </button>
       </div>
     </div>

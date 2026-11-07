@@ -93,7 +93,7 @@ const Stats = ({ password = '', analysis }) => {
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
           <span>Length</span>
-          <strong>{stats.length}</strong>
+          <strong>{[...password].length}</strong>
         </div>
         <div className={styles.statCard}>
           <span>Unique</span>
@@ -158,7 +158,7 @@ const Stats = ({ password = '', analysis }) => {
                   <code className={styles.chunkCode}>"{item.chunk}"</code>
                   <span
                     className={
-                      item.surprisal < 23
+                      item.surprisal < 25
                         ? styles.lowSurprisal
                         : styles.normalSurprisal
                     }

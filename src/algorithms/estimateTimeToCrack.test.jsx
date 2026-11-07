@@ -223,3 +223,4 @@ describe('estimateTimeToCrack() performance', () => {
     expect(duration).toBeLessThan(20)
   })
 })
+

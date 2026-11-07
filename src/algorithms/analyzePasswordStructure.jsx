@@ -67,11 +67,14 @@ export const analyzePasswordStructure = (pwd, windowSize = 4) => {
   }
 //Weakest chunks
   const structuralWeaknesses = segments.filter(x => x.surprisal <= 20 || x.entropy < 1.5);
+  const structuralWeaknessesMild = segments.filter(x => x.surprisal < 25 && x.surprisal > 20 || x.entropy <= 1.8 && x.entropy>=1.5);
+console.log(structuralWeaknessesMild);
 
   return {
     segments,
     weakestSegment,
     minWindowSurprisal,
-    structuralWeaknesses
+    structuralWeaknesses,
+    structuralWeaknessesMild
   };
 };

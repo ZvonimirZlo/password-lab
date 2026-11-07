@@ -5,12 +5,15 @@ export const estimateTimeToCrack = (password, analysis) => {
   if (!password || typeof password !== 'string')
     return { text: 'Instantly', score: 0, weakestSegment: null, warning: null }
 
-  const { isLeaked = {} } = analysis;
+  const {
+    isLeaked = {}
+    // trigramEntropy: trigram
+  } = analysis
 
-// console.log(trigram);
+  // console.log(trigram);
 
-  const length = [...password].length;
-  let warning = null;
+  const length = [...password].length
+  let warning = null
 
   // Critical Dealbreakers & Short Password Overrides
   if (length <= 2 || isLeaked.status === 'Critical Alert') {
@@ -43,7 +46,7 @@ export const estimateTimeToCrack = (password, analysis) => {
   }
 
   // call the imported function analyzePasswordStructure
-  const { segments, weakestSegment} = analyzePasswordStructure(password);
+  const { segments, weakestSegment } = analyzePasswordStructure(password)
 
   //Effective password used for final time calculation
   let effectivePassword = password
@@ -55,7 +58,7 @@ export const estimateTimeToCrack = (password, analysis) => {
   }
 
   //Markov chain weakest segment penalizer
-  if (weakestSegment?.surprisal <= 21 && isLeaked.status === 'Clear') {
+  if (weakestSegment?.surprisal <= 20 && isLeaked.status === 'Clear') {
     effectivePassword =
       password.slice(0, weakestSegment.index) +
       password.slice(weakestSegment.index + weakestSegment.length)
@@ -97,21 +100,30 @@ export const estimateTimeToCrack = (password, analysis) => {
   }
 
   //Structural weaknesses of effective password
-  const finalWeak = analyzePasswordStructure(effectivePassword).structuralWeaknesses;
+  const finalWeak =
+    analyzePasswordStructure(effectivePassword).structuralWeaknesses
+  const finalWeakMild =
+    analyzePasswordStructure(effectivePassword).structuralWeaknessesMild
 
   //Effective length of weak segments
-  const weakSpanLength = calculateWeakSpanLength(finalWeak)
+  const weakSpanLength = calculateWeakSpanLength(finalWeak) * 0.8
+  const weakSpanLengthMild = calculateWeakSpanLength(finalWeakMild) * 0.2
 
   //More than one weak segments warning
   if (calculateWeakSpanLength > 4) {
     warning = `Weak segments detected!`
   }
-// console.log(effectivePassword);
-
+  console.log(effectivePassword, weakSpanLengthMild, weakSpanLength)
 
   //Final seconds calculated from length reduced by weak segments length
-  let seconds = getSecondsForLength(effectivePassword.length - weakSpanLength)
+  let seconds =
+    length < 24
+      ? getSecondsForLength(
+          effectivePassword.length - weakSpanLength - weakSpanLengthMild
+        )
+      : getSecondsForLength(effectivePassword.length - weakSpanLength)
 
+  //  if(trigram < password.length * 4) seconds = seconds * 0.00000001;
 
   // Derive score exclusively from Final Time (aligned with floored units)
   const getScoreFromSeconds = sec => {
