@@ -55,7 +55,7 @@ const MetricList = ({ password, analysis }) => {
     },
     {
       id: 'markov1',
-      label: 'Markov 1st Order (Bigram)',
+      label: 'Markov Chain 1st Order (Bigram)',
       score: password ? calculatedMarkov.bigramEntropy : 0,
       unit: 'bits',
       barWidth: bigramBarWidth,
@@ -63,7 +63,7 @@ const MetricList = ({ password, analysis }) => {
     },
     {
       id: 'markov2',
-      label: 'Markov 2nd Order (Trigram)',
+      label: 'Markov Chain 2nd Order (Trigram)',
       score: password ? calculatedMarkov.trigramEntropy : 0,
       unit: 'bits',
       barWidth: trigramBarWidth,

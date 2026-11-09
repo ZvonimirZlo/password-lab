@@ -70,6 +70,33 @@ const About = () => {
             </p>
           </article>
         </div>
+        <article className={styles.privacy}>
+          <div className={styles.engineHeader}>
+            <div className={styles.engineIcon}>🛡️</div>
+
+            <div>
+              <span className={styles.engineType}>
+                PRIVACY ARCHITECTURE · CLIENT-SIDE
+              </span>
+
+              <h4>Local Processing. Private by Design.</h4>
+            </div>
+          </div>
+
+          <p>
+            All security analysis is performed locally within your browser. Your
+            input is never transmitted to external servers, third-party APIs, or
+            cloud-based processing services. No account or remote verification
+            is required. Your sensitive data stays under your control throughout
+            the entire analysis process.
+          </p>
+
+          <div className={styles.privacyIndicators}>
+            <span>🔒 LOCAL PROCESSING</span>
+            <span>☁️ NO CLOUD UPLOADS</span>
+            <span>🚫 NO EXTERNAL API CALLS</span>
+          </div>
+        </article>
       </div>
     </section>
   )

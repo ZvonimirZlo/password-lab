@@ -82,7 +82,7 @@ const PasswordInput = ({ password, setPassword, analysis }) => {
           type='button'
           onClick={() => setShowPassword(!showPassword)}
           className={styles.actionBtn}
-          title={showPassword ? 'Hide password' : 'Show password'}
+          title={showPassword ? 'Show password' : 'Hide password'}
         >
           {showPassword ? <FiEye size={18} /> : <FiEyeOff size={18} />}
         </button>
