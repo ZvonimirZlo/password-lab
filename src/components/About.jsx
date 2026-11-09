@@ -21,7 +21,7 @@ const About = () => {
             }`}
           >
             {isBlacklistLoaded === true ? 'Active' : 'Inactive'}
-          <span className={styles.statusDot} />
+            <span className={styles.statusDot} />
           </span>
         </div>
 
@@ -64,9 +64,9 @@ const About = () => {
             <p>
               Instead of guessing blindly, this conditional algorithm evaluates
               the transitional probability vectors of adjacent character pairs.
-              Trained over million leaked sequences, it computes structural
-              "surprise" math to flag predictable typing habits that flat
-              entropy completely misses.
+              Trained over a million leaked sequences, it computes structural
+              &quot;surprise&quot; math to flag predictable typing habits that
+              flat entropy completely misses.
             </p>
           </article>
         </div>

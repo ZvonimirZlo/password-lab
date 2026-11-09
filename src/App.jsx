@@ -43,12 +43,12 @@ export default function App () {
             {/* Pass password and the analysis object down */}
             <MetricList password={password} analysis={analysis} />
           </div>
-          <About />
 
           <div className='card stats-card-wrapper'>
             <h3>Statistics</h3>
             <Stats password={password} analysis={analysis.crackEstimate} />
           </div>
+          <About />
         </section>
       </div>
 

@@ -106,8 +106,8 @@ export const estimateTimeToCrack = (password, analysis) => {
     analyzePasswordStructure(effectivePassword).structuralWeaknessesMild
 
   //Effective length of weak segments
-  const weakSpanLength = calculateWeakSpanLength(finalWeak) * 1
-  const weakSpanLengthMild = calculateWeakSpanLength(finalWeakMild) * 0.1
+  const weakSpanLength = calculateWeakSpanLength(finalWeak) //Hard penalizing
+  const weakSpanLengthMild = calculateWeakSpanLength(finalWeakMild) * 0.1 //Mild penalizing
 
   //More than one weak segments warning
   if (calculateWeakSpanLength > 4) {
@@ -123,7 +123,6 @@ export const estimateTimeToCrack = (password, analysis) => {
         )
       : getSecondsForLength(effectivePassword.length - weakSpanLength)
 
-  //  if(trigram < password.length * 4) seconds = seconds * 0.00000001;
 
   // Derive score exclusively from Final Time (aligned with floored units)
   const getScoreFromSeconds = sec => {
