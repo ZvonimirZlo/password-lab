@@ -1,6 +1,6 @@
 import { getChunkTrigramSurprisal } from '../algorithms/markovEntropy';
 
-// Shannon entropy helper (or import from its own utility file if you have one)
+// Shannon entropy helper 
 const shannon = str => {
   if (!str || typeof str !== 'string') return 0;
   const len = str.length;
@@ -8,10 +8,7 @@ const shannon = str => {
     .split('')
     .reduce((freq, curr) => (freq[curr] = (freq[curr] || 0) + 1) && freq, {});
 
-  return Object.values(frequencies).reduce(
-    (sum, f) => sum - (f / len) * Math.log2(f / len),
-    0
-  );
+  return Object.values(frequencies).reduce((sum, f) => sum - (f / len) * Math.log2(f / len),0);
 };
 
 //Sliding window algorythm, analyzes and returns Markov trigram and entropy for 
