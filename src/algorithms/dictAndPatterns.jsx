@@ -85,6 +85,7 @@ export const checkDictionaryAndPatterns = password => {
   const dictionaryMatch = findBlacklistMatch(data, normalized)
   if (dictionaryMatch) {
     const { matchedText } = dictionaryMatch
+    if(matchedText.length >= 4)
     return {
       status: 'Weak Structure',
       position: dictionaryMatch,

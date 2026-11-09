@@ -106,18 +106,18 @@ export const estimateTimeToCrack = (password, analysis) => {
     analyzePasswordStructure(effectivePassword).structuralWeaknessesMild
 
   //Effective length of weak segments
-  const weakSpanLength = calculateWeakSpanLength(finalWeak) * 0.8
-  const weakSpanLengthMild = calculateWeakSpanLength(finalWeakMild) * 0.2
+  const weakSpanLength = calculateWeakSpanLength(finalWeak) * 1
+  const weakSpanLengthMild = calculateWeakSpanLength(finalWeakMild) * 0.1
 
   //More than one weak segments warning
   if (calculateWeakSpanLength > 4) {
     warning = `Weak segments detected!`
   }
-  console.log(effectivePassword, weakSpanLengthMild, weakSpanLength)
+  console.log(effectivePassword, effectivePassword.length-weakSpanLengthMild-weakSpanLength,finalWeak)
 
   //Final seconds calculated from length reduced by weak segments length
   let seconds =
-    length < 24
+    length < 30
       ? getSecondsForLength(
           effectivePassword.length - weakSpanLength - weakSpanLengthMild
         )

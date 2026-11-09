@@ -51,7 +51,7 @@ const MetricList = ({ password, analysis }) => {
       score: password ? Number(calculatedShannon.toFixed(1)) : 0,
       unit: 'bits',
       barWidth: shannonBarWidth,
-      description: 'Calculates pure mathematical complexity.'
+      description: 'Calculates mathematical measure of the average uncertainty and randomness.'
     },
     {
       id: 'markov1',
@@ -59,7 +59,7 @@ const MetricList = ({ password, analysis }) => {
       score: password ? calculatedMarkov.bigramEntropy : 0,
       unit: 'bits',
       barWidth: bigramBarWidth,
-      description: 'Evaluates character-pair predictability.'
+      description: 'Measures predictability between consecutive character pairs to identify common patterns.'
     },
     {
       id: 'markov2',
@@ -67,7 +67,7 @@ const MetricList = ({ password, analysis }) => {
       score: password ? calculatedMarkov.trigramEntropy : 0,
       unit: 'bits',
       barWidth: trigramBarWidth,
-      description: 'Evaluates 3-character rolling contexts.'
+      description: 'Measures predictability using three-character sequences, identifying patterns that simpler character analysis may miss.'
     },
     {
       id: 'composition',
@@ -75,7 +75,7 @@ const MetricList = ({ password, analysis }) => {
       score: calculatedVariety,
       unit: '%',
       barWidth: calculatedVariety,
-      description: 'Measures character types used.'
+      description: 'Measures the diversity of character types used, such as lowercase, uppercase, numbers, and symbols.'
     },
     {
       id: 'dictionary',
@@ -83,7 +83,7 @@ const MetricList = ({ password, analysis }) => {
       score: password && dictResult ? dictResult.score : 0,
       unit: '%',
       barWidth: dictBarWidth,
-      description: 'Scans against known compromised words.'
+      description: 'Scans against known compromised passwords, detects common words and leetspeak variations, and identifies predictable patterns such as keyboard sequences and repeated characters.'
     },
     {
       id: 'timetocrack',
@@ -92,7 +92,7 @@ const MetricList = ({ password, analysis }) => {
       isTextScore: true,
       barWidth: crackEstimate.score,
       unit: 'est',
-      description: 'Divides total combinations by guessing speeds.'
+      description: 'Estimates how long a password might take to guess by evaluating its length, character diversity, structural weaknesses, and predictable patterns under assumed attack speeds.'
     }
   ]
 
