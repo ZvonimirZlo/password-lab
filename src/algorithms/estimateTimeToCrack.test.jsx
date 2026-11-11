@@ -185,7 +185,7 @@ describe('estimateTimeToCrack', () => {
     expect(resultWithLowEntropy).toEqual(resultWithHighEntropy)
   })
 
-  it('should ignore repeated chatacters, leaked passwords, keyboard walks and repeated words when calculating', () => {
+  it('should ignore multiple simultaneously detected weak patterns', () => {
     const resultPoluted = analyzePassword('pass$wakewake6zzzP2pwsxXj0').result
       .score
     const resultClean = analyzePassword('$6P2pXj0').result.score
