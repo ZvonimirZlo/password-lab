@@ -186,14 +186,27 @@ describe('estimateTimeToCrack', () => {
   })
 
   it('should ignore repeated chatacters, leaked passwords, keyboard walks and repeated words when calculating', () => {
-    const resultPoluted = analyzePassword('pass$wakewake6zzzP2pwsxXj0').result.score
+    const resultPoluted = analyzePassword('pass$wakewake6zzzP2pwsxXj0').result
+      .score
     const resultClean = analyzePassword('$6P2pXj0').result.score
     expect(resultPoluted).toEqual(resultClean)
   })
-    it('should ignore whitespaces when calculating', () => {
-    const resultWithSpaces = analyzePassword('            ^K            >c8             (K            w').result.score
+  it('should ignore whitespaces when calculating', () => {
+    const resultWithSpaces = analyzePassword('^K            >c8             (K            w').result.score
     const resultClean = analyzePassword('^K>c8(Kw').result.score
     expect(resultWithSpaces).toEqual(resultClean)
+  })
+
+  it('should ignore whitespaces on the end of the password when calculating', () => {
+    const resultWithSpacesOnEnd = analyzePassword('VEp?Y95W                                                  ').result.score
+    const resultClean = analyzePassword('VEp?Y95W').result.score
+    expect(resultWithSpacesOnEnd).toEqual(resultClean)
+  })
+
+  it('should ignore whitespaces on the beginning of the password when calculating', () => {
+    const resultWithSpacesOnBeginning = analyzePassword('                                                  W<_8zMCh').result.score
+    const resultClean = analyzePassword('W<_8zMCh').result.score
+    expect(resultWithSpacesOnBeginning).toEqual(resultClean)
   })
 })
 
