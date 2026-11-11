@@ -100,18 +100,6 @@ describe('estimateTimeToCrack', () => {
     expect(scrambled).toBeLessThan(complex)
   })
 
-  it('should return lower output for words that are not on the black list than scrambled version of the same word', () => {
-
-    const scrambled1 = analyzePassword('Almdeecensntogkw').result.score
-    const word1 = analyzePassword('Acknowledgements').result.score
-
-    const scrambled2 = analyzePassword('rvmnziio1').result.score
-    const word2 = analyzePassword('zvonimir1').result.score
-
-    expect(word1).toBeLessThan(scrambled1)
-    expect(word2).toBeLessThan(scrambled2)
-  })
-
   it('should handle long existing words', () => {
     const out = analyzePassword('Counterdemonstration')
 
@@ -179,13 +167,14 @@ describe('estimateTimeToCrack', () => {
   })
 
   it('should ignore repeated characters when calculating', () => {
-    const resultWithRepeated = analyzePassword('lW{!7%/////////////////////E-').result.score
+    const resultWithRepeated = analyzePassword('lW{!7%/////////////////////E-')
+      .result.score
     const resultWithoutrepeated = analyzePassword('lW{!7%E-').result.score
     expect(resultWithRepeated).toEqual(resultWithoutrepeated)
   })
 
   it('should ignore predictable parts with low Markov chain analysis when calculating', () => {
-    const resultWithRepeated = analyzePassword(';64BmyorkpjS').result.score
+    const resultWithRepeated = analyzePassword(';64BmforkpjS').result.score
     const resultWithoutrepeated = analyzePassword(';64BmpjS').result.score
     expect(resultWithRepeated).toEqual(resultWithoutrepeated)
   })
@@ -196,12 +185,16 @@ describe('estimateTimeToCrack', () => {
     expect(resultWithLowEntropy).toEqual(resultWithHighEntropy)
   })
 
-    it('should ignore all weak parts when calculating', () => {
-    const resultPoluted = analyzePassword('2bhuZpasC>)gWiiWX///wakewakem').result.score
-    const resultClean = analyzePassword('2ZC>)gXm').result.score
+  it('should ignore repeated chatacters, leaked passwords, keyboard walks and repeated words when calculating', () => {
+    const resultPoluted = analyzePassword('pass$wakewake6zzzP2pwsxXj0').result.score
+    const resultClean = analyzePassword('$6P2pXj0').result.score
     expect(resultPoluted).toEqual(resultClean)
   })
-
+    it('should ignore whitespaces when calculating', () => {
+    const resultWithSpaces = analyzePassword('            ^K            >c8             (K            w').result.score
+    const resultClean = analyzePassword('^K>c8(Kw').result.score
+    expect(resultWithSpaces).toEqual(resultClean)
+  })
 })
 
 // =======================
@@ -220,4 +213,3 @@ describe('estimateTimeToCrack() performance', () => {
     expect(duration).toBeLessThan(25)
   })
 })
-

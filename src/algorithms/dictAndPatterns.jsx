@@ -9,7 +9,7 @@ const BLACKLIST_SET = new Set(TOP_100K_BLACKLIST)
 // Leetspeak normalizing logic
 // ==============================
 
-// Helper to normalize strings for leetspeak
+// // Helper to normalize strings for leetspeak
 const leetMap = {
   a: ['4', '@'],
   b: ['|3', '8'],
@@ -40,27 +40,38 @@ function escapeRegex (str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-function normalizePassword (text) {
-  text = text.trim().toLowerCase()
-  
-  const lookup = {}
-
-  for (const [letter, symbols] of Object.entries(leetMap)) {
-    symbols.forEach(symbol => {
-      lookup[symbol] = letter
-    })
-  }
-
-  const pattern = new RegExp(
-    Object.keys(lookup)
-      .sort((a, b) => b.length - a.length)
-      .map(escapeRegex)
-      .join('|'),
-    'g'
-  )
-
-  return text.replace(pattern, match => lookup[match])
+// Pre-build lookup and regex
+const lookup = {};
+for (const [letter, symbols] of Object.entries(leetMap)) {
+  symbols.forEach(symbol => {
+    lookup[symbol] = letter;
+  });
 }
+
+const leetPattern = new RegExp(
+  Object.keys(lookup)
+    .sort((a, b) => b.length - a.length)
+    .map(escapeRegex)
+    .join('|'),'g'
+);
+
+function normalizePassword(text) {
+  if (typeof text !== 'string') return '';
+  return text.trim().toLowerCase().replace(leetPattern, match => lookup[match]);
+}
+
+// function normalizePassword (input) {
+//   return input
+//     .trim()
+//     .toLowerCase()
+//     .replace(/4|@/g, 'a')
+//     .replace(/3/g, 'e')
+//     .replace(/1|!|\|/g, 'i')
+//     .replace(/0/g, 'o')
+//     .replace(/5|\$/g, 's')
+//     .replace(/7/g, 't')
+//     .replace(/8/g, 'b')
+// }
 
 // ==============================
 // Blacklist substring logic
