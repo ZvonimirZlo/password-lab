@@ -106,7 +106,7 @@ export const estimateTimeToCrack = (password, analysis) => {
     analyzePasswordStructure(effectivePassword).structuralWeaknessesMild
 
   //Effective length of weak segments
-  const weakSpanLength = calculateWeakSpanLength(finalWeak) //Hard penalizing
+  const weakSpanLength = calculateWeakSpanLength(finalWeak) * 0.9 //Hard penalizing
   const weakSpanLengthMild = calculateWeakSpanLength(finalWeakMild) * 0.1 //Mild penalizing
 
   //More than one weak segments warning

@@ -1,23 +1,70 @@
 import TOP_100K_BLACKLIST from '../data/passwords.json'
-import { sequenceRegex } from '../data/keyboardWalks.js';
+import { sequenceRegex } from '../data/keyboardWalks.js'
 export const isBlacklistLoaded = Boolean(TOP_100K_BLACKLIST.length > 0)
 
 // Process the set once when the module loads for O(1) lookups
 const BLACKLIST_SET = new Set(TOP_100K_BLACKLIST)
 
+// ==============================
+// Leetspeak normalizing logic
+// ==============================
+
 // Helper to normalize strings for leetspeak
-function normalizePassword (input) {
-  return input
-    .trim()
-    .toLowerCase()
-    .replace(/4|@/g, 'a')
-    .replace(/3/g, 'e')
-    .replace(/1|!|\|/g, 'i')
-    .replace(/0/g, 'o')
-    .replace(/5|\$/g, 's')
-    .replace(/7/g, 't')
-    .replace(/8/g, 'b')
+const leetMap = {
+  a: ['4', '@'],
+  b: ['|3', '8'],
+  d: ['|)', 'o|'],
+  e: ['3'],
+  f: ['|='],
+  g: ['9', '6'],
+  h: ['|-|', ']-[', '}-{', '(-)', ')-(', '#'],
+  i: ['1', '!', ']['],
+  j: ['_|'],
+  k: ['|<', '|{'],
+  l: ['|_'],
+  n: ['|\\|'],
+  o: ['0'],
+  p: ['|2', '|D'],
+  q: ['(,)'],
+  r: ['|Z', '|?'],
+  s: ['5', '$'],
+  t: ['+', '7'],
+  v: ['|/', '\\/'],
+  w: ['\\^/', '//'],
+  x: ['><', '}{'],
+  y: ['`/'],
+  z: ['(\\)']
 }
+
+function escapeRegex (str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function normalizePassword (text) {
+  text = text.trim().toLowerCase()
+  
+  const lookup = {}
+
+  for (const [letter, symbols] of Object.entries(leetMap)) {
+    symbols.forEach(symbol => {
+      lookup[symbol] = letter
+    })
+  }
+
+  const pattern = new RegExp(
+    Object.keys(lookup)
+      .sort((a, b) => b.length - a.length)
+      .map(escapeRegex)
+      .join('|'),
+    'g'
+  )
+
+  return text.replace(pattern, match => lookup[match])
+}
+
+// ==============================
+// Blacklist substring logic
+// ==============================
 
 function findBlacklistMatch (data) {
   const len = data.length
@@ -85,16 +132,15 @@ export const checkDictionaryAndPatterns = password => {
   const dictionaryMatch = findBlacklistMatch(data, normalized)
   if (dictionaryMatch) {
     const { matchedText } = dictionaryMatch
-    if(matchedText.length >= 4)
-    return {
-      status: 'Weak Structure',
-      position: dictionaryMatch,
-      warning: `⚠️ Detected: "${matchedText}" This password or a portion of it was found on the global blacklist of compromised credentials.`
-    }
+    if (matchedText.length >= 4)
+      return {
+        status: 'Weak Structure',
+        position: dictionaryMatch,
+        warning: `⚠️ Detected: "${matchedText}" This password or a portion of it was found on the global blacklist of compromised credentials.`
+      }
   }
 
-
-// Chechs for highly predictable layout pattern (keyboard walk or sequence)
+  // Chechs for highly predictable layout pattern (keyboard walk or sequence)
   const sequenceMatch = sequenceRegex.exec(data)
 
   if (sequenceMatch) {

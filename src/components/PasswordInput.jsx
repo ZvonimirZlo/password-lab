@@ -28,8 +28,7 @@ const PasswordInput = ({ password, setPassword, analysis }) => {
 
   //Handles input change
   const handleInputChange = event => {
-    const sanitizedValue = event.target.value.replace(/\s/g, '')
-    setInputValue(sanitizedValue)
+    setInputValue(event.target.value)
   }
 
   //Handles password copy
@@ -47,6 +46,7 @@ const PasswordInput = ({ password, setPassword, analysis }) => {
         value={inputValue}
         maxLength={'256'}
         onChange={handleInputChange}
+        onBlur={() => setInputValue(inputValue.trim())}
         placeholder='Enter or generate your password...'
       />
 
