@@ -50,7 +50,8 @@ const MetricList = ({ password, analysis }) => {
       score: password ? Number(calculatedShannon.toFixed(1)) : 0,
       unit: 'bits',
       barWidth: shannonBarWidth,
-      description: 'Calculates mathematical measure of the average uncertainty and randomness.'
+      description:
+        'Calculates mathematical measure of the average uncertainty and randomness.'
     },
     {
       id: 'markov1',
@@ -58,7 +59,8 @@ const MetricList = ({ password, analysis }) => {
       score: password ? calculatedMarkov.bigramEntropy : 0,
       unit: 'bits',
       barWidth: bigramBarWidth,
-      description: 'Measures predictability between consecutive character pairs to identify common patterns.'
+      description:
+        'Measures predictability between consecutive character pairs to identify common patterns.'
     },
     {
       id: 'markov2',
@@ -66,7 +68,8 @@ const MetricList = ({ password, analysis }) => {
       score: password ? calculatedMarkov.trigramEntropy : 0,
       unit: 'bits',
       barWidth: trigramBarWidth,
-      description: 'Measures predictability using three-character sequences, identifying patterns that simpler character analysis may miss.'
+      description:
+        'Measures predictability using three-character sequences, identifying patterns that simpler character analysis may miss.'
     },
     {
       id: 'composition',
@@ -74,7 +77,8 @@ const MetricList = ({ password, analysis }) => {
       score: calculatedVariety,
       unit: '%',
       barWidth: calculatedVariety,
-      description: 'Measures the diversity of character types used, such as lowercase, uppercase, numbers, and symbols.'
+      description:
+        'Measures the diversity of character types used, such as lowercase, uppercase, numbers, and symbols.'
     },
     {
       id: 'dictionary',
@@ -82,7 +86,8 @@ const MetricList = ({ password, analysis }) => {
       score: password && dictResult ? dictResult.score : 0,
       unit: '%',
       barWidth: dictBarWidth,
-      description: 'Scans against known compromised passwords, detects common words and leetspeak variations, and identifies predictable patterns such as keyboard sequences and repeated characters.'
+      description:
+        'Scans against known compromised passwords, detects common words and leetspeak variations, and identifies predictable patterns such as keyboard sequences and repeated characters.'
     },
     {
       id: 'timetocrack',
@@ -91,17 +96,41 @@ const MetricList = ({ password, analysis }) => {
       isTextScore: true,
       barWidth: crackEstimate.score,
       unit: 'est',
-      description: 'Estimates how long a password might take to guess by evaluating its length, character diversity, structural weaknesses, and predictable patterns under assumed attack speeds.'
+      description:
+        'Estimates how long a password might take to guess by evaluating its length, character diversity, structural weaknesses, and predictable patterns under assumed attack speeds.'
     }
   ]
+
+ const getCrackColor = score => {
+  if (score <= 5) return '#dc2626'
+  if (score <= 10) return '#ef4444'
+  if (score <= 20) return '#f97316'
+  if (score <= 30) return '#fb923c'
+  if (score <= 40) return '#eab308'
+  if (score <= 50) return '#a3b91a'
+  if (score <= 65) return '#84cc16'
+  if (score <= 75) return '#65a30d'
+  if (score <= 90) return '#098013'
+  return '#22c5a2'
+}
 
   return (
     <div className={styles.barsContainer}>
       {metrics.map(metric => {
         const calculatedWidth =
-          typeof metric.barWidth === 'number' ? metric.barWidth : 0
+          typeof metric.barWidth === 'number'
+            ? Math.min(Math.max(metric.barWidth, 0), 100)
+            : 0
+
+        const isCrackEstimate = metric.id === 'timetocrack'
+
         return (
-          <div key={metric.id} className={styles.metricRow}>
+          <div
+            key={metric.id}
+            className={`${styles.metricRow} ${
+              isCrackEstimate ? styles.crackEstimateRow : ''
+            }`}
+          >
             <div className={styles.metricInfo}>
               <span className={styles.labelWithInfo}>
                 {metric.label}
@@ -112,14 +141,34 @@ const MetricList = ({ password, analysis }) => {
                   </span>
                 </span>
               </span>
+
               <span>
                 {metric.score} {metric.unit}
               </span>
             </div>
-            <div className={styles.progressTrack}>
+
+            <div
+              className={`${styles.progressTrack} ${
+                isCrackEstimate ? styles.crackEstimateTrack : ''
+              }`}
+            >
               <div
-                className={styles.progressFill}
-                style={{ width: `${calculatedWidth}%` }}
+                className={
+                  isCrackEstimate
+                    ? styles.crackEstimateFill
+                    : styles.progressFill
+                }
+                style={
+                  isCrackEstimate
+                    ? {
+                        width: `${calculatedWidth}%`,
+                        backgroundColor: getCrackColor(calculatedWidth),
+                        color: getCrackColor(calculatedWidth)
+                      }
+                    : {
+                        width: `${calculatedWidth}%`
+                      }
+                }
               />
             </div>
           </div>

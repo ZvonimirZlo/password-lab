@@ -190,12 +190,10 @@
   position: relative;
   height: 100%;
   background: linear-gradient(
-    90deg,
-    #ef4444 0%,
-    #f97316 35%,
-    #22c55e 70%,
-    #06b6d4 100%
-  );
+  90deg,
+  #4726a3 0%,
+  #06b6d4 100%
+);
   border-radius: inherit;
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
@@ -212,6 +210,44 @@
     opacity: 0.5;
     animation: metric-shimmer 2.5s ease-in-out infinite;
   }
+}
+
+// ============================================================
+// TIME-TO-CRACK PROGRESS
+// ============================================================
+
+.crackEstimateFill {
+  position: relative;
+  height: 100%;
+  border-radius: inherit;
+
+  // Explicitly prevent inheriting the regular gradient
+  background-image: none;
+  background-color: transparent;
+
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.6s ease;
+
+  box-shadow: 0 0 12px currentColor;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 45px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4));
+    opacity: 0.5;
+    animation: metric-shimmer 2.5s ease-in-out infinite;
+  }
+}
+
+.crackEstimateTrack {
+  height: 12px;
+  border-radius: 10px;
+  background: rgba(128, 128, 128, 0.15);
+  overflow: hidden;
 }
 
 // ============================================================
@@ -245,11 +281,13 @@
 @media (prefers-reduced-motion: reduce) {
   .metricRow,
   .progressFill,
+  .crackEstimateFill,
   .tooltipText {
     transition: none;
   }
 
-  .progressFill::after {
+  .progressFill::after,
+  .crackEstimateFill::after {
     animation: none;
   }
 }
