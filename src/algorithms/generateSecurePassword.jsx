@@ -1,4 +1,6 @@
 export const generateSecurePassword = (options = {}) => {
+
+//Backup function in case Web Crypto API is not available
 // const getCrypto = () => {
 //   if (typeof globalThis !== 'undefined' && globalThis.crypto) {
 //     return globalThis.crypto;
@@ -17,6 +19,7 @@ export const generateSecurePassword = (options = {}) => {
     useSymbols = true,
   } = options;
 
+  //Sets of chars
   const sets = [];
   if (useLower) sets.push('abcdefghijklmnopqrstuvwxyz');
   if (useUpper) sets.push('ABCDEFGHIJKLMNOPQRSTUVWXYZ');

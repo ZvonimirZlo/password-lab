@@ -12,7 +12,7 @@ export const estimateTimeToCrack = (password, analysis) => {
 
   // console.log(trigram);
 
-  const length = [...password].length
+  const length = [...password].length //Prevents chars like emojis to take more than one space
   let warning = null
 
   // Critical Dealbreakers & Short Password Overrides

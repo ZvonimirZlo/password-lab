@@ -1,6 +1,6 @@
 import { getChunkTrigramSurprisal } from '../algorithms/markovEntropy';
 
-// Shannon entropy helper 
+// Shannon entropy helper function used for every inidividual chunk analysis
 const shannon = str => {
   if (!str || typeof str !== 'string') return 0;
   const len = str.length;
@@ -63,8 +63,11 @@ export const analyzePasswordStructure = (pwd, windowSize = 4) => {
     }
   }
 //Weakest chunks
+
+  //Structural weaknesses below 20 bits trigram or 1.5 bits entropy
   const structuralWeaknesses = segments.filter(x => x.surprisal <= 20 || x.entropy < 1.5);
-  const structuralWeaknessesMild = segments.filter(x => x.surprisal < 25 && x.surprisal > 20 || x.entropy <= 1.8 && x.entropy>=1.5);
+  //Structural weaknesses below 25 bits trigram or 1.8 bits entropy
+  const structuralWeaknessesMild = segments.filter(x => x.surprisal < 25 && x.surprisal > 20 || x.entropy <= 1.8 && x.entropy >= 1.5);
 console.log(structuralWeaknessesMild);
 
   return {

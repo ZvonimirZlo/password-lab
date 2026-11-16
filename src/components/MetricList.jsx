@@ -12,7 +12,6 @@ const MetricList = ({ password, analysis }) => {
     crackEstimate
   } = analysis
 
-  // Bar width memos live right here where the bars are rendered
   const shannonBarWidth = useMemo(
     () => Math.min(Math.pow(calculatedShannon / 100, 1.2) * 100, 100),
     [calculatedShannon]

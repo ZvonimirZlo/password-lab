@@ -1,3 +1,4 @@
+//Shannon entropy function used for full length password
 const shannonEntropy = (str) => {
   if (!str || typeof str !== 'string') {
     return 0

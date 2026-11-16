@@ -1228,5 +1228,5 @@ const sequencePatterns = [
   "ZXCVZXCV"
 ];
 
-
+//Regex used for keyboars walks detection
 export const sequenceRegex = new RegExp(sequencePatterns.join('|'), 'i');
