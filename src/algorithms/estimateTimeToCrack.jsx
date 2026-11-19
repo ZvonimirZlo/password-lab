@@ -12,6 +12,8 @@ export const estimateTimeToCrack = (password, analysis) => {
 
   // console.log(trigram);
 
+
+
   const length = [...password].length //Prevents chars like emojis to take more than one space
   let warning = null
 
@@ -29,7 +31,7 @@ export const estimateTimeToCrack = (password, analysis) => {
     return { text: '10 Seconds', score: 5 }
   }
 
-  //Checks is 70% of password is common word
+  //Checks is 90% of password is common word
     if(analyzePasswordStructure(password).hiddenCommonDetector === true) {
     return { text: '1 Minute', score: 5 }
   }
