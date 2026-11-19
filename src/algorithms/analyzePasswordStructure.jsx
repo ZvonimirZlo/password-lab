@@ -68,13 +68,38 @@ export const analyzePasswordStructure = (pwd, windowSize = 4) => {
   const structuralWeaknesses = segments.filter(x => x.surprisal <= 20 || x.entropy < 1.5);
   //Structural weaknesses below 25 bits trigram or 1.8 bits entropy
   const structuralWeaknessesMild = segments.filter(x => x.surprisal < 25 && x.surprisal > 20 || x.entropy <= 1.8 && x.entropy >= 1.5);
-console.log(structuralWeaknessesMild);
+  
+  //Leetspeak normalizer
+  function normalizePassword (input) {
+  return input
+    .trim()
+    .toLowerCase()
+    .replace(/4|@/g, 'a')
+    .replace(/3/g, 'e')
+    .replace(/1|!|\|/g, 'i')
+    .replace(/0/g, 'o')
+    .replace(/5|\$/g, 's')
+    .replace(/7/g, 't')
+    .replace(/8/g, 'b')
+}
+
+
+  
+//Detects if the password is common word
+const commonDetector = segments.map(x => getChunkTrigramSurprisal(normalizePassword(x.chunk))).every(x => x < 25)
+
+//Detects if 70% of the password is common word
+const hiddenCommonDetector = segments.length > 0 
+    ? (segments.filter(x => getChunkTrigramSurprisal(normalizePassword(x.chunk)) < 25).length / segments.length) >= 0.7 
+    : false;
 
   return {
     segments,
     weakestSegment,
     minWindowSurprisal,
     structuralWeaknesses,
-    structuralWeaknessesMild
+    structuralWeaknessesMild,
+    commonDetector,
+    hiddenCommonDetector
   };
 };

@@ -24,6 +24,16 @@ export const estimateTimeToCrack = (password, analysis) => {
     return { text: 'Less Than A Second', score: 1 }
   }
 
+  //Checks if password is a common word
+  if(analyzePasswordStructure(password).commonDetector === true) {
+    return { text: '10 Seconds', score: 5 }
+  }
+
+  //Checks is 70% of password is common word
+    if(analyzePasswordStructure(password).hiddenCommonDetector === true) {
+    return { text: '1 Minute', score: 5 }
+  }
+
   // Calculate pool size
   let pool = 0
   if (/[a-z]/.test(password)) pool += 26
@@ -118,9 +128,7 @@ export const estimateTimeToCrack = (password, analysis) => {
   //Final seconds calculated from length reduced by weak segments length
   let seconds =
     length < 30
-      ? getSecondsForLength(
-          effectivePassword.length - weakSpanLength - weakSpanLengthMild
-        )
+      ? getSecondsForLength(effectivePassword.length - weakSpanLength - weakSpanLengthMild)
       : getSecondsForLength(effectivePassword.length - weakSpanLength)
 
 
