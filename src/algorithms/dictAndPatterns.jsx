@@ -195,7 +195,7 @@ export const checkDictionaryAndPatterns = password => {
       position: {
         start: patternMatch.index,
         end: patternMatch.index + patternMatch[0].length,
-        matchedText: patternMatch,
+        matchedText: patternMatch[0],
         matchType: 'repeated-pattern'
       }
     }
