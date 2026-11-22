@@ -60,19 +60,6 @@ function normalizePassword(text) {
   return text.trim().toLowerCase().replace(leetPattern, match => lookup[match]);
 }
 
-// function normalizePassword (input) {
-//   return input
-//     .trim()
-//     .toLowerCase()
-//     .replace(/4|@/g, 'a')
-//     .replace(/3/g, 'e')
-//     .replace(/1|!|\|/g, 'i')
-//     .replace(/0/g, 'o')
-//     .replace(/5|\$/g, 's')
-//     .replace(/7/g, 't')
-//     .replace(/8/g, 'b')
-// }
-
 // ==============================
 // Blacklist substring logic
 // ==============================

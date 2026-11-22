@@ -88,18 +88,12 @@ export const analyzePasswordStructure = (pwd, windowSize = 4) => {
 //Detects if the password is leetspeak version of common word
 const commonDetector = segments.map(x => getChunkTrigramSurprisal(normalizePassword(x.chunk))).every(x => x < 25)
 
-//Detects if 90% of the password is common word
-const hiddenCommonDetector = segments.length > 0 
-    ? (segments.filter(x => getChunkTrigramSurprisal(normalizePassword(x.chunk)) < 25).length / segments.length) >= 0.9 
-    : false;
-
   return {
     segments,
     weakestSegment,
     minWindowSurprisal,
     structuralWeaknesses,
     structuralWeaknessesMild,
-    commonDetector,
-    hiddenCommonDetector
+    commonDetector
   };
 };

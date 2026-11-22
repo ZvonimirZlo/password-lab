@@ -31,11 +31,6 @@ export const estimateTimeToCrack = (password, analysis) => {
     return { text: '10 Seconds', score: 5 }
   }
 
-  //Checks is 90% of password is common word
-    if(analyzePasswordStructure(password).hiddenCommonDetector === true) {
-    return { text: '1 Minute', score: 5 }
-  }
-
   // Calculate pool size
   let pool = 0
   if (/[a-z]/.test(password)) pool += 26
