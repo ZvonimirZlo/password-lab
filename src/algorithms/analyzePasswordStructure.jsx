@@ -85,7 +85,7 @@ export const analyzePasswordStructure = (pwd, windowSize = 4) => {
 
 
   
-//Detects if the password is leetspeak version of common word
+//Detects if the password is leetspeak version of common word or common word
 const commonDetector = segments.map(x => getChunkTrigramSurprisal(normalizePassword(x.chunk))).every(x => x < 25)
 
   return {
