@@ -10,10 +10,6 @@ export const estimateTimeToCrack = (password, analysis) => {
     // trigramEntropy: trigram
   } = analysis
 
-  // console.log(trigram);
-
-
-
   const length = [...password].length //Prevents chars like emojis to take more than one space
   let warning = null
 
@@ -21,14 +17,15 @@ export const estimateTimeToCrack = (password, analysis) => {
   if (length <= 2 || isLeaked.status === 'Critical Alert') {
     return { text: 'Instantly', score: 0 }
   }
-
-  if (length <= 5) {
+ 
+  //Password contains only duplicates or is <= length 5
+  if (length <= 5 || new Set(password).size === 1) {
     return { text: 'Less Than A Second', score: 1 }
   }
 
   //Checks if password is a common word
-  if(analyzePasswordStructure(password).commonDetector === true) {
-    return { text: '10 Seconds', score: 5 }
+  if (analyzePasswordStructure(password).commonDetector === true) {
+    return { text: '10 Seconds', score: 5, warning: `Weak segments detected!`}
   }
 
   // Calculate pool size
@@ -113,8 +110,8 @@ export const estimateTimeToCrack = (password, analysis) => {
     analyzePasswordStructure(effectivePassword).structuralWeaknessesMild
 
   //Effective length of weak segments
-  const weakSpanLength = calculateWeakSpanLength(finalWeak) //Hard penalizing
-  const weakSpanLengthMild = calculateWeakSpanLength(finalWeakMild) * 0.2 //Mild penalizing
+  const weakSpanLength = calculateWeakSpanLength(finalWeak) * 0.8 //Hard penalizing
+  const weakSpanLengthMild = calculateWeakSpanLength(finalWeakMild) * 0.1 //Mild penalizing
 
   //More than one weak segments warning
   if (weakSpanLength > 4) {
@@ -125,9 +122,10 @@ export const estimateTimeToCrack = (password, analysis) => {
   //Final seconds calculated from length reduced by weak segments length
   let seconds =
     length < 30
-      ? getSecondsForLength(effectivePassword.length - weakSpanLength - weakSpanLengthMild)
+      ? getSecondsForLength(
+          effectivePassword.length - weakSpanLength - weakSpanLengthMild
+        )
       : getSecondsForLength(effectivePassword.length - weakSpanLength)
-
 
   // Derive score exclusively from Final Time (aligned with floored units)
   const getScoreFromSeconds = sec => {

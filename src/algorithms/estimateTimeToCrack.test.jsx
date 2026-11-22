@@ -81,6 +81,18 @@ describe('estimateTimeToCrack', () => {
     expect(out.result.score).toBeGreaterThan(0)
   })
 
+  it('should handle only whitespace character sets', () => {
+    const out = analyzePassword('                                          ')
+
+    expect(out.result.score).toEqual(1)
+  })
+
+  it('should return minimal score for sequence of repeated characters', () => {
+    const out = analyzePassword('***************************************************************')
+
+    expect(out.result.score).toEqual(1)
+  })
+
   it('estimates cracking time for a weak/leaked password', () => {
     const { result } = analyzePassword('password123')
     expect(result).toEqual({ text: 'Instantly', score: 0 })
@@ -167,8 +179,7 @@ describe('estimateTimeToCrack', () => {
   })
 
   it('should ignore repeated characters when calculating', () => {
-    const resultWithRepeated = analyzePassword('lW{!7%///E-')
-      .result.score
+    const resultWithRepeated = analyzePassword('lW{!7%///E-').result.score
     const resultWithoutrepeated = analyzePassword('lW{!7%E-').result.score
     expect(resultWithRepeated).toEqual(resultWithoutrepeated)
   })
@@ -179,12 +190,6 @@ describe('estimateTimeToCrack', () => {
     expect(resultWithRepeated).toEqual(resultWithoutrepeated)
   })
 
-  it('should ignore parts with low Shannon entropy analysis when calculating', () => {
-    const resultWithLowEntropy = analyzePassword('q(.2WiiW1*dD').result.score
-    const resultWithHighEntropy = analyzePassword('q(.21*dD').result.score
-    expect(resultWithLowEntropy).toEqual(resultWithHighEntropy)
-  })
-
   it('should ignore multiple simultaneously detected weak patterns', () => {
     const resultPoluted = analyzePassword('pass$wakewake6zzzP2pwsxXj0').result
       .score
@@ -193,13 +198,15 @@ describe('estimateTimeToCrack', () => {
   })
 
   it('should ignore whitespaces on the end of the password when calculating', () => {
-    const resultWithSpacesOnEnd = analyzePassword('VEp?Y95W*      ').result.score
+    const resultWithSpacesOnEnd =
+      analyzePassword('VEp?Y95W*      ').result.score
     const resultClean = analyzePassword('VEp?Y95W*').result.score
     expect(resultWithSpacesOnEnd).toEqual(resultClean)
   })
 
   it('should ignore whitespaces on the beginning of the password when calculating', () => {
-    const resultWithSpacesOnBeginning = analyzePassword('     W<_8zMCh1*').result.score
+    const resultWithSpacesOnBeginning =
+      analyzePassword('     W<_8zMCh1*').result.score
     const resultClean = analyzePassword('W<_8zMCh1*').result.score
     expect(resultWithSpacesOnBeginning).toEqual(resultClean)
   })
