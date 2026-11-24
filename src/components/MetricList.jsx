@@ -60,7 +60,7 @@ const MetricList = ({ password, analysis }) => {
       unit: 'bits',
       barWidth: bigramBarWidth,
       description:
-        'Measures predictability between consecutive character pairs to identify common patterns.'
+        'Analyzes pairs of consecutive characters to detect common structural habits and patterns.'
     },
     {
       id: 'markov2',
@@ -69,7 +69,7 @@ const MetricList = ({ password, analysis }) => {
       unit: 'bits',
       barWidth: trigramBarWidth,
       description:
-        'Measures predictability using three-character sequences, identifying patterns that simpler character analysis may miss.'
+        'Evaluates three-character sequences to catch predictable patterns that simpler checks might miss.'
     },
     {
       id: 'composition',
@@ -87,7 +87,7 @@ const MetricList = ({ password, analysis }) => {
       unit: '%',
       barWidth: dictBarWidth,
       description:
-        'Scans against known compromised passwords, detects common words and leetspeak variations, and identifies predictable patterns such as keyboard sequences and repeated characters.'
+        'Scans against known compromised passwords, detects common words and leetspeak variations, and identifies predictable patterns such as keyboard walks and repeated patterns and characters.'
     },
     {
       id: 'timetocrack',

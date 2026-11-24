@@ -134,7 +134,8 @@ export const checkDictionaryAndPatterns = password => {
       return {
         status: 'Weak Structure',
         position: dictionaryMatch,
-        warning: `⚠️ Detected: "${matchedText}" This password or a portion of it was found on the global blacklist of compromised credentials.`
+        warning: `⚠️ Detected: "${matchedText}" This password or a portion of it was found on the global blacklist of compromised credentials.`,
+        score: 0
       }
   }
 
@@ -150,7 +151,8 @@ export const checkDictionaryAndPatterns = password => {
         end: sequenceMatch.index + sequenceMatch[0].length,
         matchedText: sequenceMatch[0],
         matchType: 'sequence'
-      }
+      },
+      score: 0
     }
   }
 
@@ -161,13 +163,14 @@ export const checkDictionaryAndPatterns = password => {
   if (repeatMatch) {
     return {
       status: 'Weak Structure',
-      warning: `⚠️ "${repeatMatch[0]}" Contains too many consecutive repeating characters.`,
+      warning: `⚠️ "${repeatMatch[0].length > 20 ? repeatMatch[0].slice(0,20) + '...' : repeatMatch[0]}" Contains too many consecutive repeating characters.`,
       position: {
         start: repeatMatch.index,
         end: repeatMatch.index + repeatMatch[0].length,
         matchedText: repeatMatch[0],
         matchType: 'repeating-chars'
-      }
+      },
+      score: 0
     }
   }
 
@@ -178,13 +181,14 @@ export const checkDictionaryAndPatterns = password => {
   if (patternMatch) {
     return {
       status: 'Weak Structure',
-      warning: `⚠️ Avoid repeating short patterns consecutively (e.g., "abcabc"). Detected: "${patternMatch[0]}"`,
+      warning: `⚠️ Avoid repeating short patterns consecutively (e.g., "abcabc"). Detected: "${patternMatch[0].length > 20 ? patternMatch[0].slice(0,20) + '...' : patternMatch[0]}"`,
       position: {
         start: patternMatch.index,
         end: patternMatch.index + patternMatch[0].length,
         matchedText: patternMatch[0],
         matchType: 'repeated-pattern'
-      }
+      },
+      score: 0
     }
   }
 
