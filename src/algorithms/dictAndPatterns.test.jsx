@@ -51,7 +51,7 @@ describe('checkDictionaryAndPatterns()', () => {
     expect(result.status).toBe('Critical Alert')
     expect(result.score).toBe(0)
     expect(result.warning).toBe(
-      '⚠️ A leetspeak variation of this password was found on the global blacklist.'
+      '⚠️ Variation of this password was found on the global blacklist.'
     )
   })
 

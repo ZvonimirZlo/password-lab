@@ -121,7 +121,7 @@ export const checkDictionaryAndPatterns = password => {
       score: 0,
       status: 'Critical Alert',
       warning:
-        '⚠️ A leetspeak variation of this password was found on the global blacklist.',
+        '⚠️ Variation of this password was found on the global blacklist.',
       position: { start: 0, end: data.length, matchType: 'normalized' }
     }
   }
