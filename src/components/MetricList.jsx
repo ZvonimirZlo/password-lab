@@ -101,18 +101,30 @@ const MetricList = ({ password, analysis }) => {
     }
   ]
 
- const getCrackColor = score => {
-  if (score <= 5) return '#dc2626'
-  if (score <= 10) return '#ef4444'
-  if (score <= 20) return '#f97316'
-  if (score <= 30) return '#fb923c'
-  if (score <= 40) return '#eab308'
-  if (score <= 50) return '#a3b91a'
-  if (score <= 65) return '#84cc16'
-  if (score <= 75) return '#65a30d'
-  if (score <= 90) return '#098013'
-  return '#22c5a2'
-}
+  const getCrackColor = score => {
+    if (score <= 5) return '#dc2626'
+    if (score <= 10) return '#ef4444'
+    if (score <= 20) return '#f97316'
+    if (score <= 30) return '#fb923c'
+    if (score <= 40) return '#eab308'
+    if (score <= 50) return '#a3b91a'
+    if (score <= 65) return '#84cc16'
+    if (score <= 75) return '#65a30d'
+    if (score <= 90) return '#098013'
+    return '#22c5a2'
+  }
+
+  // Helper function to return a text description matching the score range
+  const getCrackLabelText = score => {
+    if(score === 0) return ''
+    if (score <= 5) return 'Dangerous'
+    if (score <= 10) return 'Very Weak'
+    if (score <= 30) return 'Weak'
+    if (score <= 45) return 'Fair'
+    if (score <= 60) return 'Medium'
+    if (score <= 75) return 'Strong'
+    return 'Very Strong'
+  }
 
   return (
     <div className={styles.barsContainer}>
@@ -171,6 +183,16 @@ const MetricList = ({ password, analysis }) => {
                 }
               />
             </div>
+
+             {/* Conditionally render the text label directly below the crack estimate bar  */}
+            {isCrackEstimate && (
+              <div 
+                className={styles.crackEstimateLabel}
+                style={{ color: getCrackColor(calculatedWidth) }}
+              >
+                {getCrackLabelText(calculatedWidth)}
+              </div>
+            )}
           </div>
         )
       })}
