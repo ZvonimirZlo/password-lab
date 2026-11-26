@@ -122,9 +122,7 @@ export const estimateTimeToCrack = (password, analysis) => {
   //Final seconds calculated from length reduced by weak segments length
   let seconds =
     length < 30
-      ? getSecondsForLength(
-          effectivePassword.length - weakSpanLength - weakSpanLengthMild
-        )
+      ? getSecondsForLength(effectivePassword.length - weakSpanLength - weakSpanLengthMild)
       : getSecondsForLength(effectivePassword.length - weakSpanLength)
 
   // Derive score exclusively from Final Time (aligned with floored units)
@@ -224,16 +222,10 @@ export const estimateTimeToCrack = (password, analysis) => {
 
     //Scientific formatter
     const formatScientific = (value, precision = 2) => {
-      if (value === 0n) return '0'
-
-      const str = value.toString()
-      const exponent = str.length - 1
-
-      if (exponent === 0) return str
-
-      const decimals = str.slice(1, precision + 1).padEnd(precision, '0')
-
-      return `${str[0]}${decimals} × 10${toSuperscript(exponent)}`
+    if (!Number.isFinite(value)) return '10³⁰⁸+'
+    const [mantissa, expPart] = value.toExponential(precision).split('e')
+    const exponent = Number(expPart)
+    return `${mantissa} × 10${toSuperscript(exponent)}`
     }
 
     const toSuperscript = num => {
